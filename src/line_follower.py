@@ -77,6 +77,9 @@ def follow_line(left, right, sensor,
     """
     target = black_val #(white_val + black_val) / 2.0
 
+    if (target > 20 and target < 28):
+        return
+
     integral   = 0.0
     prev_error = 0.0
     start      = time.time()

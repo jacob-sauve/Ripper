@@ -15,7 +15,7 @@ v0.1.5
 # imports
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from utils.brick import BP, Motor, EV3ColorSensor, reset_brick
+from utils.brick import BP, Motor, EV3ColorSensor, reset_brick, wait_ready_sensors
 import time
 import drive as ts
 import line_follower as lf
@@ -24,7 +24,8 @@ import line_follower as lf
 # 1- ports
 RIGHT  = Motor("A")
 LEFT   = Motor("D")
-COLOR  = EV3ColorSensor(1, mode="red")  # color sensor on port 1
+COLOR  = EV3ColorSensor(4, mode="red")
+wait_ready_sensors(True)
 
 
 if __name__ == "__main__":
