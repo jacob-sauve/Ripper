@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
 """
-Line follower using a PID controller and an EV3 color sensor.
+Line follower using a PID controller and an EV3 color sensor in "red" mode.
 
 Strategy: follow the RIGHT edge of a black line on a white background.
 The sensor targets the midpoint between white and black reflectance so
 it rides the boundary — this gives a continuous, signed error signal
 rather than a binary on/off response.
 
-Sensor mode: "component" (RGB).  The R channel is used for line tracking;
-all three channels are sampled simultaneously to detect the orange door.
+Orange door detection: the sensor is calibrated over the orange surface
+during setup. At runtime, if the reading falls within ORANGE_TOLERANCE
+of the calibrated orange value, the robot stops.
 
 Motor DPS convention (from drive.py):
   forward  →  set_dps(-speed)   (negative)
@@ -65,112 +66,82 @@ KI = 0.05   # integral     – corrects slow steady-state drift
 KD = 0.8    # derivative   – damps oscillation on sharp edges
 # ─────────────────────────────────────────────────────────────────────────
 
-BASE_SPEED = 150        # DPS base forward speed
-MAX_SPEED  = 350        # DPS hard cap per wheel (prevents stalling)
-LOOP_HZ    = 50         # control-loop frequency (iterations/sec)
-DT         = 1.0 / LOOP_HZ
+BASE_SPEED     = 150    # DPS base forward speed
+MAX_SPEED      = 350    # DPS hard cap per wheel (prevents stalling)
+LOOP_HZ        = 50     # control-loop frequency (iterations/sec)
+DT             = 1.0 / LOOP_HZ
+ORANGE_TOLERANCE = 20   # ± this many units around orange_val triggers door stop
 
-# Fallback calibration constants for component (RGB) mode, R channel (0–255)
-# Override with calibrate() before running on the real robot.
-DEFAULT_WHITE = 220
-DEFAULT_BLACK = 10
-
-# Orange detection thresholds (RGB, 0–255).
-# Orange: high red, moderate green, very low blue.
-# Adjust if the robot misidentifies the door on your specific floor colour.
-ORANGE_R_MIN  = 100   # R must exceed this
-ORANGE_G_MAX  = 160   # G must be below this (orange is not yellow)
-ORANGE_RG_RATIO = 1.4 # R must be at least this many times G
-ORANGE_B_MAX  = 60    # B must be below this
-
-
-def _read_rgb(sensor):
-    """Return (r, g, b) from the color sensor, handling None gracefully."""
-    rgb = sensor.get_rgb()
-    if rgb is None or None in rgb:
-        return (0, 0, 0)
-    return rgb[0], rgb[1], rgb[2]
-
-
-def is_orange(r, g, b):
-    """
-    Return True if the RGB reading looks like the orange door.
-
-    Heuristic: high red, moderate-to-low green, very low blue.
-    If this triggers false positives on your floor, raise ORANGE_R_MIN
-    or lower ORANGE_RG_RATIO.
-    """
-    return (
-        r > ORANGE_R_MIN
-        and g < ORANGE_G_MAX
-        and b < ORANGE_B_MAX
-        and g > 0               # avoid div-by-zero; pure red/black is not orange
-        and (r / g) > ORANGE_RG_RATIO
-    )
+# Fallback calibration constants for red mode (0–255 scale).
+# Always run calibrate() on the actual robot before following.
+DEFAULT_WHITE  = 60
+DEFAULT_BLACK  = 10
+DEFAULT_ORANGE = 40     # placeholder — must be calibrated
 
 
 def calibrate(sensor):
     """
-    Interactive white/black calibration using the R channel.
+    Interactive calibration for white, black, and orange surfaces.
 
     Returns:
-        (white_val, black_val): R-channel readings for each surface.
+        (white_val, black_val, orange_val): get_red() readings for each surface.
     """
     input("Place sensor over WHITE surface, then press Enter... ")
-    white_val = _read_rgb(sensor)[0]
-    print(f"  white R = {white_val}")
+    white_val = sensor.get_red()
+    print(f"  white  = {white_val}")
 
     input("Place sensor over BLACK surface, then press Enter... ")
-    black_val = _read_rgb(sensor)[0]
-    print(f"  black R = {black_val}")
+    black_val = sensor.get_red()
+    print(f"  black  = {black_val}")
+
+    input("Place sensor over ORANGE door, then press Enter... ")
+    orange_val = sensor.get_red()
+    print(f"  orange = {orange_val}")
 
     if abs(white_val - black_val) < 10:
         print("WARNING: white/black contrast is very low — check sensor placement.")
 
-    return white_val, black_val
+    return white_val, black_val, orange_val
 
 
 def follow_line(left, right, sensor,
                 white_val=DEFAULT_WHITE, black_val=DEFAULT_BLACK,
-                touch=None, duration=None):
+                orange_val=DEFAULT_ORANGE, touch=None, duration=None):
     """
     PID line follower.  Stops on:
-      • orange door detected by the color sensor
+      • orange door detected (sensor reading within ORANGE_TOLERANCE of orange_val)
       • touch sensor pressed (emergency stop)
       • duration elapsed
       • Ctrl-C
 
     Args:
-        left      : Motor object for the left wheel  (port D)
-        right     : Motor object for the right wheel (port A)
-        sensor    : EV3ColorSensor (will be used in component/RGB mode)
-        white_val : Calibrated R-channel reading over white surface
-        black_val : Calibrated R-channel reading over black surface
-        touch     : TouchSensor for emergency stop (None = disabled)
-        duration  : Seconds to run (None = run until another stop condition)
+        left       : Motor object for the left wheel  (port D)
+        right      : Motor object for the right wheel (port A)
+        sensor     : EV3ColorSensor in 'red' mode
+        white_val  : Calibrated get_red() reading over white surface
+        black_val  : Calibrated get_red() reading over black surface
+        orange_val : Calibrated get_red() reading over orange door
+        touch      : TouchSensor for emergency stop (None = disabled)
+        duration   : Seconds to run (None = run until another stop condition)
 
     Returns:
         str: reason for stopping — "door", "emergency_stop", "timeout", or "interrupted"
     """
-<<<<<<< HEAD
-    target = (white_val + black_val) / 2.0
+    target      = (white_val + black_val) / 2.0
     stop_reason = "interrupted"
-=======
-    target = black_val #(white_val + black_val) / 2.0
->>>>>>> 91a4a3d2cd5c92d497b7e9cad1990fc1886dbae1
 
     integral   = 0.0
     prev_error = 0.0
     start      = time.time()
 
-    print(f"Line follower started  (target={target:.1f}  white={white_val}  black={black_val})")
+    print(f"Line follower started  (target={target:.1f}  white={white_val}  black={black_val}  orange={orange_val})")
     if touch is not None:
         print("Emergency stop: touch sensor on S2 active.")
     print("Press Ctrl-C to stop.\n")
 
     try:
         while True:
-            # ── Stop conditions checked before each control step ──────────
+            # ── Stop conditions ───────────────────────────────────────────
 
             if touch is not None and touch.is_pressed():
                 stop_reason = "emergency_stop"
@@ -183,16 +154,16 @@ def follow_line(left, right, sensor,
 
             # ── Sensor read ───────────────────────────────────────────────
 
-            r, g, b = _read_rgb(sensor)
+            reading = sensor.get_red()
 
-            if is_orange(r, g, b):
+            if abs(reading - orange_val) <= ORANGE_TOLERANCE:
                 stop_reason = "door"
-                print(f"Orange door detected (R={r} G={g} B={b}) — stopping.")
+                print(f"Orange door detected (reading={reading}) — stopping.")
                 break
 
             # ── PID ───────────────────────────────────────────────────────
 
-            error = r - target
+            error = reading - target
 
             integral  += error * DT
             integral   = max(-100, min(100, integral))   # anti-windup
