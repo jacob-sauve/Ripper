@@ -8,7 +8,7 @@
   :   : : :    :        :       : :: :::  :   : :
 
 Main loop
-v0.1.1
+v0.1.2
 2026-03-12
 """
 
@@ -29,7 +29,7 @@ if __name__ == "__main__":
         right.set_dps(20)
         left.set_dps(20)
         time.sleep(5)
-    except BaseException e:
-        print(e.message)
+    except BaseException as e:
+        print(e)
     finally:
         reset_brick()
