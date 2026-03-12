@@ -25,12 +25,14 @@ def move(left, right, distance, speed=MIN_SPEED):
     left.set_dps(direction * speed)
     right.set_dps(direction * speed)
     time.sleep(spin_time)
+    left.set_dps(0)
+    right.set_dps(0)
 
 
 def rotate_in_place(left, right, degrees, speed=MIN_SPEED):
     distance = R_ROBOT * (degrees * math.pi / 180)
     # divide by 2 to find rotation distance per wheel
-    n_rotations = (abs(distance/(R_WHEEL * math.pi * 2)))/2
+    n_rotations = (abs(distance/(R_WHEEL * math.pi * 2)))
     spin_time = (n_rotations*360)/speed
     if degrees < 0:
         direction = 1
@@ -39,6 +41,8 @@ def rotate_in_place(left, right, degrees, speed=MIN_SPEED):
     left.set_dps(direction * speed)
     right.set_dps(-direction * speed)
     time.sleep(spin_time)
+    left.set_dps(0)
+    right.set_dps(0)
 
 
 # main loop
