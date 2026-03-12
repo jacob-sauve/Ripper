@@ -12,6 +12,8 @@ import time
 
 
 def drive_test(right, left):
+    print("moving...")
     right.set_dps(20)
     left.set_dps(20)
     time.sleep(5)
+    print("moved!")
