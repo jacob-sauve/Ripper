@@ -15,7 +15,7 @@ v0.1.5
 # imports
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from utils.brick import BP, Motor, EV3ColorSensor, reset_brick
+from utils.brick import BP, Motor, EV3ColorSensor, TouchSensor, reset_brick
 import time
 import drive as ts
 import line_follower as lf
@@ -24,7 +24,8 @@ import line_follower as lf
 # 1- ports
 RIGHT  = Motor("A")
 LEFT   = Motor("D")
-COLOR  = EV3ColorSensor(1, mode="red")  # color sensor on port 1
+COLOR  = EV3ColorSensor(1, mode="component")  # color sensor on port 1
+TOUCH  = TouchSensor(2)                        # emergency stop on port S2
 
 
 if __name__ == "__main__":
@@ -57,6 +58,7 @@ if __name__ == "__main__":
             lf.follow_line(LEFT, RIGHT, COLOR,
                            white_val=white_val,
                            black_val=black_val,
+                           touch=TOUCH,
                            duration=duration)
         else:
             print("Unknown mode.")
