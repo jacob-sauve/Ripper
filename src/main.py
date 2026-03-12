@@ -8,14 +8,14 @@
   :   : : :    :        :       : :: :::  :   : :
 
 Main loop
-v0.1.5
+v0.2.0
 2026-03-12
 """
 
 # imports
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from utils.brick import BP, Motor, EV3ColorSensor, reset_brick, wait_ready_sensors
+from utils.brick import BP, Motor, EV3ColorSensor, reset_brick, wait_ready_sensors, TouchSensor
 import time
 import drive as ts
 import line_follower as lf
@@ -25,13 +25,14 @@ import line_follower as lf
 RIGHT  = Motor("A")
 LEFT   = Motor("D")
 COLOR  = EV3ColorSensor(4, mode="red")
+STOP   = TouchSensor(2)
 wait_ready_sensors(True)
 
 
 if __name__ == "__main__":
     try:
         import titlecard
-        print("You are now piloting...\n\n")
+        print("\n\n\033[3mYou are now piloting...\033[0m\n\n")
         titlecard.show()
 
         print("Select mode:")
@@ -40,10 +41,11 @@ if __name__ == "__main__":
         mode = input("Mode: ").strip()
 
         if mode == "1":
-            d = float(input("How far should Ripper move? (cm): "))
-            ts.move(LEFT, RIGHT, d)
-            d = float(input("Turn how many degrees (algebraic): "))
-            ts.rotate_in_place(LEFT, RIGHT, d)
+            while not STOP.is_pressed():
+                d = float(input("How far should Ripper move? (cm): "))
+                ts.move(LEFT, RIGHT, d)
+                d = float(input("Turn how many degrees (algebraic): "))
+                ts.rotate_in_place(LEFT, RIGHT, d)
 
         elif mode == "2":
             calibrate = input("Calibrate sensor? (y/n): ").strip().lower()

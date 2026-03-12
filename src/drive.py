@@ -6,12 +6,13 @@ Ripper driving scripts.
 
 # imports
 from utils.brick import BP, Motor, reset_brick
+from vision import _read_rgb, is_orange
 import math
 import time
 
 # constants
 R_WHEEL = 2.2       # wheel radius in cm
-R_ROBOT = 7.55      # middle wheel to middle wheel in cm
+R_ROBOT = 7.60      # middle wheel to middle wheel in cm
 MIN_SPEED = 270     # wheel rotation speed in degrees.s-1
 
 
@@ -27,6 +28,16 @@ def move(left, right, distance, speed=MIN_SPEED):
     time.sleep(spin_time)
     left.set_dps(0)
     right.set_dps(0)
+
+def orange_oscillation(left, right, color, speed=MIN_SPEED):
+    while True:
+        left.set_dps(speed)
+        right.set_dps(speed)
+        while not (is_orange(_read_rgb(color))):
+            time.sleep(0.1)
+        left.set_dps(0)
+        right.set_dps(0)
+        rotate_in_place(left, right, 180, speed)
 
 
 def rotate_in_place(left, right, degrees, speed=MIN_SPEED):
