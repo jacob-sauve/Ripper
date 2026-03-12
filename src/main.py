@@ -64,6 +64,8 @@ if __name__ == "__main__":
                            orange_val=orange_val,
                            touch=TOUCH,
                            duration=duration)
+        elif mode == "3":
+            ts.orange_loop(LEFT, RIGHT, COLOR)
         else:
             print("Unknown mode.")
 

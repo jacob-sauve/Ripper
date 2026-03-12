@@ -29,12 +29,14 @@ def move(left, right, distance, speed=MIN_SPEED):
     left.set_dps(0)
     right.set_dps(0)
 
-def orange_oscillation(left, right, color, speed=MIN_SPEED):
+def orange_loop(left, right, color, speed=MIN_SPEED):
     while True:
-        left.set_dps(speed)
-        right.set_dps(speed)
-        while not (is_orange(_read_rgb(color))):
-            time.sleep(0.2)
+        left.set_dps(-speed)
+        right.set_dps(-speed)
+        r,g,b = _read_rgb(color)
+        while not (is_orange(r,g,b)):
+            time.sleep(0.1)
+            r,g,b = _read_rgb(color)
         left.set_dps(0)
         right.set_dps(0)
         rotate_in_place(left, right, 180, speed)

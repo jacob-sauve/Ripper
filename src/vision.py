@@ -19,6 +19,7 @@ def _read_rgb(sensor):
     rgb = sensor.get_rgb()
     if rgb is None or None in rgb:
         return (0,0,0)
+    print(rgb)
     return rgb[0], rgb[1], rgb[2]
 
 def is_orange(r,g,b):
