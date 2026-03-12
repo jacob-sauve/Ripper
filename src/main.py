@@ -28,7 +28,6 @@ COLOR  = EV3ColorSensor(4, mode="red")
 STOP   = TouchSensor(2)
 wait_ready_sensors(True)
 
-
 if __name__ == "__main__":
     try:
         import titlecard
@@ -50,9 +49,11 @@ if __name__ == "__main__":
         elif mode == "2":
             calibrate = input("Calibrate sensor? (y/n): ").strip().lower()
             if calibrate == "y":
-                white_val, black_val = lf.calibrate(COLOR)
+                white_val, black_val, orange_val = lf.calibrate(COLOR)
             else:
-                white_val, black_val = lf.DEFAULT_WHITE, lf.DEFAULT_BLACK
+                white_val  = lf.DEFAULT_WHITE
+                black_val  = lf.DEFAULT_BLACK
+                orange_val = lf.DEFAULT_ORANGE
 
             duration_str = input("Run for how many seconds? (Enter for unlimited): ").strip()
             duration = float(duration_str) if duration_str else None
@@ -60,6 +61,8 @@ if __name__ == "__main__":
             lf.follow_line(LEFT, RIGHT, COLOR,
                            white_val=white_val,
                            black_val=black_val,
+                           orange_val=orange_val,
+                           touch=TOUCH,
                            duration=duration)
         else:
             print("Unknown mode.")
