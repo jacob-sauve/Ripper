@@ -75,7 +75,7 @@ def follow_line(left, right, sensor,
         black_val : Calibrated reflectance reading over black surface
         duration  : Seconds to run (None = run until KeyboardInterrupt)
     """
-    target = (white_val + black_val) / 2.0
+    target = black_val #(white_val + black_val) / 2.0
 
     integral   = 0.0
     prev_error = 0.0
