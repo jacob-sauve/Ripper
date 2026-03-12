@@ -26,7 +26,11 @@ LEFT = Motor("D")
 if __name__ == "__main__":
     # main loop
     try:
-        pass
+        import titlecard
+        print("You are now piloting...")
+        titlecard.show()
+        d = int(input("How far should Ripper move? (cm): "))
+        ts.move(d)
     except BaseException as e:
         print(e)
     finally:
