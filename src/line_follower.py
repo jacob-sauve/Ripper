@@ -152,8 +152,12 @@ def follow_line(left, right, sensor,
     Returns:
         str: reason for stopping — "door", "emergency_stop", "timeout", or "interrupted"
     """
+<<<<<<< HEAD
     target = (white_val + black_val) / 2.0
     stop_reason = "interrupted"
+=======
+    target = black_val #(white_val + black_val) / 2.0
+>>>>>>> 91a4a3d2cd5c92d497b7e9cad1990fc1886dbae1
 
     integral   = 0.0
     prev_error = 0.0
