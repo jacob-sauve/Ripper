@@ -13,7 +13,8 @@ v0.1.5
 """
 
 # imports
-from .. import utils
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import BP, Motor, reset_brick
 import time
 import drive as ts
