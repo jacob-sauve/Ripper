@@ -8,7 +8,7 @@
   :   : : :    :        :       : :: :::  :   : :
 
 Main loop
-v0.1.2
+v0.1.3
 2026-03-12
 """
 
@@ -26,9 +26,7 @@ LEFT = Motor("D")
 if __name__ == "__main__":
     # main loop
     try:
-        right.set_dps(20)
-        left.set_dps(20)
-        time.sleep(5)
+        pass
     except BaseException as e:
         print(e)
     finally:
