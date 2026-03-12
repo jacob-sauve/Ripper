@@ -8,7 +8,7 @@
   :   : : :    :        :       : :: :::  :   : :
 
 Main loop
-v0.1.3
+v0.1.4
 2026-03-12
 """
 
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     # main loop
     try:
         import titlecard
-        print("You are now piloting...")
+        print("You are now piloting...\n\n")
         titlecard.show()
         d = int(input("How far should Ripper move? (cm): "))
         ts.move(LEFT, RIGHT, d)

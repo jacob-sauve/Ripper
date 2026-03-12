@@ -12,7 +12,7 @@ import drive
 # constants
 
 
-def move(left, right distance):
+def move(left, right, distance):
     print("moving...")
     drive.move(left, right, distance)
     print("moved!")

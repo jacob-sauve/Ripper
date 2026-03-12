@@ -10,14 +10,14 @@ import math
 import time
 
 # constants
-R_WHEEL = 10        # wheel radius in cm
+R_WHEEL = 2.2       # wheel radius in cm
 MIN_SPEED = 90      # wheel rotation speed in degrees.s-1
 
 def move(left, right, distance, speed=MIN_SPEED):
     n_rotations = distance/(R_WHEEL * math.pi * 2)
     spin_time = (n_rotations*360)/speed
-    left.dps(speed)
-    right.dps(speed)
+    left.set_dps(speed)
+    right.set_dps(speed)
     time.sleep(spin_time)
 
 
