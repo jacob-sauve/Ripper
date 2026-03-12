@@ -30,7 +30,7 @@ if __name__ == "__main__":
         print("You are now piloting...")
         titlecard.show()
         d = int(input("How far should Ripper move? (cm): "))
-        ts.move(d)
+        ts.move(LEFT, RIGHT, d)
     except BaseException as e:
         print(e)
     finally:

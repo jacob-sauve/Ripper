@@ -7,13 +7,12 @@ Ripper test scripts.
 # imports
 from utils.brick import BP, Motor, reset_brick
 import time
+import drive
 
 # constants
 
 
-def drive_test(right, left):
+def move(left, right distance):
     print("moving...")
-    right.set_dps(20)
-    left.set_dps(20)
-    time.sleep(5)
+    drive.move(left, right, distance)
     print("moved!")
