@@ -8,8 +8,8 @@
   :   : : :    :        :       : :: :::  :   : :
 
 Main loop
-v0.2.0
-2026-03-12
+v0.3.0
+2026-03-16
 """
 
 # imports
@@ -17,13 +17,13 @@ import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import BP, Motor, EV3ColorSensor, reset_brick, wait_ready_sensors, TouchSensor
 import time
-import drive as ts
+from multi_process_drive import launch_processes
 import line_follower as lf
 
 # constants
 # 1- ports
-RIGHT  = Motor("A")
-LEFT   = Motor("D")
+RIGHT  = "A"
+LEFT   = "D"
 COLOR  = EV3ColorSensor(4, mode="red")
 STOP   = TouchSensor(2)
 wait_ready_sensors(True)
@@ -31,20 +31,20 @@ wait_ready_sensors(True)
 if __name__ == "__main__":
     try:
         import titlecard
-        print("\n\n\033[3mYou are now piloting...\033[0m\n\n")
         titlecard.show()
 
         print("Select mode:")
         print("  1 - Manual move + rotate")
         print("  2 - Line follower")
         mode = input("Mode: ").strip()
+        brain, left, right = launch_processes(LEFT, RIGHT)
 
         if mode == "1":
             while not STOP.is_pressed():
                 d = float(input("How far should Ripper move? (cm): "))
-                ts.move(LEFT, RIGHT, d)
+                brain.move(d)
                 d = float(input("Turn how many degrees (algebraic): "))
-                ts.rotate_in_place(LEFT, RIGHT, d)
+                brain.rotate_in_place(d)
 
         elif mode == "2":
             calibrate = input("Calibrate sensor? (y/n): ").strip().lower()
@@ -64,8 +64,8 @@ if __name__ == "__main__":
                            orange_val=orange_val,
                            touch=TOUCH,
                            duration=duration)
-        elif mode == "3":
-            ts.orange_loop(LEFT, RIGHT, COLOR)
+        #elif mode == "3":
+        #    ts.orange_loop(LEFT, RIGHT, COLOR)
         else:
             print("Unknown mode.")
 

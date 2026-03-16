@@ -22,6 +22,7 @@ RIPPER = r"""@@@@@@@   @@@  @@@@@@@   @@@@@@@   @@@@@@@@  @@@@@@@
 
 
 def show():
+    print("\n\n\033[3mYou are now piloting...\033[0m\n\n")
     print(RIPPER)
 
 
