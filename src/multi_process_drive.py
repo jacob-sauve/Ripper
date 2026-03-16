@@ -8,61 +8,129 @@ Implemented using multiprocessing.
 # imports
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from utils.brick import BP, Motor, reset_brick
+from utils.brick import reset_brick
 from vision import _read_rgb, is_orange
 import math
 import time
-from multiprocess import cpu_count, Process
+from multiprocess import cpu_count, Process, Queue
 
 
 # constants
 R_WHEEL = 2.2       # wheel radius in cm
 R_ROBOT = 7.60      # middle wheel to middle wheel in cm
 MIN_SPEED = 270     # wheel rotation speed in degrees.s-1
+LEFT = 1            # multiplier for correct rotations of left wheel
+RIGHT = -1          # multiplier for correct rotations of right wheel
+
+class Megamind:
+    """
+    Dispatcher/controller
+    Reads main instruction queue and sends instructions to each wheel
+    ⢘⣾⣾⣿⣾⣽⣯⣼⣿⣿⣴⣽⣿⣽⣭⣿⣿⣿⣿⣿⣧
+⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠀⠀⠠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠀⠀⣰⣯⣾⣿⣿⡼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿
+⠀⠀⠛⠛⠋⠁⣠⡼⡙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁
+⠀⠀⠀⠤⣶⣾⣿⣿⣿⣦⡈⠉⠉⠉⠙⠻⣿⣿⣿⣿⣿⠿⠁⠀
+⠀⠀⠀⠀⠈⠟⠻⢛⣿⣿⣿⣷⣶⣦⣄⠀⠸⣿⣿⣿⠗⠀⠀⠀
+⠀⠀⠀⠀⠀⣼⠀⠄⣿⡿⠋⣉⠈⠙⢿⣿⣦⣿⠏⡠⠂⠀⠀⠀
+⠀⠀⠀⠀⢰⡌⠀⢠⠏⠇⢸⡇⠐⠀⡄⣿⣿⣃⠈⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠈⣻⣿⢫⢻⡆⡀⠁⠀⢈⣾⣿⠏⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢀⣿⣻⣷⣾⣿⣿⣷⢾⣽⢭⣍⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣼⣿⣿⣿⣿⡿⠈⣹⣾⣿⡞⠐⠁⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠨⣟⣿⢟⣯⣶⣿⣆⣘⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⡆⠀⠐⠶⠮⡹⣸⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    """
+    def __init__(self, queue, left_queue, right_queue):
+        self.left_queue = left_queue
+        self.right_queue = right_queue
+        self.process = Process(target=self.parse_instructions)
+        self.process.start()
+
+    def move(distance, speed=MIN_SPEED):
+        queue.put(("GO", distance, speed))
+
+    def rotate_in_place(degrees, speed=MIN_SPEED):
+        queue.put(("TURN", degrees, speed))
+
+    def parse_instructions(self):
+        while True:
+            instruction = queue.get()
+            if instruction:
+                self.left_queue.put(instruction)
+                self.right_queue.put(instruction)
 
 
-def move(left, right, distance, speed=MIN_SPEED):
-    n_rotations = abs(distance/(R_WHEEL * math.pi * 2))
-    spin_time = (n_rotations*360)/speed
-    if distance < 0:
-        direction = 1
-    else:
-        direction = -1
-    left.set_dps(direction * speed)
-    right.set_dps(direction * speed)
-    time.sleep(spin_time)
-    left.set_dps(0)
-    right.set_dps(0)
+class Driver:
+    """One driver per motor; worker class for process management"""
+    def __init__(self, motor_pin_name, direction, queue, min_speed=MIN_SPEED):
+        self.motor_pin = Motor(motor_pin_name)
+        self.direction = direction
+        self.process = Process(target = self._driver_loop)
+        self.queue = queue
+        self.min_speed = min_speed
+        # dict mapping funcnames to funcs for safe pickling
+        self.funcdict = {
+                "TURN": _turn,
+                "GO": _go
+                }
+        self.process.start()
 
-def orange_loop(left, right, color, speed=MIN_SPEED):
-    while True:
-        left.set_dps(-speed)
-        right.set_dps(-speed)
-        r,g,b = _read_rgb(color)
-        while not (is_orange(r,g,b)):
-            time.sleep(0.1)
-            r,g,b = _read_rgb(color)
-        left.set_dps(0)
-        right.set_dps(0)
-        rotate_in_place(left, right, 180, speed)
+    def _turn(self, degrees, speed=None):
+        """rotate a given number of degrees"""
+        # set default speed value
+        speed = speed if speed is not None else self.min_speed
+        distance = R_ROBOT * (degrees * math.pi / 180)
+        n_rotations = (abs(distance/(R_WHEEL * math.pi * 2)))
+        spin_time = (n_rotations*360)/speed
+        if degrees < 0:
+            direction = 1 * self.direction
+        else:
+            direction = -1 * self.direction
+        motor_pin.set_dps(direction * speed)
+        time.sleep(spin_time)
+        motor_pin.set_dps(0)
+
+    def _go(self, distance, speed=None):
+        """roll wheel over a given distance"""
+        speed = speed if speed is not None else self.min_speed
+        n_rotations = abs(distance/(R_WHEEL * math.pi * 2))
+        spin_time = (n_rotations*360)/speed
+        if distance < 0:
+            direction = 1 * self.direction
+        else:
+            direction = -1 * self.direction
+        motor_pin.set_dps(direction * speed)
+        time.sleep(spin_time)
+        motor_pin.set_dps(0)
+
+    def driver_loop(self):
+        while True:
+            instruction = queue.get()
+            if instruction:
+                funcname, *args = instruction
+                funcdict[funcname](*args)
 
 
-def rotate_in_place(left, right, degrees, speed=MIN_SPEED):
-    distance = R_ROBOT * (degrees * math.pi / 180)
-    # divide by 2 to find rotation distance per wheel
-    n_rotations = (abs(distance/(R_WHEEL * math.pi * 2)))
-    spin_time = (n_rotations*360)/speed
-    if degrees < 0:
-        direction = 1
-    else:
-        direction = -1
-    left.set_dps(direction * speed)
-    right.set_dps(-direction * speed)
-    time.sleep(spin_time)
-    left.set_dps(0)
-    right.set_dps(0)
+def launch_drivers(left_pin, right_pin):
+    # overarching queue used by dispatcher
+    papa_queue = Queue()
+    # subqueues per motor
+    left_queue = Queue()
+    right_queue = Queue()
+    # drivers for each wheel
+    left = Driver(left_pin, LEFT, queue)
+    right = Driver(right_pin, RIGHT, queue)
+    # dispatcher who sends specific instructions from general ones received
+    brain = Megamind(papa_queue, left_queue, right_queue)
+    return brain, left, right
 
-def 
+
+def killall(brain, left, right):
+    """stop all active processes"""
+    for processor in brain, left, right:
+        try:
+            processor.process.join()
 
 
 # main loop
@@ -70,8 +138,14 @@ if __name__ == "__main__":
     try:
         import titlecard
         titlecard.show()
-        print(f"{cpu_count()=}")
+        print(f"{cpu_count()=}\n\n")
+        brain, left, right = launch_drivers("A", "D")
+        brain.move(20)
+        brain.rotate_in_place(180)
+        brain.move(20)
+        brain.rotate_in_place(180)
     except BaseException as e:
         print(e)
     finally:
+        killall()
         reset_brick()
