@@ -17,7 +17,7 @@ import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import BP, Motor, EV3ColorSensor, reset_brick, wait_ready_sensors, TouchSensor
 import time
-from multi_process_drive import launch_processes
+from multi_process_drive import launch_drivers
 import line_follower as lf
 
 # constants
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         print("  1 - Manual move + rotate")
         print("  2 - Line follower")
         mode = input("Mode: ").strip()
-        brain, left, right = launch_processes(LEFT, RIGHT)
+        brain, left, right = launch_drivers(LEFT, RIGHT)
 
         if mode == "1":
             while not STOP.is_pressed():
