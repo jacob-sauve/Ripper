@@ -119,7 +119,7 @@ class Megamind(Processor):
         queue_front_dict = dict(zip(sensors, [None]*len(sensors)))
         for sensor in sensors:
             if not (sensor is None):
-                queue_front = sensor.queue.get()
+                queue_front = sensor.queue.get_nowait()
                 while not (queue_front is None):
                     queue_front_dict[sensor] = queue_front
         return queue_front_dict
@@ -128,7 +128,7 @@ class Megamind(Processor):
         """probably should rework --> could easily get stuck in busy mode"""
         self.is_terminated = False
         while not self.is_terminated:
-            instruction, *args = self.queue.get()
+            instruction, *args = self.queue.get_nowait()
             if instruction:
                 # call function
                 self.funcdict.get(instruction)(*args)
