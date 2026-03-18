@@ -94,9 +94,7 @@ class Megamind(Processor):
         """kill processor object passed as arg"""
         if processor is None:
             return False
-        del self.processor_dict[processor.name]
         processor.process.terminate() # kill active process
-        del processor
         return True
 
     def killProcessorByName(self, name):
@@ -106,6 +104,8 @@ class Megamind(Processor):
     def killAll(self):
         for name in self.processor_dict:
             self.killProcessorByName(name)
+        # kill itself
+        self.process.terminate()
 
 
     def clearSensorQueues(self):
@@ -317,7 +317,6 @@ if __name__ == "__main__":
             "GRABBER": Driver("GRABBER", "B")
         }
     brain = Megamind(processors)
-    #brain.addProcessor(Driver("GRABBER", "B"))
     try:
         import titlecard
         titlecard.show()
