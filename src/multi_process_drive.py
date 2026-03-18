@@ -25,9 +25,9 @@ MIN_SPEED = 270         # wheel rotation speed in degrees.s-1
 LEFT = -1               # multiplier for correct rotations of left wheel
 RIGHT = -1              # multiplier for correct rotations of right wheel
 GRABBER = -1            # multiplier for correct rotations of grabber (should be pickup direction)
-MEGAMIND_BUFFER = 0.01  # seconds between Megamind queue parsings
+MEGAMIND_BUFFER = 0.005 # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectilinear trajectory
-DRIFT_CORRECTION = 1.1  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
+DRIFT_CORRECTION = 1.05 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 
 
 class Processor:
@@ -154,23 +154,31 @@ class Megamind(Processor):
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
         # take it as reference for "straightness"
-        initial_angle = gyro.queue.get()
-        print(f"{initial_angle = }")
+        initial_angle = gyro.queue.get().get("angle")
         for i in range(granular_iterations):
             gyro_readings = gyro.queue.get()
-            print("collected gyro readings")
             if gyro_readings:
-                print("gyro readings exist")
-                drift = gyro_readings.get("angle") - initial_angle
+                drift =  gyro_readings.get("angle") - initial_angle
                 # flip these corrections if they're inverted
+                print(f"{drift=}")
                 if drift > MAX_DRIFT:
+                    #print("right drift. correcting...")
                     # right wheel lagging
+                    right.queue.put(("STOP",))
+                    left.queue.put(("STOP",))
                     right.queue.put(("GO", speed * DRIFT_CORRECTION))
                     left.queue.put(("GO", speed / DRIFT_CORRECTION))
+                    #right.queue.put(("GO", speed))
+                    #left.queue.put(("STOP",))
                 elif drift < -MAX_DRIFT:
+                    print("right drift. correcting...")
                     # left wheel lagging
+                    right.queue.put(("STOP",))
+                    left.queue.put(("STOP",))
                     right.queue.put(("GO", speed / DRIFT_CORRECTION))
                     left.queue.put(("GO", speed * DRIFT_CORRECTION))
+                    #right.queue.put(("STOP",))
+                    #left.queue.put(("GO", speed))
                 else:
                     # all good
                     left.queue.put(("GO", speed))
@@ -292,7 +300,6 @@ class Vision(Processor):
         if self.name != "GYRO":
             return False
         data = self.sensor_pin.get_both_measure()
-        print(f"{data=}")
         if data is None:
             return None
         output = dict()
@@ -322,8 +329,8 @@ class Vision(Processor):
             measurement = self.read(*args)
             # put new reading to output queue
             if measurement:
-                if self.name == "GYRO":
-                    print("I'm alive!!!")
+                #if self.name == "GYRO":
+                    #print("I'm alive!!!")
                 self.queue.put(measurement)
                 time.sleep(self.poll_period)
 
@@ -341,7 +348,7 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        brain.queue.put(("GO", 5))
+        brain.queue.put(("GO", 1000))
         #brain.queue.put(("GRAB", 50, 2))
     except Exception as e:
         print(e)
