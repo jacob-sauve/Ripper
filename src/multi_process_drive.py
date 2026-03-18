@@ -10,7 +10,7 @@ import sys, os
 import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from utils.brick import reset_brick, Motor, EV3ColorSensor, EV3GyroSensor, TouchSensor
+from utils.brick import reset_brick, Motor, EV3ColorSensor, EV3GyroSensor, TouchSensor, wait_ready_sensors
 from vision import _read_rgb, is_orange
 from math import pi
 from time import sleep
@@ -79,8 +79,12 @@ class Megamind(Processor):
         }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
-        super().start()
+        self.start()
 
+    def start(self):
+        wait_ready_sensors(True)
+        super().start()
+    
     def addProcessor(self, processor):
         """connect a new processor (sensor/actuator)"""
         if processor is None:
@@ -150,10 +154,13 @@ class Megamind(Processor):
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
         # take it as reference for "straightness"
-        initial_angle = self.latest_readings.get(gyro)
+        initial_angle = gyro.queue.get()
+        print(f"{initial_angle = }")
         for i in range(granular_iterations):
             gyro_readings = gyro.queue.get()
+            print("collected gyro readings")
             if gyro_readings:
+                print("gyro readings exist")
                 drift = gyro_readings.get("angle") - initial_angle
                 # flip these corrections if they're inverted
                 if drift > MAX_DRIFT:
@@ -285,6 +292,7 @@ class Vision(Processor):
         if self.name != "GYRO":
             return False
         data = self.sensor_pin.get_both_measure()
+        print(f"{data=}")
         output = dict()
         for mode in args:
             if mode == "angle":
@@ -306,9 +314,14 @@ class Vision(Processor):
 
     def manage_queue(self):
         while True:
-            measurement = self.read()
+            args = []
+            if self.name == "GYRO":
+                args.append("angle")
+            measurement = self.read(*args)
             # put new reading to output queue
             if measurement:
+                if self.name == "GYRO":
+                    print("I'm alive!!!")
                 self.queue.put(measurement)
                 time.sleep(self.poll_period)
 
@@ -326,7 +339,7 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        brain.queue.put(("GO", 10))
+        brain.queue.put(("GO", 5))
         #brain.queue.put(("GRAB", 50, 2))
     except Exception as e:
         print(e)
