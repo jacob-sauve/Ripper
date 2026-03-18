@@ -67,7 +67,7 @@ if __name__ == "__main__":
         #elif mode == "3":
         #    ts.orange_loop(LEFT, RIGHT, COLOR)
         else:
-            print("Unknown mode.")
+            print("Unknown mode. Underworld activated")
 
     except BaseException as e:
         print(e)
