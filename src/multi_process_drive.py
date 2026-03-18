@@ -9,8 +9,6 @@ Implemented using multiprocessing.
 import sys, os
 import time
 
-from sympy.physics.units.definitions.dimension_definitions import information
-
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import reset_brick, Motor, EV3ColorSensor, EV3GyroSensor, TouchSensor
 from vision import _read_rgb, is_orange
@@ -23,7 +21,7 @@ from multiprocess import cpu_count, Process, Queue
 R_WHEEL = 2.2           # wheel radius in cm
 R_ROBOT = 7.60          # middle wheel to middle wheel in cm
 MIN_SPEED = 270         # wheel rotation speed in degrees.s-1
-LEFT = 1                # multiplier for correct rotations of left wheel
+LEFT = -1               # multiplier for correct rotations of left wheel
 RIGHT = -1              # multiplier for correct rotations of right wheel
 GRABBER = 1             # multiplier for correct rotations of grabber (should be pickup direction)
 MEGAMIND_BUFFER = 0.01  # seconds between Megamind queue parsings
@@ -121,19 +119,15 @@ class Megamind(Processor):
 
     def manage_queue(self):
         """probably should rework --> could easily get stuck in busy mode"""
-        while True:
-            if not self.is_busy:
-                instruction, *args = self.queue.get()
-                if instruction:
-                    self.is_busy = True
-                    # call function
-                    self.is_busy = not self.funcdict.get(instruction)(*args)
-                else:
-                    # empty sensor queues if unused to keep front of queue up-to-date
-                    # store most recent readings
-                    self.latest_readings = self.clearSensorQueues()
-            else:
-                pass
+        self.is_terminated = False
+        while not self.is_terminated:
+            instruction, *args = self.queue.get()
+            if instruction:
+                # call function
+                self.funcdict.get(instruction)(*args)
+            # clear sensor queues to keep them up to date, store newest readings
+            self.latest_readings = self.clearSensorQueues()
+            self.is_terminated = self.latest_readings.get("TOUCH").get("pressed")
             sleep(MEGAMIND_BUFFER)
 
     def _go_with_sensors(self, distance, speed=MIN_SPEED):
@@ -142,7 +136,7 @@ class Megamind(Processor):
         n_rotations = abs(distance / (R_WHEEL * pi * 2))
         spin_time = (n_rotations * 360) / speed
         # calculate amount of iterations with delay equal to constant buffer are needed
-        granular_iterations = spin_time/MEGAMIND_BUFFER
+        granular_iterations = spin_time // MEGAMIND_BUFFER
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
@@ -164,7 +158,7 @@ class Megamind(Processor):
                     # left wheel lagging
                     right.queue.put(("GO", speed / DRIFT_CORRECTION))
                     left.queue.put(("GO", speed * DRIFT_CORRECTION))
-                else
+                else:
                     # all good
                     left.queue.put(("GO", speed))
                     right.queue.put(("GO", speed))
@@ -204,7 +198,7 @@ class Driver(Processor):
     def start(self):
         """Start process, initialise Motor output pin"""
         self.motor_pin = Motor(self.motor_pin_name)
-        super.start()
+        super().start()
 
     def _go(self, speed=None):
         """start moving"""
@@ -213,6 +207,7 @@ class Driver(Processor):
             speed = self.direction * speed if speed is not None else self.min_speed
             self.motor_pin.set_dps(speed)
             self.is_moving = True
+            print(self.name + " moving")
             return True
         except:
             return False
@@ -276,7 +271,8 @@ class Vision(Processor):
     def touch_measure(self, *args):
         if self.name != "TOUCH":
             return False
-        return True
+        is_pressed = self.sensor_pin.is_pressed()
+        return {"press":is_pressed}
 
     def color_measure(self, *args):
         if self.name != "COLOR":
@@ -294,22 +290,22 @@ class Vision(Processor):
 # main loop
 # REWORK THIS
 if __name__ == "__main__":
-    try:
-        processors = {
+    processors = {
             "GYRO": Vision("GYRO", 3),
             "TOUCH": Vision("TOUCH", 1),
             "LEFT": Driver("LEFT", "A"),
             "RIGHT": Driver("RIGHT", "D")
         }
-        brain = Megamind(processors)
-    except Exception as e:
-        print(e)
+    brain = Megamind(processors)
     try:
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-
+        brain.queue.put(("GO", 100))
     except BaseException as e:
         print(e)
     finally:
+        print("killing...")
+        brain.killAll()
+        print("killed.")
         reset_brick()
