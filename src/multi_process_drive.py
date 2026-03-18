@@ -18,12 +18,13 @@ from multiprocess import cpu_count, Process, Queue
 
 
 # constants
+R_GRABBER = 1.8
 R_WHEEL = 2.2           # wheel radius in cm
-R_ROBOT = 7.60          # middle wheel to middle wheel in cm
+R_ROBOT = 7.52          # middle wheel to middle wheel in cm
 MIN_SPEED = 270         # wheel rotation speed in degrees.s-1
 LEFT = -1               # multiplier for correct rotations of left wheel
 RIGHT = -1              # multiplier for correct rotations of right wheel
-GRABBER = 1             # multiplier for correct rotations of grabber (should be pickup direction)
+GRABBER = -1            # multiplier for correct rotations of grabber (should be pickup direction)
 MEGAMIND_BUFFER = 0.01  # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectilinear trajectory
 DRIFT_CORRECTION = 1.1  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
@@ -73,7 +74,8 @@ class Megamind(Processor):
         self.processor_dict = processor_dict
         self.funcdict = {
             "GO": self._go_with_sensors,
-            "TURN": self._turn_with_sensors
+            "TURN": self._turn_with_sensors,
+            "GRAB": self._grab
         }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
@@ -84,6 +86,7 @@ class Megamind(Processor):
         if processor is None:
             return False
         self.processor_dict[processor.name] = processor
+        print(self.processor_dict)
         return True
 
 
@@ -130,12 +133,12 @@ class Megamind(Processor):
             self.is_terminated = self.latest_readings.get("TOUCH").get("pressed")
             sleep(MEGAMIND_BUFFER)
 
-    def _distance_to_iterations(self, distance, speed=MIN_SPEED):
+    def _distance_to_iterations(self, distance, speed=MIN_SPEED, radius=R_WHEEL):
         # calculate how much motor rotation is necessary to move distance
-        n_rotations = abs(distance / (R_WHEEL * pi * 2))
+        n_rotations = abs(distance / (radius * pi * 2))
         spin_time = (n_rotations * 360) / speed
         # calculate amount of iterations with delay equal to constant buffer are needed
-        return spin_time // MEGAMIND_BUFFER
+        return int(spin_time / MEGAMIND_BUFFER)
 
     def _go_with_sensors(self, distance, speed=MIN_SPEED):
         """go a certain distance in a straight line. uses gyro for drift mgmt."""
@@ -165,6 +168,7 @@ class Megamind(Processor):
                     # all good
                     left.queue.put(("GO", speed))
                     right.queue.put(("GO", speed))
+            print("about to sleep, iterating...")
             sleep(MEGAMIND_BUFFER)
         left.queue.put(("STOP"))
         right.queue.put(("STOP"))
@@ -173,6 +177,16 @@ class Megamind(Processor):
     def _turn_with_sensors(self):
         return True
 
+    def _grab(self, distance, speed=MIN_SPEED):
+        granular_iterations = self._distance_to_iterations(distance, radius=R_GRABBER)
+        grabber = self.processor_dict.get("GRABBER")
+
+        grabber.queue.put(("GO", speed))
+
+        for i in range(granular_iterations):
+            sleep(MEGAMIND_BUFFER)
+        grabber.queue.put(("STOP"))
+        return True
 
 class Driver(Processor):
     """One driver per motor; worker class for process management"""
@@ -207,19 +221,22 @@ class Driver(Processor):
         """start moving"""
         # set default speed value
         try:
-            speed = self.direction * speed if speed is not None else self.min_speed
-            self.motor_pin.set_dps(speed)
-            self.is_moving = True
-            print(self.name + " moving")
-            return True
+            if not self.is_moving:
+                speed = self.direction * speed if speed is not None else self.min_speed
+                self.motor_pin.set_dps(speed)
+                self.is_moving = True
+                print(self.name + " moving")
+                return True
         except:
             return False
 
     def _stop(self):
         """stop moving"""
         try:
+            print("stopping...")
             self.motor_pin.set_dps(0)
             self.is_moving = False
+            print("stopped")
             return True
         except:
             return False
@@ -297,18 +314,22 @@ if __name__ == "__main__":
             "GYRO": Vision("GYRO", 3),
             "TOUCH": Vision("TOUCH", 1),
             "LEFT": Driver("LEFT", "A"),
-            "RIGHT": Driver("RIGHT", "D")
+            "RIGHT": Driver("RIGHT", "D"),
+            "GRABBER": Driver("GRABBER", "B")
         }
     brain = Megamind(processors)
+    #brain.addProcessor(Driver("GRABBER", "B"))
     try:
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        brain.queue.put(("GO", 100))
+        #brain.queue.put(("GO", 10))
+        brain.queue.put(("GRAB", 10, 2))
     except BaseException as e:
         print(e)
     finally:
-        print("killing...")
-        brain.killAll()
-        print("killed.")
-        reset_brick()
+        pass
+        #print("killing...")
+        #brain.killAll()
+        #print("killed.")
+        #reset_brick()
