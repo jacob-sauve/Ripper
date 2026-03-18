@@ -323,9 +323,10 @@ if __name__ == "__main__":
         print(f"{cpu_count()=}\n\n")
         #brain.queue.put(("GO", 10))
         brain.queue.put(("GRAB", 10, 2))
-    except BaseException as e:
+    except Exception as e:
         print(e)
     finally:
+        sleep(30)
         print("killing...")
         brain.killAll()
         print("killed.")
