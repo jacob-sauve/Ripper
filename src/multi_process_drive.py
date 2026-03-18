@@ -7,13 +7,14 @@ Implemented using multiprocessing.
 
 # imports
 import sys, os
+import time
 
 from sympy.physics.units.definitions.dimension_definitions import information
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from utils.brick import reset_brick, Motor
+from utils.brick import reset_brick, Motor, EV3ColorSensor, EV3GyroSensor, TouchSensor
 from vision import _read_rgb, is_orange
-import math
+from math import pi
 from time import sleep
 from multiprocess import cpu_count, Process, Queue
 
@@ -26,6 +27,8 @@ LEFT = 1                # multiplier for correct rotations of left wheel
 RIGHT = -1              # multiplier for correct rotations of right wheel
 GRABBER = 1             # multiplier for correct rotations of grabber (should be pickup direction)
 MEGAMIND_BUFFER = 0.01  # seconds between Megamind queue parsings
+MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectilinear trajectory
+DRIFT_CORRECTION = 1.1  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 
 
 class Processor:
@@ -74,6 +77,8 @@ class Megamind(Processor):
             "GO": self._go_with_sensors,
             "TURN": self._turn_with_sensors
         }
+        # mapping of Sensor objects to their respective most recent readings
+        self.latest_readings = dict()
         super().start()
 
     def addProcessor(self, processor):
@@ -101,24 +106,71 @@ class Megamind(Processor):
         for name in self.processor_dict:
             self.killProcessorByName(name)
 
+
+    def clearSensorQueues(self):
+        """Empty all sensor queues to have up-to-date data at front of queue"""
+        sensors = (self.processor_dict.get("GYRO"),
+                   self.processor_dict.get("COLOR"))
+        queue_front_dict = dict(zip(sensors, [None]*len(sensors)))
+        for sensor in sensors:
+            if not (sensor is None):
+                queue_front = sensor.queue.get()
+                while not (queue_front is None):
+                    queue_front_dict[sensor] = queue_front
+        return queue_front_dict
+
     def manage_queue(self):
+        """probably should rework --> could easily get stuck in busy mode"""
         while True:
             if not self.is_busy:
                 instruction, *args = self.queue.get()
                 if instruction:
-                    self.is_busy
+                    self.is_busy = True
                     # call function
                     self.is_busy = not self.funcdict.get(instruction)(*args)
+                else:
+                    # empty sensor queues if unused to keep front of queue up-to-date
+                    # store most recent readings
+                    self.latest_readings = self.clearSensorQueues()
             else:
                 pass
             sleep(MEGAMIND_BUFFER)
 
-    def _go_with_sensors(self, speed=MIN_SPEED):
+    def _go_with_sensors(self, distance, speed=MIN_SPEED):
         """go a certain distance in a straight line. uses gyro for drift mgmt."""
+        # calculate how much motor rotation is necessary
+        n_rotations = abs(distance / (R_WHEEL * pi * 2))
+        spin_time = (n_rotations * 360) / speed
+        # calculate amount of iterations with delay equal to constant buffer are needed
+        granular_iterations = spin_time/MEGAMIND_BUFFER
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
         left.queue.put(("GO", speed))
+        right.queue.put(("GO", speed))
+        # get most recent gyro reading, if existent
+        # take it as reference for "straightness"
+        initial_angle = self.latest_readings.get(gyro)
+        for i in range(granular_iterations):
+            gyro_readings = gyro.queue.get()
+            if gyro_readings:
+                drift = gyro_readings.get("angle") - initial_angle
+                # flip these corrections if they're inverted
+                if drift > MAX_DRIFT:
+                    # right wheel lagging
+                    right.queue.put(("GO", speed * DRIFT_CORRECTION))
+                    left.queue.put(("GO", speed / DRIFT_CORRECTION))
+                elif drift < -MAX_DRIFT:
+                    # left wheel lagging
+                    right.queue.put(("GO", speed / DRIFT_CORRECTION))
+                    left.queue.put(("GO", speed * DRIFT_CORRECTION))
+                else
+                    # all good
+                    left.queue.put(("GO", speed))
+                    right.queue.put(("GO", speed))
+            sleep(MEGAMIND_BUFFER)
+        left.queue.put(("STOP"))
+        right.queue.put(("STOP"))
         return True
 
     def _turn_with_sensors(self):
@@ -144,7 +196,7 @@ class Driver(Processor):
             # grabber
             self.direction = GRABBER
         else:
-            raise ValueError(f"Invalid Motor name: {self.name}. Should be one of: 'LEFT', 'RIGHT', 'GRABBER'")
+            raise ValueError(f"Invalid Motor name: '{self.name}'. Should be one of: 'LEFT', 'RIGHT', 'GRABBER'")
         self.min_speed = min_speed * self.direction
         super().__init__(self.name)
         self.start()
@@ -182,6 +234,63 @@ class Driver(Processor):
                 self.funcdict[funcname](*args)
 
 
+class Vision(Processor):
+    """One Vision object per sensor; worker class for process management"""
+    def __init__(self, name, sensor_pin_number, poll_period=MEGAMIND_BUFFER):
+        self.sensor_pin_number = sensor_pin_number
+        self.name = name.upper()
+        # seconds between sensor polls
+        self.poll_period = poll_period
+        # set port initialisation and polling functions
+        if self.name == "GYRO":
+            self.setup_function = EV3GyroSensor
+            self.read = self.gyro_measure
+        elif self.name == "TOUCH":
+            self.setup_function = TouchSensor
+            self.read = self.touch_measure
+        elif self.name == "COLOR":
+            self.setup_function = EV3ColorSensor
+            self.read = self.color_measure
+        else:
+            raise ValueError(f"Invalid Sensor name: '{self.name}'. Should be one of: 'GYRO', 'TOUCH', 'COLOR'")
+        super().__init__(self.name)
+        self.start()
+
+    def start(self):
+        # setup sensor pin
+        self.sensor_pin = self.setup_function(self.sensor_pin_number)
+        super().start()
+
+    def gyro_measure(self, *args):
+        if self.name != "GYRO":
+            return False
+        data = self.sensor_pin.get_both_measure()
+        output = dict()
+        for mode in args:
+            if mode == "angle":
+                output["angle"] = data[0]
+            if mode == "dps":
+                output["dps"] = data[1]
+        return output
+
+    def touch_measure(self, *args):
+        if self.name != "TOUCH":
+            return False
+        return True
+
+    def color_measure(self, *args):
+        if self.name != "COLOR":
+            return False
+        return True
+
+    def manage_queue(self):
+        while True:
+            measurement = self.read()
+            # put new reading to output queue
+            if measurement:
+                self.queue.put(measurement)
+                time.sleep(self.poll_period)
+
 # main loop
 # REWORK THIS
 if __name__ == "__main__":
@@ -190,19 +299,12 @@ if __name__ == "__main__":
         brain = Megamind(processors)
     except Exception as e:
         print(e)
-        killall(brain, left, right)
-        raise Exception("unable to launch driver processes")
     try:
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
         brain.move(20)
-        brain.rotate_in_place(180)
-        brain.move(20)
-        brain.rotate_in_place(180)
-        killall(brain, left, right)
     except BaseException as e:
         print(e)
     finally:
-        killall(brain, left, right)
         reset_brick()
