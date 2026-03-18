@@ -67,7 +67,7 @@ class Megamind(Processor):
 ⠀⠀⠀⠨⣟⣿⢟⣯⣶⣿⣆⣘⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⡆⠀⠐⠶⠮⡹⣸⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     """
-    def __init__(self, processor_dict):
+    def __init__(self, processor_dict=dict()):
         super().__init__("MEGAMIND")
         self.is_busy = False
         self.active_command = None
@@ -295,7 +295,12 @@ class Vision(Processor):
 # REWORK THIS
 if __name__ == "__main__":
     try:
-        processors = dict()
+        processors = {
+            "GYRO": Vision("GYRO", 3),
+            "TOUCH": Vision("TOUCH", 1),
+            "LEFT": Driver("LEFT", "A"),
+            "RIGHT": Driver("RIGHT", "D")
+        }
         brain = Megamind(processors)
     except Exception as e:
         print(e)
@@ -303,7 +308,7 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        brain.move(20)
+
     except BaseException as e:
         print(e)
     finally:
