@@ -92,7 +92,7 @@ class Megamind(Processor):
         if processor is None:
             return False
         del self.processor_dict[processor.name]
-        processor.process.join() # kill active process
+        processor.process.terminate() # kill active process
         del processor
         return True
 
