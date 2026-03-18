@@ -130,13 +130,16 @@ class Megamind(Processor):
             self.is_terminated = self.latest_readings.get("TOUCH").get("pressed")
             sleep(MEGAMIND_BUFFER)
 
-    def _go_with_sensors(self, distance, speed=MIN_SPEED):
-        """go a certain distance in a straight line. uses gyro for drift mgmt."""
-        # calculate how much motor rotation is necessary
+    def _distance_to_iterations(self, distance, speed=MIN_SPEED):
+        # calculate how much motor rotation is necessary to move distance
         n_rotations = abs(distance / (R_WHEEL * pi * 2))
         spin_time = (n_rotations * 360) / speed
         # calculate amount of iterations with delay equal to constant buffer are needed
-        granular_iterations = spin_time // MEGAMIND_BUFFER
+        return spin_time // MEGAMIND_BUFFER
+
+    def _go_with_sensors(self, distance, speed=MIN_SPEED):
+        """go a certain distance in a straight line. uses gyro for drift mgmt."""
+        granular_iterations = self._distance_to_iterations(distance)
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
