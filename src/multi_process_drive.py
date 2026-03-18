@@ -147,8 +147,9 @@ class Megamind(Processor):
     def _go_with_sensors(self, distance, speed=MIN_SPEED):
         """go a certain distance in a straight line. uses gyro for drift mgmt."""
         granular_iterations = self._distance_to_iterations(distance)
-        left, right, gyro = (self.processor_dict.get("LEFT"),
+        left, right, touch, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
+                             self.processor_dict.get("TOUCH"),
                              self.processor_dict.get("GYRO"))
         left.queue.put(("GO", speed))
         right.queue.put(("GO", speed))
@@ -156,6 +157,9 @@ class Megamind(Processor):
         # take it as reference for "straightness"
         initial_angle = gyro.queue.get().get("angle")
         for i in range(granular_iterations):
+            self.is_terminated = touch.queue.get().get("pressed")
+            if self.is_terminated:
+                self.killAll()
             gyro_readings = gyro.queue.get()
             if gyro_readings:
                 drift =  gyro_readings.get("angle") - initial_angle
@@ -164,8 +168,8 @@ class Megamind(Processor):
                 if drift > MAX_DRIFT:
                     #print("right drift. correcting...")
                     # right wheel lagging
-                    right.queue.put(("STOP",))
-                    left.queue.put(("STOP",))
+                    #right.queue.put(("STOP",))
+                    #left.queue.put(("STOP",))
                     right.queue.put(("GO", speed * DRIFT_CORRECTION))
                     left.queue.put(("GO", speed / DRIFT_CORRECTION))
                     #right.queue.put(("GO", speed))
@@ -173,8 +177,8 @@ class Megamind(Processor):
                 elif drift < -MAX_DRIFT:
                     print("right drift. correcting...")
                     # left wheel lagging
-                    right.queue.put(("STOP",))
-                    left.queue.put(("STOP",))
+                    #right.queue.put(("STOP",))
+                    #left.queue.put(("STOP",))
                     right.queue.put(("GO", speed / DRIFT_CORRECTION))
                     left.queue.put(("GO", speed * DRIFT_CORRECTION))
                     #right.queue.put(("STOP",))
@@ -238,12 +242,11 @@ class Driver(Processor):
         """start moving"""
         # set default speed value
         try:
-            if not self.is_moving:
-                speed = self.direction * speed if speed is not None else self.min_speed
-                self.motor_pin.set_dps(speed)
-                self.is_moving = True
-                print(self.name + " moving")
-                return True
+            speed = self.direction * speed if speed is not None else self.min_speed
+            self.motor_pin.set_dps(speed)
+            self.is_moving = True
+            print(self.name + " moving")
+            return True
         except:
             return False
 
@@ -349,7 +352,7 @@ if __name__ == "__main__":
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
         brain.queue.put(("GO", 1000))
-        #brain.queue.put(("GRAB", 50, 2))
+        brain.queue.put(("GRAB", 50, 2))
     except Exception as e:
         print(e)
     finally:
