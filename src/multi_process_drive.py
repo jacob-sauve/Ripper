@@ -293,6 +293,8 @@ class Vision(Processor):
             return False
         data = self.sensor_pin.get_both_measure()
         print(f"{data=}")
+        if data is None:
+            return None
         output = dict()
         for mode in args:
             if mode == "angle":
