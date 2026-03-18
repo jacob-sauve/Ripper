@@ -184,7 +184,9 @@ class Megamind(Processor):
         grabber.queue.put(("GO", speed))
 
         for i in range(granular_iterations):
+            print(f"waiting... iteration {i}")
             sleep(MEGAMIND_BUFFER)
+
         grabber.queue.put(("STOP",))
         return True
 
@@ -324,12 +326,12 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        #brain.queue.put(("GO", 10))
-        brain.queue.put(("GRAB", 10, 2))
+        brain.queue.put(("GO", 10))
+        #brain.queue.put(("GRAB", 50, 2))
     except Exception as e:
         print(e)
     finally:
-        sleep(30)
+        sleep(10)
         print("killing...")
         brain.killAll()
         print("killed.")
