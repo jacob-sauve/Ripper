@@ -308,7 +308,6 @@ class Vision(Processor):
                 time.sleep(self.poll_period)
 
 # main loop
-# REWORK THIS
 if __name__ == "__main__":
     processors = {
             "GYRO": Vision("GYRO", 3),
@@ -328,8 +327,7 @@ if __name__ == "__main__":
     except BaseException as e:
         print(e)
     finally:
-        pass
-        #print("killing...")
-        #brain.killAll()
-        #print("killed.")
-        #reset_brick()
+        print("killing...")
+        brain.killAll()
+        print("killed.")
+        reset_brick()
