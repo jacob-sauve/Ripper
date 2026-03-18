@@ -18,8 +18,9 @@ from multiprocess import cpu_count, Process, Queue
 
 
 # constants
+R_GRABBER = 1.8
 R_WHEEL = 2.2           # wheel radius in cm
-R_ROBOT = 7.60          # middle wheel to middle wheel in cm
+R_ROBOT = 7.52          # middle wheel to middle wheel in cm
 MIN_SPEED = 270         # wheel rotation speed in degrees.s-1
 LEFT = -1               # multiplier for correct rotations of left wheel
 RIGHT = -1              # multiplier for correct rotations of right wheel
@@ -130,9 +131,9 @@ class Megamind(Processor):
             self.is_terminated = self.latest_readings.get("TOUCH").get("pressed")
             sleep(MEGAMIND_BUFFER)
 
-    def _distance_to_iterations(self, distance, speed=MIN_SPEED):
+    def _distance_to_iterations(self, distance, speed=MIN_SPEED, radius=R_WHEEL):
         # calculate how much motor rotation is necessary to move distance
-        n_rotations = abs(distance / (R_WHEEL * pi * 2))
+        n_rotations = abs(distance / (radius * pi * 2))
         spin_time = (n_rotations * 360) / speed
         # calculate amount of iterations with delay equal to constant buffer are needed
         return spin_time // MEGAMIND_BUFFER
@@ -173,6 +174,16 @@ class Megamind(Processor):
     def _turn_with_sensors(self):
         return True
 
+    def _grab(self, distance, speed=MIN_SPEED):
+        granular_iterations = self._distance_to_iterations(distance, radius=R_GRABBER)
+        grabber = self.processor_dict.get("GRABBER")
+
+        grabber.queue.put(("GO", speed))
+
+        for i in range(granular_iterations):
+            sleep(MEGAMIND_BUFFER)
+        grabber.queue.put(("STOP"))
+        return True
 
 class Driver(Processor):
     """One driver per motor; worker class for process management"""
@@ -305,6 +316,7 @@ if __name__ == "__main__":
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
         brain.queue.put(("GO", 100))
+        brain.queue.put(("GRAB", 100))
     except BaseException as e:
         print(e)
     finally:
