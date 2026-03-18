@@ -170,8 +170,8 @@ class Megamind(Processor):
                     right.queue.put(("GO", speed))
             print("about to sleep, iterating...")
             sleep(MEGAMIND_BUFFER)
-        left.queue.put(("STOP"))
-        right.queue.put(("STOP"))
+        left.queue.put(("STOP",))
+        right.queue.put(("STOP",))
         return True
 
     def _turn_with_sensors(self):
@@ -185,7 +185,7 @@ class Megamind(Processor):
 
         for i in range(granular_iterations):
             sleep(MEGAMIND_BUFFER)
-        grabber.queue.put(("STOP"))
+        grabber.queue.put(("STOP",))
         return True
 
 class Driver(Processor):
@@ -245,7 +245,10 @@ class Driver(Processor):
         while True:
             instruction = self.queue.get()
             if instruction:
-                funcname, *args = instruction
+                if isinstance(instruction, str):
+                    funcname, args = instruction, []
+                else:
+                    funcname, *args = instruction
                 self.funcdict[funcname](*args)
 
 
