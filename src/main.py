@@ -8,8 +8,8 @@
   :   : : :    :        :       : :: :::  :   : :
 
 Main loop
-v0.3.0
-2026-03-16
+v0.4.0
+2026-03-17
 """
 
 # imports
@@ -17,7 +17,7 @@ import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import BP, Motor, EV3ColorSensor, reset_brick, wait_ready_sensors, TouchSensor
 import time
-from multi_process_drive import launch_drivers
+from multi_process_drive import Megamind
 import line_follower as lf
 
 # constants
@@ -29,6 +29,7 @@ STOP   = TouchSensor(2)
 wait_ready_sensors(True)
 
 if __name__ == "__main__":
+    # REWORK BASED ON NEW MPD.PY STRUCTURE
     try:
         import titlecard
         titlecard.show()
