@@ -5,7 +5,6 @@ Displays ripper titlecard
 """
 
 # imports
-from utils.brick import BP, Motor, reset_brick
 
 # constants
 RIPPER = r"""@@@@@@@   @@@  @@@@@@@   @@@@@@@   @@@@@@@@  @@@@@@@
@@ -34,4 +33,4 @@ if __name__ == "__main__":
     except BaseException as e:
         print(e)
     finally:
-        reset_brick()
+        pass
