@@ -130,9 +130,8 @@ class Megamind(Processor):
 
     def manage_queue(self):
         """probably should rework --> could easily get stuck in busy mode"""
-        self.is_terminated = False
         instruction = None
-        while not self.is_terminated:
+        while True: 
             try:
                 instruction, *args = self.queue.get_nowait()
             except BaseException as e:
@@ -143,8 +142,6 @@ class Megamind(Processor):
                 self.funcdict.get(instruction)(*args)
             # clear sensor queues to keep them up to date, store newest readings
             self.latest_readings = self.clearSensorQueues()
-            self.is_terminated = self.latest_readings.get("TOUCH").get("pressed")
-            print(self.is_terminated)
             sleep(MEGAMIND_BUFFER)
 
     def _distance_to_iterations(self, distance, speed=MIN_SPEED, radius=R_WHEEL):
@@ -167,13 +164,6 @@ class Megamind(Processor):
         # take it as reference for "straightness"
         initial_angle = gyro.queue.get().get("angle")
         for i in range(granular_iterations):
-            try:
-                self.is_terminated = touch.queue.get(False).get("pressed")
-            except:
-                self.is_terminated = False
-            if self.is_terminated:
-                print("termination ordererd")
-                self.killAll()
             gyro_readings = gyro.queue.get()
             if gyro_readings:
                 drift =  gyro_readings.get("angle") - initial_angle
@@ -356,22 +346,24 @@ class Vision(Processor):
 if __name__ == "__main__":
     processors = {
             "GYRO": Vision("GYRO", 3),
-            "TOUCH": Vision("TOUCH", 1),
             "LEFT": Driver("LEFT", "A"),
             "RIGHT": Driver("RIGHT", "D"),
             "GRABBER": Driver("GRABBER", "B")
         }
     brain = Megamind(processors)
+    stop = TouchSensor(1)
     try:
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
         brain.queue.put(("GO", 1000))
         brain.queue.put(("GRAB", 50, 2))
+        while not stop.is_pressed():
+            sleep(0.01)
+        raise Exception()
     except Exception as e:
         print(e)
     finally:
-        sleep(10)
         print("killing...")
         brain.killAll()
         print("killed.")
