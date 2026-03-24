@@ -242,8 +242,8 @@ class Driver(Processor):
         """start moving"""
         # set default speed value
         try:
-            speed = self.direction * speed if speed is not None else self.min_speed
-            self.motor_pin.set_dps(speed)
+            speed = (self.direction * speed)/1250 if speed is not None else self.min_speed/1250
+            self.motor_pin.set_power(speed)
             self.is_moving = True
             #print(self.name + " moving")
             return True
