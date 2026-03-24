@@ -254,7 +254,7 @@ class Driver(Processor):
         """stop moving"""
         try:
             print("stopping...")
-            self.motor_pin.set_dps(0)
+            self.motor_pin.set_power(0)
             self.is_moving = False
             print("stopped")
             return True
