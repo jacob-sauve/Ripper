@@ -119,7 +119,8 @@ class Megamind(Processor):
         queue_front_dict = dict(zip(sensors, [None]*len(sensors)))
         for sensor in sensors:
             if not (sensor is None):
-                queue_front = sensor.queue.get_nowait()
+                #queue_front = sensor.queue.get_nowait()
+                queue_front = sensor.queue.get()
                 while not (queue_front is None):
                     queue_front_dict[sensor] = queue_front
         return queue_front_dict
@@ -318,7 +319,7 @@ class Vision(Processor):
             return False
         is_pressed = self.sensor_pin.is_pressed()
         if is_pressed:
-            return {"press":is_pressed}
+                return {"press":is_pressed}
 
     def color_measure(self, *args):
         if self.name != "COLOR":
