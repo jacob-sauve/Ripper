@@ -170,7 +170,7 @@ class Megamind(Processor):
                 # flip these corrections if they're inverted
                 #print(f"{drift=}")
                 if drift > MAX_DRIFT:
-                    #print("right drift. correcting...")
+                    print("right drift. correcting...")
                     # right wheel lagging
                     #right.queue.put(("STOP",))
                     #left.queue.put(("STOP",))
@@ -179,7 +179,7 @@ class Megamind(Processor):
                     #right.queue.put(("GO", speed))
                     #left.queue.put(("STOP",))
                 elif drift < -MAX_DRIFT:
-                    print("right drift. correcting...")
+                    print("left drift. correcting...")
                     # left wheel lagging
                     #right.queue.put(("STOP",))
                     #left.queue.put(("STOP",))
