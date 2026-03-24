@@ -352,6 +352,7 @@ if __name__ == "__main__":
         print(f"{cpu_count()=}\n\n")
         brain.queue.put(("GO", 20, -270))
         brain.queue.put(("GO", 20, 500))
+        print(list(brain.queue))
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
