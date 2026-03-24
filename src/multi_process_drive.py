@@ -135,6 +135,7 @@ class Megamind(Processor):
             #instruction, *args = self.queue.get()
             if instruction:
                 # call function
+                print(instruction)
                 self.funcdict.get(instruction)(*args)
             # clear sensor queues to keep them up to date, store newest readings
             self.latest_readings = self.clearSensorQueues()
@@ -243,7 +244,6 @@ class Driver(Processor):
         # set default speed value
         try:
             power = 100*(self.direction * speed)/self.motor_pin.MAX_SPEED if speed is not None else 100*self.min_speed/self.motor_pin.MAX_SPEED
-            print(power)
             self.motor_pin.set_power(power)
             self.is_moving = True
            #print(self.name + " moving")
