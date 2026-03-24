@@ -12,7 +12,7 @@ rhythm = 2
 
 
 def victor_jingle():
-    tone1 = Sound(duration = rhythm/8, pitch = "A3")
+    tone1 = Sound(duration = rhythm/8, pitch = "A3", volume=100)
 
     tone1.play()
     tone1.wait_done()
