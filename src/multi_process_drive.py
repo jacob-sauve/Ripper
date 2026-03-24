@@ -168,7 +168,7 @@ class Megamind(Processor):
         initial_angle = gyro.queue.get().get("angle")
         for i in range(granular_iterations):
             try:
-                self.is_terminated = touch.queue.get_nowait().get("pressed")
+                self.is_terminated = touch.queue.get(False).get("pressed")
             except:
                 self.is_terminated = False
             if self.is_terminated:
