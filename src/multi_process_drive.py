@@ -131,13 +131,13 @@ class Megamind(Processor):
     def manage_queue(self):
         """probably should rework --> could easily get stuck in busy mode"""
         self.is_terminated = False
+        instruction = None
         while not self.is_terminated:
             try:
                 instruction, *args = self.queue.get_nowait()
+            except BaseException as e:
+                print(e)
             #instruction, *args = self.queue.get()
-            except Exception as e:
-                print("instruction queue error: " + str(e))
-                instruction = None
             if instruction:
                 # call function
                 self.funcdict.get(instruction)(*args)
