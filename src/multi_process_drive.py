@@ -133,7 +133,7 @@ class Megamind(Processor):
         while True: 
             instruction, *args = self.queue.get()
             #instruction, *args = self.queue.get()
-            print(instruction)
+            print(f"{instruction=}")
             if instruction:
                 # call function
                 self.funcdict.get(instruction)(*args)
