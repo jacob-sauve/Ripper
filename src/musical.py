@@ -1,3 +1,8 @@
+"""
+All things musical
+"""
+
+from utils.brick import reset_brick
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
@@ -158,3 +163,17 @@ def victor_jingle():
 
     tone1.play()
     tone1.wait_done()
+#!/usr/bin/env python3
+
+
+
+# main loop
+if __name__ == "__main__":
+    try:
+        import titlecard
+        titlecard.show()
+        victor_jingle()
+    except BaseException as e:
+        print(e)
+    finally:
+        reset_brick()
