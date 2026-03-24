@@ -349,7 +349,7 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        brain.queue.put(("GO", 20))
+        brain.queue.put(("GO", -20))
         brain.queue.put(("GRAB", 5, 500))
         while not stop.is_pressed():
             sleep(0.01)
