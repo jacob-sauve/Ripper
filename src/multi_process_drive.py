@@ -171,6 +171,7 @@ class Megamind(Processor):
             except:
                 self.is_terminated = False
             if self.is_terminated:
+                print("termination ordererd")
                 self.killAll()
             gyro_readings = gyro.queue.get()
             if gyro_readings:
@@ -199,7 +200,7 @@ class Megamind(Processor):
                     # all good
                     left.queue.put(("GO", speed))
                     right.queue.put(("GO", speed))
-            print("about to sleep, iterating...")
+            #print("about to sleep, iterating...")
             sleep(MEGAMIND_BUFFER)
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
