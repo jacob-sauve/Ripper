@@ -131,12 +131,10 @@ class Megamind(Processor):
     def manage_queue(self):
         """probably should rework --> could easily get stuck in busy mode"""
         while True: 
-            instruction, *args = self.queue.get()
-            #instruction, *args = self.queue.get()
-            print(f"{instruction=}")
+            instruction = self.queue.get()
             if instruction:
-                # call function
-                self.funcdict.get(instruction)(*args)
+                funcname, args = instruction[0], instruction[1:]
+                self.funcdict[funcname](*args)
             # clear sensor queues to keep them up to date, store newest readings
             self.latest_readings = self.clearSensorQueues()
             sleep(MEGAMIND_BUFFER)
