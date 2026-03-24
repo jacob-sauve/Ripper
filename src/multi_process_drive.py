@@ -30,7 +30,7 @@ MEGAMIND_BUFFER = 0.005 # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectilinear trajectory
 DRIFT_CORRECTION = 1.05 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12         # length of a bed in centimeters
-START_SWEEP_ANGLE = 0   # initial angle of sweeper
+START_SWEEP_ANGLE = 90   # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 
 
@@ -402,7 +402,7 @@ if __name__ == "__main__":
         print(f"{cpu_count()=}\n\n")
         #brain.queue.put_nowait(("GO", 20, 270))
         brain.queue.put_nowait(("GRAB", 10, 500))
-        brain.queue.put_nowait(("SWEEP", 90, True, 100))
+        brain.queue.put_nowait(("SWEEP", 180, False, 100))
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
