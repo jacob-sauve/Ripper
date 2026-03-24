@@ -243,7 +243,7 @@ class Driver(Processor):
         # set default speed value
         try:
             power = 100*(self.direction * speed)/self.motor_pin.MAX_SPEED if speed is not None else 100*self.min_speed/self.motor_pin.MAX_SPEED
-            print(self.motor_pin.MAX_SPEED)
+            print(power)
             self.motor_pin.set_power(power)
             self.is_moving = True
            #print(self.name + " moving")
@@ -351,7 +351,7 @@ if __name__ == "__main__":
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
         #brain.queue.put(("GO", 10))
-        brain.queue.put(("GRAB", 50, 100))
+        brain.queue.put(("GRAB", 50, 500))
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
