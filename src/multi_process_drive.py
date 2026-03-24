@@ -123,7 +123,7 @@ class Megamind(Processor):
                     queue_front = sensor.queue.get_nowait()
                 #queue_front = sensor.queue.get()
                 except:
-                    print("reading failed")
+                    queue_front = None
                 while not (queue_front is None):
                     queue_front_dict[sensor] = queue_front
         return queue_front_dict
@@ -140,6 +140,7 @@ class Megamind(Processor):
             # clear sensor queues to keep them up to date, store newest readings
             self.latest_readings = self.clearSensorQueues()
             self.is_terminated = self.latest_readings.get("TOUCH").get("pressed")
+            print(self.is_terminated)
             sleep(MEGAMIND_BUFFER)
 
     def _distance_to_iterations(self, distance, speed=MIN_SPEED, radius=R_WHEEL):
@@ -169,7 +170,7 @@ class Megamind(Processor):
             if gyro_readings:
                 drift =  gyro_readings.get("angle") - initial_angle
                 # flip these corrections if they're inverted
-                print(f"{drift=}")
+                #print(f"{drift=}")
                 if drift > MAX_DRIFT:
                     #print("right drift. correcting...")
                     # right wheel lagging
@@ -250,7 +251,7 @@ class Driver(Processor):
             speed = self.direction * speed if speed is not None else self.min_speed
             self.motor_pin.set_dps(speed)
             self.is_moving = True
-            print(self.name + " moving")
+            #print(self.name + " moving")
             return True
         except:
             return False
