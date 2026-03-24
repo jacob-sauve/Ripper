@@ -317,7 +317,8 @@ class Vision(Processor):
         if self.name != "TOUCH":
             return False
         is_pressed = self.sensor_pin.is_pressed()
-        return {"press":is_pressed}
+        if is_pressed:
+            return {"press":is_pressed}
 
     def color_measure(self, *args):
         if self.name != "COLOR":
