@@ -21,7 +21,7 @@ from multiprocess import cpu_count, Process, Queue
 R_GRABBER = 1.8
 R_WHEEL = 2.2           # wheel radius in cm
 R_ROBOT = 7.52          # middle wheel to middle wheel in cm
-MIN_SPEED = 400         # wheel rotation speed in degrees.s-1
+MIN_SPEED = 270         # wheel rotation speed in degrees.s-1
 LEFT = -1               # multiplier for correct rotations of left wheel
 RIGHT = -1              # multiplier for correct rotations of right wheel
 GRABBER = -1            # multiplier for correct rotations of grabber (should be pickup direction)
