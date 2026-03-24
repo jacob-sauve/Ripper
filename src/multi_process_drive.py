@@ -25,9 +25,13 @@ MIN_SPEED = 270         # wheel rotation speed in degrees.s-1
 LEFT = -1               # multiplier for correct rotations of left wheel
 RIGHT = -1              # multiplier for correct rotations of right wheel
 GRABBER = -1            # multiplier for correct rotations of grabber (should be pickup direction)
+SWEEPER = -1            # multiplier for correct rotations of front-mounted colour sensor sweep motor
 MEGAMIND_BUFFER = 0.005 # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectilinear trajectory
 DRIFT_CORRECTION = 1.05 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
+BED_LENGTH = 12         # length of a bed in centimeters
+START_SWEEP_ANGLE = 0   # initial angle of sweeper
+SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 
 
 class Processor:
@@ -75,7 +79,8 @@ class Megamind(Processor):
         self.funcdict = {
             "GO": self._go_with_sensors,
             "TURN": self._turn_with_sensors,
-            "GRAB": self._grab
+            "GRAB": self._grab,
+            "SWEEP": self._sweep
         }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
@@ -146,7 +151,11 @@ class Megamind(Processor):
         n_rotations = abs(distance / (radius * pi * 2))
         spin_time = (n_rotations * 360) / speed
         # calculate amount of iterations with delay equal to constant buffer are needed
-        return int(spin_time / MEGAMIND_BUFFER)
+        return int(abs(spin_time / MEGAMIND_BUFFER))
+
+    def _degrees_to_iterations(self, degrees, speed=MIN_SPEED):
+        spin_time = degrees / speed
+        return int(abs(spin_time/MEGAMIND_BUFFER))
 
     def _go_with_sensors(self, distance, speed=MIN_SPEED):
         """go a certain distance in a straight line. uses gyro for drift mgmt."""
@@ -210,6 +219,23 @@ class Megamind(Processor):
         grabber.queue.put(("STOP",))
         return True
 
+    def _sweep(self, range_of_motion, center=True, speed=MIN_SPEED):
+        #granular_iterations = self._degrees_to_iterations(degrees, speed)
+        sweeper = self.processor_dict.get("SWEEPER")
+
+        if center:
+            start = START_SWEEP_ANGLE - range_of_motion / 2
+        else:
+            start = START_SWEEP_ANGLE
+
+        for degrees in range(start, range_of_motion + start, SWEEP_MINIMUM_TURN):
+            sweeper.queue.put(("ANGLE", degrees, speed))
+        
+        return False
+
+
+
+
 class Driver(Processor):
     """One driver per motor; worker class for process management"""
     def __init__(self, name, motor_pin_name, min_speed=MIN_SPEED):
@@ -218,7 +244,8 @@ class Driver(Processor):
         # dict mapping funcnames to funcs for safe pickling
         self.funcdict = {
                 "GO": self._go,
-                "STOP": self._stop
+                "STOP": self._stop,
+                "ANGLE": self._angle
                 }
         self.name = name.upper()
         if self.name == "LEFT":
@@ -228,6 +255,9 @@ class Driver(Processor):
         elif self.name == "GRABBER":
             # grabber
             self.direction = GRABBER
+        elif self.name == "SWEEPER":
+            # sweeper colour sensor
+            self.direction = SWEEPER
         else:
             raise ValueError(f"Invalid Motor name: '{self.name}'. Should be one of: 'LEFT', 'RIGHT', 'GRABBER'")
         self.min_speed = min_speed * self.direction
@@ -242,8 +272,10 @@ class Driver(Processor):
     def _go(self, speed=None):
         """start moving"""
         # set default speed value
+        speed = self.direction*speed if speed is not None else self.min_speed
+        self.motor_pin.set_limits(dps=speed)
         try:
-            power = 100*(self.direction * speed)/self.motor_pin.MAX_SPEED if speed is not None else 100*self.min_speed/self.motor_pin.MAX_SPEED
+            power = 100*(self.direction * speed)/self.motor_pin.MAX_SPEED
             #print(power)
             self.motor_pin.set_power(power)
             self.is_moving = True
@@ -251,6 +283,14 @@ class Driver(Processor):
             return True
         except:
             return False
+
+    def _angle(self, degrees, speed=None):
+        """face a certain angle""" 
+        # limit speed
+        speed = self.direction*speed if speed is not None else self.min_speed
+        self.motor_pin.set_limits(dps=speed)
+        # turn!
+        self.motor_pin.set_position(degrees)
 
     def _stop(self):
         """stop moving"""
