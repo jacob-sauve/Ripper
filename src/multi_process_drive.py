@@ -129,7 +129,8 @@ class Megamind(Processor):
         """probably should rework --> could easily get stuck in busy mode"""
         self.is_terminated = False
         while not self.is_terminated:
-            instruction, *args = self.queue.get_nowait()
+            #instruction, *args = self.queue.get_nowait()
+            instruction, *args = self.queue.get()
             if instruction:
                 # call function
                 self.funcdict.get(instruction)(*args)
