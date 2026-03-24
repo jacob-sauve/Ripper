@@ -25,7 +25,7 @@ MIN_SPEED = 270         # wheel rotation speed in degrees.s-1
 LEFT = -1               # multiplier for correct rotations of left wheel
 RIGHT = -1              # multiplier for correct rotations of right wheel
 GRABBER = -1            # multiplier for correct rotations of grabber (should be pickup direction)
-SWEEPER = -1            # multiplier for correct rotations of front-mounted colour sensor sweep motor
+SWEEPER = +1            # multiplier for correct rotations of front-mounted colour sensor sweep motor
 MEGAMIND_BUFFER = 0.005 # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectilinear trajectory
 DRIFT_CORRECTION = 1.05 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
@@ -229,10 +229,10 @@ class Megamind(Processor):
             start = START_SWEEP_ANGLE
         # set start angle 
         sweeper.queue.put(("ANGLE", start-START_SWEEP_ANGLE, speed))
-
-        for degrees in range(start, range_of_motion + start, SWEEP_MINIMUM_TURN):
-            sweeper.queue.put(("ANGLE", degrees, speed))
-            sleep(MEGAMIND_BUFFER)
+        while True:
+            for degrees in range(start, range_of_motion + start, SWEEP_MINIMUM_TURN):
+                sweeper.queue.put(("ANGLE", degrees, speed))
+                sleep(MEGAMIND_BUFFER)
         
         return False
 
@@ -397,7 +397,7 @@ if __name__ == "__main__":
         print(f"{cpu_count()=}\n\n")
         #brain.queue.put_nowait(("GO", 20, 270))
         brain.queue.put_nowait(("GRAB", 10, 500))
-        brain.queue.put_nowait(("SWEEP", 180, True))
+        brain.queue.put_nowait(("SWEEP", 180, True, 90))
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
