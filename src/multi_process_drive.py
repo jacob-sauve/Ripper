@@ -122,6 +122,8 @@ class Megamind(Processor):
                 try:
                     queue_front = sensor.queue.get_nowait()
                 #queue_front = sensor.queue.get()
+                except:
+                    print("reading failed")
                 while not (queue_front is None):
                     queue_front_dict[sensor] = queue_front
         return queue_front_dict
