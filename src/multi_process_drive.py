@@ -227,9 +227,12 @@ class Megamind(Processor):
             start = START_SWEEP_ANGLE - range_of_motion / 2
         else:
             start = START_SWEEP_ANGLE
+        # set start angle 
+        sweeper.queue.put(("ANGLE", start-START_SWEEP_ANGLE, speed))
 
         for degrees in range(start, range_of_motion + start, SWEEP_MINIMUM_TURN):
             sweeper.queue.put(("ANGLE", degrees, speed))
+            sleep(MEGAMIND_BUFFER)
         
         return False
 
