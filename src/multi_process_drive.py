@@ -124,7 +124,7 @@ class Megamind(Processor):
                 #queue_front = sensor.queue.get()
                 except:
                     queue_front = None
-                while not (queue_front is None):
+                while not (sensor.queue.Empty):
                     queue_front_dict[sensor] = queue_front
                     queue_front = sensor.queue.get_nowait()
         return queue_front_dict
