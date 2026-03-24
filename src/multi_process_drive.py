@@ -135,8 +135,8 @@ class Megamind(Processor):
             try:
                 instruction, *args = self.queue.get_nowait()
             #instruction, *args = self.queue.get()
-            except:
-                instruction = None
+            except Exception as e:
+                print("instruction queue error: " + str(e))
             if instruction:
                 # call function
                 self.funcdict.get(instruction)(*args)
