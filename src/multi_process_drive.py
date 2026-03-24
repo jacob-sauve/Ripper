@@ -265,11 +265,7 @@ class Driver(Processor):
         while True:
             instruction = self.queue.get()
             if instruction:
-                if isinstance(instruction, str):
-                    funcname, args = instruction, []
-                else:
-                    print("something went wrong with the grabby grab")
-                    funcname, *args = instruction
+                funcname, args = instruction[0], instruction[1:]
                 self.funcdict[funcname](*args)
 
 
