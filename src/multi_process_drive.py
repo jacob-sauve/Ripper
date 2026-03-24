@@ -224,7 +224,7 @@ class Megamind(Processor):
         sweeper = self.processor_dict.get("SWEEPER")
 
         if center:
-            start = START_SWEEP_ANGLE - range_of_motion / 2
+            start = START_SWEEP_ANGLE - range_of_motion // 2
         else:
             start = START_SWEEP_ANGLE
         # set start angle 
