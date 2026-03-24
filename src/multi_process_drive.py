@@ -268,6 +268,7 @@ class Driver(Processor):
                 if isinstance(instruction, str):
                     funcname, args = instruction, []
                 else:
+                    print("something went wrong with the grabby grab")
                     funcname, *args = instruction
                 self.funcdict[funcname](*args)
 
