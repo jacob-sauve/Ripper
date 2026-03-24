@@ -166,7 +166,10 @@ class Megamind(Processor):
         # take it as reference for "straightness"
         initial_angle = gyro.queue.get().get("angle")
         for i in range(granular_iterations):
-            self.is_terminated = touch.queue.get().get("pressed")
+            try:
+                self.is_terminated = touch.queue.get_nowait().get("pressed")
+            except:
+                self.is_terminated = False
             if self.is_terminated:
                 self.killAll()
             gyro_readings = gyro.queue.get()
