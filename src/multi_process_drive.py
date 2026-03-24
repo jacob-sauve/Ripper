@@ -386,7 +386,8 @@ if __name__ == "__main__":
             "GYRO": Vision("GYRO", 3),
             "LEFT": Driver("LEFT", "A"),
             "RIGHT": Driver("RIGHT", "D"),
-            "GRABBER": Driver("GRABBER", "B")
+            "GRABBER": Driver("GRABBER", "B"),
+            "SWEEPER": Driver("SWEEPER", "C")
         }
     brain = Megamind(processors)
     stop = TouchSensor(1)
