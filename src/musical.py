@@ -5,6 +5,7 @@ All things musical
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import reset_brick
+import array
 
 from utils.sound import Sound, Song
 
