@@ -35,6 +35,7 @@ BED_LENGTH = 12         # length of a bed in centimeters
 START_SWEEP_ANGLE = 0   # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
+SENSOR_INIT_DELAY = 2   # seconds waited in addition to waitreadysensors before accessing current orientation
 
 
 class Processor:
@@ -96,6 +97,7 @@ class Megamind(Processor):
     def start(self):
         wait_ready_sensors(True)
         # to prevent compound microdrifts if correction doesn't manage to complete itself in time
+        sleep(SENSOR_INIT_DELAY)
         self.initial_orientation = self.clearSensorQueues().get("GYRO").get("angle")
         super().start()
     
