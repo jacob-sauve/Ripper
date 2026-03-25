@@ -281,6 +281,7 @@ class Megamind(Processor):
                 sleep(MEGAMIND_BUFFER)
                 left.queue.put(("STOP",))
                 right.queue.put(("STOP",))
+            sleep(1)
 
         #turn(degrees)
         #forward(5cm)
