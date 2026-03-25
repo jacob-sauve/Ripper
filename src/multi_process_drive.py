@@ -248,7 +248,6 @@ class Megamind(Processor):
             start *= -1
             range_of_motion *= -1
             increment *= -1
-            self._go_with_sensors(5, LEFT * speed)
         #turn(degrees)
         #forward(5cm)
         #grabber(-speed)
@@ -257,7 +256,7 @@ class Megamind(Processor):
         #return
         # false if not found
         # queue instructions again
-        self.queue.put(("GO", 5, -speed))
+        self.queue.put(("GO", 5, speed))
         self.queue.put(("SWEEP", range_of_motion, center, speed))
         sleep(0.5)
         return False
