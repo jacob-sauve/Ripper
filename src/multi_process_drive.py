@@ -253,7 +253,7 @@ class Megamind(Processor):
             range_of_motion *= -1
             increment *= -1
             # yanked from _go_with_sensors, hopefully this works now
-            granular_iterations = self._distance_to_iterations(5)
+            granular_iterations = self._distance_to_iterations(10)
             left.queue.put(("GO", -speed))
             right.queue.put(("GO", -speed))
             # get most recent gyro reading, if existent
