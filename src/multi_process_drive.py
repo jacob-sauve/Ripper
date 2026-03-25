@@ -243,7 +243,7 @@ class Megamind(Processor):
                         sweeper.queue.put(("STOP",))
                         self.queue.put(("JINGLE",))
                         return True
-            sleep(MEGAMIND_BUFFER*10)
+            sleep(MEGAMIND_BUFFER*20)
             start *= -1
             range_of_motion *= -1
             increment *= -1
