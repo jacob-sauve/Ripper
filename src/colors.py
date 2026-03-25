@@ -16,8 +16,8 @@ from utils.brick import BP, Motor, reset_brick
 OMEGA_THRESHOLDS = [        # max omega values at which colors are classified
         (0.2, "red"),
         (0.5, "orange"),
-        (1.0, "yellow"),
-        (1.3, "green") # i.e., all omega values below 1.3 are green
+        (0.79, "yellow"),
+        (1.1, "green") # i.e., all omega values below 1.3 are green
         ]
 
 
