@@ -163,7 +163,7 @@ class Megamind(Processor):
     def _go_with_sensors(self, distance, speed=MIN_SPEED):
         """go a certain distance in a straight line. uses gyro for drift mgmt."""
         granular_iterations = self._distance_to_iterations(distance)
-        left, right, touch, gyro = (self.processor_dict.get("LEFT"),
+        left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
         speed = -speed
