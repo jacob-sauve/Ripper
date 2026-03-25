@@ -239,6 +239,7 @@ class Megamind(Processor):
                 color_readings = color.queue.get()
                 if color_readings:
                     curr_color = color_readings.get("COLOR")
+                    print(f"{color_readings.get(\"RGB\") = }")
                     if curr_color == "green":
                         sweeper.queue.put(("STOP",))
                         self.queue.put(("JINGLE",))
@@ -394,8 +395,9 @@ class Vision(Processor):
         rgb = self.sensor_pin.get_rgb()
         output = dict()
         if rgb != None and not None in rgb:
-            color = classify(rgb, debugging=True)
+            color = classify(rgb, debugging=False) # SET TO TRUE FOR CALIBRATION
             output["COLOR"] = color
+            ouput["RGB"] = rgb
         return output
 
     def manage_queue(self):
