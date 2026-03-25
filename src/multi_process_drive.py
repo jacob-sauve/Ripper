@@ -237,8 +237,8 @@ class Megamind(Processor):
                 sweeper.queue.put(("ANGLE", degrees, speed))
                 color_readings = color.queue.get()
                 if color_readings:
-                    color = color_readings.get("COLOR")
-                    if color == "green":
+                    curr_color = color_readings.get("COLOR")
+                    if curr_color == "green":
                         victor_jingle()
                         return True
             sleep(MEGAMIND_BUFFER*10)
