@@ -9,7 +9,21 @@ from utils.brick import reset_brick
 from utils.sound import Sound, Song
 
 # duration of a full note (float possible)
-rhythm = 0.5
+rhythm = 0.75
+
+chord_dur = 4*rhythm
+chord_tones = ["G#3", "C4", "D#4", "G4", "A#4"]
+chord_sounds = [Sound(duration=chord_dur, pitch=p, volume=80) for p in chord_tones]
+
+# mix them by summing the audio arrays
+mixed = array.array('h', [0] * len(chord_sounds[0].audio))
+for s in chord_sounds:
+    for i in range(len(mixed)):
+        mixed[i] = max(-32768, min(32767, mixed[i] + s.audio[i] // len(chord_tones)))
+
+chord = Sound(duration=chord_dur, pitch="A4", volume=100)
+chord.audio = mixed
+
 
 def victor_jingle():
     notes = [
@@ -25,6 +39,7 @@ def victor_jingle():
     sounds = [Sound(duration=dur, pitch=pitch, volume=100) for pitch, dur in notes]
 
     song = Song(sounds)
+    sounds.append(chord)
     song.compile()  # merges everything into one buffer
     song.play()
     song.wait_done()
