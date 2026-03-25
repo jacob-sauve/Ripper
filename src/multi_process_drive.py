@@ -258,8 +258,14 @@ class Megamind(Processor):
                     curr_color = color_readings.get("color")
                     print(f"{color_readings.get('rgb') = }")
                     if curr_color == "green":
+                        # play happy sounds if patient found
                         sweeper.queue.put(("STOP",))
                         self.queue.put(("JINGLE",))
+                        return True
+                    elif curr_color == "red":
+                        # exit room if patient invalid
+                        sweeper.queue.put(("STOP",))
+                        self.queue.put(("GO_DOOR", -270))
                         return True
             sleep(MEGAMIND_BUFFER*10)
             start *= -1
@@ -503,7 +509,7 @@ if __name__ == "__main__":
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
         brain.queue.put_nowait(("GO_DOOR",))
-        brain.queue.put_nowait(("GRAB", 10, 500))
+        brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
         brain.queue.put_nowait(("SWEEP", 195, True))
         while not stop.is_pressed():
             sleep(0.01)
