@@ -261,6 +261,13 @@ class Megamind(Processor):
             initial_angle = gyro.queue.get().get("angle")
             for i in range(granular_iterations):
                 gyro_readings = gyro.queue.get()
+                color_readings = color.queue.get()
+                if color_readings:
+                    curr_color = color_readings.get("COLOR")
+                    if curr_color == "green":
+                        sweeper.queue.put(("STOP",))
+                        self.queue.put(("JINGLE",))
+                        return True
                 if gyro_readings:
                     drift =  gyro_readings.get("angle") - initial_angle
                     # flip these corrections if they're inverted
@@ -278,10 +285,8 @@ class Megamind(Processor):
                         # all good
                         left.queue.put(("GO", -speed))
                         right.queue.put(("GO", -speed))
-                sleep(MEGAMIND_BUFFER)
                 left.queue.put(("STOP",))
                 right.queue.put(("STOP",))
-            sleep(1)
 
         #turn(degrees)
         #forward(5cm)
