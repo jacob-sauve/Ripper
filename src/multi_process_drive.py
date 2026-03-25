@@ -15,6 +15,8 @@ from vision import _read_rgb, is_orange
 from math import pi
 from time import sleep
 from multiprocess import cpu_count, Process, Queue
+from colors import classify
+from musical import victor_jingle
 
 
 # constants
@@ -221,7 +223,7 @@ class Megamind(Processor):
 
     def _sweep(self, range_of_motion, center=True, speed=MIN_SPEED):
         #granular_iterations = self._degrees_to_iterations(degrees, speed)
-        sweeper = self.processor_dict.get("SWEEPER")
+        sweeper, color = (self.processor_dict.get("SWEEPER"), self.processor_dict.get("COLOR"))
 
         if center:
             start = START_SWEEP_ANGLE - range_of_motion // 2
@@ -233,12 +235,25 @@ class Megamind(Processor):
         while True:
             for degrees in range(start, range_of_motion + start, increment):
                 sweeper.queue.put(("ANGLE", degrees, speed))
-                sleep(MEGAMIND_BUFFER*10)
+                color_readings = color.queue.get()
+                if color_readings:
+                    color = color_readings.get("COLOR")
+                    if color == "green":
+                        victor_jingle()
+                        return True
+            sleep(MEGAMIND_BUFFER*10)
             start *= -1
             range_of_motion *= -1
             increment *= -1
-            
-        
+            #move forward a bit
+
+        #turn(degrees)
+        #forward(5cm)
+        #grabber(-speed)
+        #backward(5cm)
+        #turn(-degrees)
+        #return
+        # false if not found
         return False
 
 
@@ -370,7 +385,10 @@ class Vision(Processor):
     def color_measure(self, *args):
         if self.name != "COLOR":
             return False
-        return True
+        rgb = self.sensor_pin.get_rgb()
+        color = classify(rgb, debug=True)
+        output = {"COLOR": color}
+        return output
 
     def manage_queue(self):
         while True:
@@ -392,7 +410,8 @@ if __name__ == "__main__":
             "LEFT": Driver("LEFT", "A"),
             "RIGHT": Driver("RIGHT", "D"),
             "GRABBER": Driver("GRABBER", "B"),
-            "SWEEPER": Driver("SWEEPER", "C")
+            "SWEEPER": Driver("SWEEPER", "C"),
+            "COLOR": Vision("COLOR", 2)
         }
     brain = Megamind(processors)
     stop = TouchSensor(1)
