@@ -35,6 +35,7 @@ BED_LENGTH = 12         # length of a bed in centimeters
 START_SWEEP_ANGLE = 0   # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
+MAX_ROOM_DISTANCE = 45  # centimeters of straight-line motion before robot can safely assume it is in a room
 
 
 class Processor:
@@ -84,7 +85,9 @@ class Megamind(Processor):
             "TURN": self._turn_with_sensors,
             "GRAB": self._grab,
             "SWEEP": self._sweep,
-            "JINGLE": victor_jingle
+            "JINGLE": victor_jingle,
+            "GO_DOOR": self._go_to_door
+
         }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
@@ -252,8 +255,8 @@ class Megamind(Processor):
                 sweeper.queue.put(("ANGLE", degrees, speed))
                 color_readings = color.queue.get()
                 if color_readings:
-                    curr_color = color_readings.get("COLOR")
-                    print(f"{color_readings.get('RGB') = }")
+                    curr_color = color_readings.get("color")
+                    print(f"{color_readings.get('rgb') = }")
                     if curr_color == "green":
                         sweeper.queue.put(("STOP",))
                         self.queue.put(("JINGLE",))
@@ -274,6 +277,63 @@ class Megamind(Processor):
         self.queue.put(("SWEEP", range_of_motion, center, speed))
         sleep(0.5)
         return False
+
+    def _go_to_door(self, speed=MIN_SPEED):
+        """advance until orange is detected; then proceed to room logic"""
+        granular_iterations = self._distance_to_iterations(MAX_ROOM_DISTANCE)
+        left, right, gyro, color = (self.processor_dict.get("LEFT"),
+                                    self.processor_dict.get("RIGHT"),
+                                    self.processor_dict.get("GYRO"),
+                                    self.processor_dict.get("COLOR"))
+        speed = -speed
+        left.queue.put(("GO", speed))
+        right.queue.put(("GO", speed))
+        # get most recent gyro reading, if existent
+        # take it as reference for "straightness"
+        if not (self.initial_orientation is None):
+            initial_angle = self.initial_orientation + self.current_direction
+        else:
+            initial_angle = gyro.queue.get().get("angle")
+        for i in range(granular_iterations):
+            gyro_readings = gyro.queue.get()
+            color_readings = color.queue.get()
+            if color_readings:
+                curr_color = color_readings.get("color")
+                if curr_color and curr_color == "orange":
+                    break
+            if gyro_readings:
+                drift =  gyro_readings.get("angle") - initial_angle
+                # flip these corrections if they're inverted
+                #print(f"{drift=}")
+                if drift > MAX_DRIFT:
+                    print("right drift. correcting...")
+                    # right wheel lagging
+                    #right.queue.put(("STOP",))
+                    #left.queue.put(("STOP",))
+                    right.queue.put(("GO", speed * DRIFT_CORRECTION))
+                    left.queue.put(("GO", speed / DRIFT_CORRECTION))
+                    #right.queue.put(("GO", speed))
+                    #left.queue.put(("STOP",))
+                elif drift < -MAX_DRIFT:
+                    print("left drift. correcting...")
+                    # left wheel lagging
+                    #right.queue.put(("STOP",))
+                    #left.queue.put(("STOP",))
+                    right.queue.put(("GO", speed / DRIFT_CORRECTION))
+                    left.queue.put(("GO", speed * DRIFT_CORRECTION))
+                    #right.queue.put(("STOP",))
+                    #left.queue.put(("GO", speed))
+                else:
+                    # all good
+                    left.queue.put(("GO", speed))
+                    right.queue.put(("GO", speed))
+            #print("about to sleep, iterating...")
+            sleep(MEGAMIND_BUFFER)
+        left.queue.put(("STOP",))
+        right.queue.put(("STOP",))
+        return True
+
+
 
 
 
@@ -409,8 +469,8 @@ class Vision(Processor):
         output = dict()
         if rgb != None and not None in rgb:
             color = classify(rgb, debugging=False) # SET TO TRUE FOR CALIBRATION
-            output["COLOR"] = color
-            output["RGB"] = rgb
+            output["color"] = color
+            output["rgb"] = rgb
         return output
 
     def manage_queue(self):
@@ -442,9 +502,9 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        brain.queue.put_nowait(("GO", 50, 270))
+        brain.queue.put_nowait(("GO_DOOR",))
         brain.queue.put_nowait(("GRAB", 10, 500))
-        brain.queue.put_nowait(("SWEEP", 180, True))
+        brain.queue.put_nowait(("SWEEP", 195, True))
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
