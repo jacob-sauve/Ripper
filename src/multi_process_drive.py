@@ -30,12 +30,12 @@ GRABBER = -1            # multiplier for correct rotations of grabber (should be
 SWEEPER = +1            # multiplier for correct rotations of front-mounted colour sensor sweep motor
 MEGAMIND_BUFFER = 0.005 # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectilinear trajectory
-DRIFT_CORRECTION = 1.05 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
+DRIFT_CORRECTION = 1.25 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12         # length of a bed in centimeters
 START_SWEEP_ANGLE = 0   # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
-MAX_ROOM_DISTANCE = 70  # centimeters of straight-line motion before robot can safely assume it is in a room
+MAX_ROOM_DISTANCE = 45  # centimeters of straight-line motion before robot can safely assume it is in a room
 
 
 class Processor:
@@ -176,7 +176,7 @@ class Megamind(Processor):
 
     def _go_with_sensors(self, distance, speed=MIN_SPEED):
         """go a certain distance in a straight line. uses gyro for drift mgmt."""
-        granular_iterations = self._distance_to_iterations(distance)
+        granular_iterations = self._distance_to_iterations(distance, speed)
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
@@ -265,6 +265,7 @@ class Megamind(Processor):
                     elif curr_color == "red":
                         # exit room if patient invalid
                         sweeper.queue.put(("STOP",))
+                        self.queue.put(("GO", 5, -270))
                         self.queue.put(("GO_DOOR", -270))
                         return True
             sleep(MEGAMIND_BUFFER*10)
@@ -286,7 +287,7 @@ class Megamind(Processor):
 
     def _go_to_door(self, speed=MIN_SPEED):
         """advance until orange is detected; then proceed to room logic"""
-        granular_iterations = self._distance_to_iterations(MAX_ROOM_DISTANCE)
+        granular_iterations = self._distance_to_iterations(MAX_ROOM_DISTANCE, speed)
         left, right, gyro, color = (self.processor_dict.get("LEFT"),
                                     self.processor_dict.get("RIGHT"),
                                     self.processor_dict.get("GYRO"),
@@ -296,6 +297,8 @@ class Megamind(Processor):
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
         # take it as reference for "straightness"
+        print("go to door protocol initiated")
+        print(f"{granular_iterations = }")
         if not (self.initial_orientation is None):
             initial_angle = self.initial_orientation + self.current_direction
         else:
@@ -510,6 +513,7 @@ if __name__ == "__main__":
         print(f"{cpu_count()=}\n\n")
         brain.queue.put_nowait(("GO_DOOR",))
         brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
+        brain.queue.put_nowait(("GO", 5))
         brain.queue.put_nowait(("SWEEP", 195, True))
         while not stop.is_pressed():
             sleep(0.01)
