@@ -386,7 +386,7 @@ class Vision(Processor):
         if self.name != "COLOR":
             return False
         rgb = self.sensor_pin.get_rgb()
-        color = classify(rgb, debug=True)
+        color = classify(rgb, debugging=True)
         output = {"COLOR": color}
         return output
 
