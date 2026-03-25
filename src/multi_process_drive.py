@@ -233,7 +233,7 @@ class Megamind(Processor):
         # set start angle 
         sweeper.queue.put(("ANGLE", start-START_SWEEP_ANGLE, speed))
         increment = SWEEP_MINIMUM_TURN
-        while True:
+        for i in range(2):
             for degrees in range(start, range_of_motion + start, increment):
                 sweeper.queue.put(("ANGLE", degrees, speed))
                 color_readings = color.queue.get()
@@ -255,6 +255,9 @@ class Megamind(Processor):
         #turn(-degrees)
         #return
         # false if not found
+        # queue instructions again
+        self.queue.put(("GO", 5))
+        self.queue.put(("SWEEP",))
         return False
 
 
