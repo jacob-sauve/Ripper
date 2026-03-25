@@ -257,7 +257,7 @@ class Megamind(Processor):
         #return
         # false if not found
         # queue instructions again
-        self.queue.put(("GO", 5, speed))
+        self.queue.put(("GO", 5, -speed))
         self.queue.put(("SWEEP", range_of_motion, center, speed))
         sleep(0.5)
         return False
