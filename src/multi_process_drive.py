@@ -243,7 +243,7 @@ class Megamind(Processor):
                         sweeper.queue.put(("STOP",))
                         self.queue.put(("JINGLE",))
                         return True
-            sleep(MEGAMIND_BUFFER*20)
+            sleep(MEGAMIND_BUFFER*10)
             start *= -1
             range_of_motion *= -1
             increment *= -1
@@ -426,7 +426,7 @@ if __name__ == "__main__":
         print(f"{cpu_count()=}\n\n")
         #brain.queue.put_nowait(("GO", 20, 270))
         brain.queue.put_nowait(("GRAB", 10, 500))
-        brain.queue.put_nowait(("SWEEP", 180, True, 150))
+        brain.queue.put_nowait(("SWEEP", 180, True, 200))
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
