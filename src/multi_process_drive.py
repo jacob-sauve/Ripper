@@ -36,6 +36,7 @@ START_SWEEP_ANGLE = 0   # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 MAX_ROOM_DISTANCE = 45  # centimeters of straight-line motion before robot can safely assume it is in a room
+SWEEPS_PER_SWEEP = 2    # number of full ROMs swept per call of Megamind._sweep()
 
 
 class Processor:
@@ -195,7 +196,7 @@ class Megamind(Processor):
                 drift =  gyro_readings.get("angle") - initial_angle
                 # flip these corrections if they're inverted
                 #print(f"{drift=}")
-                if drift > MAX_DRIFT:
+                if (drift > MAX_DRIFT and speed < 0) or (drift < -MAX_DRIFT and speed > 0):
                     print("right drift. correcting...")
                     # right wheel lagging
                     #right.queue.put(("STOP",))
@@ -204,7 +205,7 @@ class Megamind(Processor):
                     left.queue.put(("GO", speed / DRIFT_CORRECTION))
                     #right.queue.put(("GO", speed))
                     #left.queue.put(("STOP",))
-                elif drift < -MAX_DRIFT:
+                elif (drift < -MAX_DRIFT and speed < 0) or (drift > MAX_DRIFT and speed > 0):
                     print("left drift. correcting...")
                     # left wheel lagging
                     #right.queue.put(("STOP",))
@@ -250,7 +251,7 @@ class Megamind(Processor):
         # set start angle 
         sweeper.queue.put(("ANGLE", start-START_SWEEP_ANGLE, speed))
         increment = SWEEP_MINIMUM_TURN
-        for i in range(2):
+        for i in range(SWEEPS_PER_SWEEP):
             for degrees in range(start, range_of_motion + start, increment):
                 sweeper.queue.put(("ANGLE", degrees, speed))
                 color_readings = color.queue.get()
@@ -265,8 +266,8 @@ class Megamind(Processor):
                     elif curr_color == "red":
                         # exit room if patient invalid
                         sweeper.queue.put(("STOP",))
-                        self.queue.put(("GO", 5, -270))
-                        self.queue.put(("GO_DOOR", -270))
+                        self.queue.put(("GO", 8, -speed))
+                        self.queue.put(("GO_DOOR", -speed))
                         return True
             sleep(MEGAMIND_BUFFER*10)
             start *= -1
@@ -314,7 +315,7 @@ class Megamind(Processor):
                 drift =  gyro_readings.get("angle") - initial_angle
                 # flip these corrections if they're inverted
                 #print(f"{drift=}")
-                if drift > MAX_DRIFT:
+                if (drift > MAX_DRIFT and speed < 0) or (drift < -MAX_DRIFT and speed > 0):
                     print("right drift. correcting...")
                     # right wheel lagging
                     #right.queue.put(("STOP",))
@@ -323,7 +324,7 @@ class Megamind(Processor):
                     left.queue.put(("GO", speed / DRIFT_CORRECTION))
                     #right.queue.put(("GO", speed))
                     #left.queue.put(("STOP",))
-                elif drift < -MAX_DRIFT:
+                elif (drift < -MAX_DRIFT and speed < 0) or (drift > MAX_DRIFT and speed > 0):
                     print("left drift. correcting...")
                     # left wheel lagging
                     #right.queue.put(("STOP",))
@@ -511,10 +512,10 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        brain.queue.put_nowait(("GO_DOOR",))
+        brain.queue.put_nowait(("GO_DOOR", 320))
         brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
-        brain.queue.put_nowait(("GO", 5))
-        brain.queue.put_nowait(("SWEEP", 195, True))
+        brain.queue.put_nowait(("GO", 15, 320))
+        brain.queue.put_nowait(("SWEEP", 270, True))
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
