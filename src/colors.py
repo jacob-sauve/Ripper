@@ -32,10 +32,14 @@ def classify(rgb, debugging=False):
     if mag != 0:
         for i in range(3):
             rgb[i] = rgb[i] / mag
+    else:
+        return "false color mag = 0"
 
     # 2) calculate color's 'omega' value
-    omega = math.atan(math.asin(rgb[2]) / math.atan(rgb[0] * rgb[2] / rgb[1]))
-
+    if rgb[1] != 0:
+        omega = math.atan(math.asin(rgb[2]) / math.atan(rgb[0] * rgb[2] / rgb[1]))
+    else:
+        return "false color rgb[1] = 0"
     # 3) classify color
     for threshold, color in OMEGA_THRESHOLDS:
         if (omega <= threshold):
