@@ -166,6 +166,7 @@ class Megamind(Processor):
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
+        speed = -speed # otherwise direction is inverted
         left.queue.put(("GO", speed))
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
@@ -253,8 +254,8 @@ class Megamind(Processor):
             increment *= -1
             # yanked from _go_with_sensors, hopefully this works now
             granular_iterations = self._distance_to_iterations(5)
-            left.queue.put(("GO", speed))
-            right.queue.put(("GO", speed))
+            left.queue.put(("GO", -speed))
+            right.queue.put(("GO", -speed))
             # get most recent gyro reading, if existent
             # take it as reference for "straightness"
             initial_angle = gyro.queue.get().get("angle")
@@ -266,17 +267,17 @@ class Megamind(Processor):
                     if drift > MAX_DRIFT:
                         print("right drift. correcting...")
                         # right wheel lagging
-                        right.queue.put(("GO", speed * DRIFT_CORRECTION))
-                        left.queue.put(("GO", speed / DRIFT_CORRECTION))
+                        right.queue.put(("GO", -speed * DRIFT_CORRECTION))
+                        left.queue.put(("GO", -speed / DRIFT_CORRECTION))
                     elif drift < -MAX_DRIFT:
                         print("left drift. correcting...")
                         # left wheel lagging
-                        right.queue.put(("GO", speed / DRIFT_CORRECTION))
-                        left.queue.put(("GO", speed * DRIFT_CORRECTION))
+                        right.queue.put(("GO", -speed / DRIFT_CORRECTION))
+                        left.queue.put(("GO", -speed * DRIFT_CORRECTION))
                     else:
                         # all good
-                        left.queue.put(("GO", speed))
-                        right.queue.put(("GO", speed))
+                        left.queue.put(("GO", -speed))
+                        right.queue.put(("GO", -speed))
                 sleep(MEGAMIND_BUFFER)
                 left.queue.put(("STOP",))
                 right.queue.put(("STOP",))
