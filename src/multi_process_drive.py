@@ -397,7 +397,7 @@ class Vision(Processor):
         if rgb != None and not None in rgb:
             color = classify(rgb, debugging=False) # SET TO TRUE FOR CALIBRATION
             output["COLOR"] = color
-            ouput["RGB"] = rgb
+            output["RGB"] = rgb
         return output
 
     def manage_queue(self):
