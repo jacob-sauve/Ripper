@@ -247,6 +247,7 @@ class Megamind(Processor):
             start *= -1
             range_of_motion *= -1
             increment *= -1
+            self._go_with_sensors(5, LEFT * speed)
         #turn(degrees)
         #forward(5cm)
         #grabber(-speed)
@@ -422,7 +423,7 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        #brain.queue.put_nowait(("GO", 20, 270))
+        brain.queue.put_nowait(("GO", 20, 270))
         brain.queue.put_nowait(("GRAB", 10, 500))
         brain.queue.put_nowait(("SWEEP", 180, True, 200))
         while not stop.is_pressed():
