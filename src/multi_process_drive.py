@@ -35,8 +35,9 @@ BED_LENGTH = 12         # length of a bed in centimeters
 START_SWEEP_ANGLE = 0   # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
-MAX_ROOM_DISTANCE = 45  # centimeters of straight-line motion before robot can safely assume it is in a room
+MAX_ROOM_DISTANCE = 50  # centimeters of straight-line motion before robot can safely assume it is in a room
 SWEEPS_PER_SWEEP = 2    # number of full ROMs swept per call of Megamind._sweep()
+FW_PER_SWEEP = 10       # centimeters of straight-line motion between every sweep
 
 
 class Processor:
@@ -266,7 +267,7 @@ class Megamind(Processor):
                     elif curr_color == "red":
                         # exit room if patient invalid
                         sweeper.queue.put(("STOP",))
-                        self.queue.put(("GO", 8, -speed))
+                        self.queue.put(("GO", 10, -speed))
                         self.queue.put(("GO_DOOR", -speed))
                         return True
             sleep(MEGAMIND_BUFFER*10)
@@ -281,7 +282,7 @@ class Megamind(Processor):
         #return
         # false if not found
         # queue instructions again
-        self.queue.put(("GO", 6, speed))
+        self.queue.put(("GO", FW_PER_SWEEP, speed))
         self.queue.put(("SWEEP", range_of_motion, center, speed))
         sleep(0.5)
         return False
