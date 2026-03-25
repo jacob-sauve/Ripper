@@ -247,8 +247,6 @@ class Megamind(Processor):
             start *= -1
             range_of_motion *= -1
             increment *= -1
-            self._go_with_sensors(6, LEFT*speed)
-            sleep(1)
         #turn(degrees)
         #forward(5cm)
         #grabber(-speed)
