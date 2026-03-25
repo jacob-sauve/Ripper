@@ -82,7 +82,8 @@ class Megamind(Processor):
             "GO": self._go_with_sensors,
             "TURN": self._turn_with_sensors,
             "GRAB": self._grab,
-            "SWEEP": self._sweep
+            "SWEEP": self._sweep,
+            "JINGLE": victor_jingle
         }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
@@ -239,7 +240,7 @@ class Megamind(Processor):
                 if color_readings:
                     curr_color = color_readings.get("COLOR")
                     if curr_color == "green":
-                        victor_jingle()
+                        self.queue.put(("JINGLE",))
                         return True
             sleep(MEGAMIND_BUFFER*10)
             start *= -1
