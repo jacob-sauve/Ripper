@@ -35,7 +35,7 @@ BED_LENGTH = 12         # length of a bed in centimeters
 START_SWEEP_ANGLE = 0   # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
-MAX_ROOM_DISTANCE = 45  # centimeters of straight-line motion before robot can safely assume it is in a room
+MAX_ROOM_DISTANCE = 70  # centimeters of straight-line motion before robot can safely assume it is in a room
 
 
 class Processor:
