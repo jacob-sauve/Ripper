@@ -82,7 +82,7 @@ class Megamind(Processor):
             "GO": self._go_with_sensors,
             "TURN": self._turn_with_sensors,
             "GRAB": self._grab,
-            "SWEEP": self._sweep,
+            "SWEEP": self._sweep_forward,
             "JINGLE": victor_jingle
         }
         # mapping of Sensor objects to their respective most recent readings
