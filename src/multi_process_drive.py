@@ -256,7 +256,7 @@ class Megamind(Processor):
         #return
         # false if not found
         # queue instructions again
-        self.queue.put(("GO", 5, speed))
+        self.queue.put(("GO", 6, speed))
         self.queue.put(("SWEEP", range_of_motion, center, speed))
         sleep(0.5)
         return False
@@ -430,7 +430,7 @@ if __name__ == "__main__":
         print(f"{cpu_count()=}\n\n")
         brain.queue.put_nowait(("GO", 50, 270))
         brain.queue.put_nowait(("GRAB", 10, 500))
-        brain.queue.put_nowait(("SWEEP", 180, True, 200))
+        brain.queue.put_nowait(("SWEEP", 180, True))
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
