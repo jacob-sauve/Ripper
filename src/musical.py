@@ -6,7 +6,7 @@ import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import reset_brick
 
-from utils.sound import Sound
+from utils.sound import Sound, Song
 
 # duration of a full note (float possible)
 rhythm = 0.5
