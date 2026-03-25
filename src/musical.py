@@ -37,10 +37,10 @@ def victor_jingle():
         ("F#4", rhythm*3/8), ("G#4", rhythm),
     ]
 
-    sounds = [Sound(duration=dur, pitch=pitch, volume=100) for pitch, dur in notes]
+    sounds = [Sound(duration=dur, pitch=pitch, volume=100) for pitch, dur in notes] 
+    sounds.append(chord)
 
     song = Song(sounds)
-    sounds.append(chord)
     song.compile()  # merges everything into one buffer
     song.play()
     song.wait_done()
