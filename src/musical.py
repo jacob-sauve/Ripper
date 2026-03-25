@@ -21,7 +21,7 @@ def make_sounds():
     mixed = array.array('h', [0] * len(chord_sounds[0].audio))
     for s in chord_sounds:
         for i in range(len(mixed)):
-            mixed[i] = max(-32768, min(32767, mixed[i] + s.audio[i]*2))
+            mixed[i] = max(-32768, min(32767, mixed[i] + s.audio[i]*1.5))
 
     chord = Sound(duration=chord_dur, pitch="A4", volume=100)
     chord.audio = mixed
