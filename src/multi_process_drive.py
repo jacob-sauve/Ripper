@@ -165,8 +165,8 @@ class Megamind(Processor):
         granular_iterations = self._distance_to_iterations(distance)
         left, right, touch, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
-                             self.processor_dict.get("TOUCH"),
                              self.processor_dict.get("GYRO"))
+        speed = -speed
         left.queue.put(("GO", speed))
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
@@ -258,6 +258,7 @@ class Megamind(Processor):
         # queue instructions again
         self.queue.put(("GO", 5))
         self.queue.put(("SWEEP",))
+        sleep(0.5)
         return False
 
 
