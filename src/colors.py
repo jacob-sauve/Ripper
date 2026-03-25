@@ -29,8 +29,9 @@ def classify(rgb, debugging=False):
     """
     # 1) normalise RGB values
     mag = math.sqrt(rgb[0]**2 + rgb[1]**2 + rgb[2]**2)
-    for i in range(3):
-        rgb[i] = rgb[i] / mag
+    if mag != 0:
+        for i in range(3):
+            rgb[i] = rgb[i] / mag
 
     # 2) calculate color's 'omega' value
     omega = math.atan(math.asin(rgb[2]) / math.atan(rgb[0] * rgb[2] / rgb[1]))
