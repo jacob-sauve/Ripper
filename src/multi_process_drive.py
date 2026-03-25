@@ -35,7 +35,6 @@ BED_LENGTH = 12         # length of a bed in centimeters
 START_SWEEP_ANGLE = 0   # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
-SENSOR_INIT_DELAY = 2   # seconds waited in addition to waitreadysensors before accessing current orientation
 
 
 class Processor:
@@ -97,8 +96,8 @@ class Megamind(Processor):
     def start(self):
         wait_ready_sensors(True)
         # to prevent compound microdrifts if correction doesn't manage to complete itself in time
-        sleep(SENSOR_INIT_DELAY)
-        self.initial_orientation = self.clearSensorQueues().get("GYRO").get("angle")
+        # include wait to let sensors initialise
+        self.initial_orientation = self.clearSensorQueues(wait=True).get("GYRO").get("angle")
         super().start()
     
     def addProcessor(self, processor):
@@ -128,7 +127,7 @@ class Megamind(Processor):
         self.process.terminate()
 
 
-    def clearSensorQueues(self):
+    def clearSensorQueues(self, wait = False):
         """Empty all sensor queues to have up-to-date data at front of queue"""
         sensors = (self.processor_dict.get("GYRO"),
                    self.processor_dict.get("COLOR"))
@@ -136,13 +135,13 @@ class Megamind(Processor):
         for sensor in sensors:
             if not (sensor is None):
                 try:
-                    queue_front = sensor.queue.get_nowait()
+                    queue_front = sensor.queue.get(wait)
                 #queue_front = sensor.queue.get()
                 except:
                     queue_front = None
                 while not (sensor.queue.empty()):
                     queue_front_dict[sensor] = queue_front
-                    queue_front = sensor.queue.get_nowait()
+                    queue_front = sensor.queue.get(wait)
         return queue_front_dict
 
     def manage_queue(self):
