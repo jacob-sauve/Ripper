@@ -99,6 +99,8 @@ class Megamind(Processor):
         # include wait to let sensors initialise
         try:
             self.initial_orientation = self.clearSensorQueues(wait=True).get("GYRO").get("angle")
+        except:
+            pass
         finally:
             super().start()
     
