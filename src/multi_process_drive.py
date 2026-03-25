@@ -240,6 +240,7 @@ class Megamind(Processor):
                 if color_readings:
                     curr_color = color_readings.get("COLOR")
                     if curr_color == "green":
+                        sweeper.queue.put(("STOP",))
                         self.queue.put(("JINGLE",))
                         return True
             sleep(MEGAMIND_BUFFER*10)
