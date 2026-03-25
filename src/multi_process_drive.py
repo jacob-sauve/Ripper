@@ -383,7 +383,6 @@ class Vision(Processor):
                 return {"press":is_pressed}
 
     def color_measure(self, *args):
-        return False
         sleep(0.01)
         if self.name != "COLOR":
             return False
