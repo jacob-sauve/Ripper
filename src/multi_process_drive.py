@@ -383,11 +383,14 @@ class Vision(Processor):
                 return {"press":is_pressed}
 
     def color_measure(self, *args):
+        sleep(0.01)
         if self.name != "COLOR":
             return False
         rgb = self.sensor_pin.get_rgb()
-        color = classify(rgb, debugging=True)
-        output = {"COLOR": color}
+        output = dict()
+        if rgb:
+            color = classify(rgb, debugging=True)
+            output["COLOR"] = color
         return output
 
     def manage_queue(self):
