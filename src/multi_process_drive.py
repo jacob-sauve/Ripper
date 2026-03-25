@@ -163,9 +163,8 @@ class Megamind(Processor):
     def _go_with_sensors(self, distance, speed=MIN_SPEED):
         """go a certain distance in a straight line. uses gyro for drift mgmt."""
         granular_iterations = self._distance_to_iterations(distance)
-        left, right, touch, gyro = (self.processor_dict.get("LEFT"),
+        left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
-                             self.processor_dict.get("TOUCH"),
                              self.processor_dict.get("GYRO"))
         left.queue.put(("GO", speed))
         right.queue.put(("GO", speed))
@@ -222,10 +221,14 @@ class Megamind(Processor):
         grabber.queue.put(("STOP",))
         return True
 
-    def _sweep(self, range_of_motion, center=True, speed=MIN_SPEED):
+    def _sweep_forward(self, range_of_motion, center=True, speed=MIN_SPEED):
         #granular_iterations = self._degrees_to_iterations(degrees, speed)
-        sweeper, color = (self.processor_dict.get("SWEEPER"), self.processor_dict.get("COLOR"))
-
+        left, right, sweeper, color, gyro = (self.processor_dict.get("LEFT"),
+                                            self.processor_dict.get("RIGHT"),
+                                            self.processor_dict.get("SWEEPER"),
+                                            self.processor_dict.get("COLOR"),
+                                            self.processor_dict.get("GYRO"))
+        # center if specified
         if center:
             start = START_SWEEP_ANGLE - range_of_motion // 2
         else:
@@ -233,6 +236,7 @@ class Megamind(Processor):
         # set start angle 
         sweeper.queue.put(("ANGLE", start-START_SWEEP_ANGLE, speed))
         increment = SWEEP_MINIMUM_TURN
+
         while True:
             for degrees in range(start, range_of_motion + start, increment):
                 sweeper.queue.put(("ANGLE", degrees, speed))
@@ -247,7 +251,36 @@ class Megamind(Processor):
             start *= -1
             range_of_motion *= -1
             increment *= -1
-            self._go_with_sensors(5, LEFT * speed)
+            # yanked from _go_with_sensors, hopefully this works now
+            granular_iterations = self._distance_to_iterations(5)
+            left.queue.put(("GO", speed))
+            right.queue.put(("GO", speed))
+            # get most recent gyro reading, if existent
+            # take it as reference for "straightness"
+            initial_angle = gyro.queue.get().get("angle")
+            for i in range(granular_iterations):
+                gyro_readings = gyro.queue.get()
+                if gyro_readings:
+                    drift =  gyro_readings.get("angle") - initial_angle
+                    # flip these corrections if they're inverted
+                    if drift > MAX_DRIFT:
+                        print("right drift. correcting...")
+                        # right wheel lagging
+                        right.queue.put(("GO", speed * DRIFT_CORRECTION))
+                        left.queue.put(("GO", speed / DRIFT_CORRECTION))
+                    elif drift < -MAX_DRIFT:
+                        print("left drift. correcting...")
+                        # left wheel lagging
+                        right.queue.put(("GO", speed / DRIFT_CORRECTION))
+                        left.queue.put(("GO", speed * DRIFT_CORRECTION))
+                    else:
+                        # all good
+                        left.queue.put(("GO", speed))
+                        right.queue.put(("GO", speed))
+                sleep(MEGAMIND_BUFFER)
+                left.queue.put(("STOP",))
+                right.queue.put(("STOP",))
+
         #turn(degrees)
         #forward(5cm)
         #grabber(-speed)
