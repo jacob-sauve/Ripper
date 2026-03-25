@@ -182,7 +182,7 @@ class Megamind(Processor):
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
         # take it as reference for "straightness"
-        if self.initial_orientation is None:
+        if not (self.initial_orientation is None):
             initial_angle = self.initial_orientation + self.current_direction
         else:
             initial_angle = gyro.queue.get().get("angle")
