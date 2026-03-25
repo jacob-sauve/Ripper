@@ -34,6 +34,7 @@ DRIFT_CORRECTION = 1.05 # percentage (decimal form) of desired speed applied to 
 BED_LENGTH = 12         # length of a bed in centimeters
 START_SWEEP_ANGLE = 0   # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
+START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 
 
 class Processor:
@@ -87,10 +88,15 @@ class Megamind(Processor):
         }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
+        self.initial_orientation = None # for calibration of direction over multiple func calls
+        # to keep track of where we WANT to be facing
+        self.current_direction = START_DIRECTION # for DESIRED direction, NOT true direction
         self.start()
 
     def start(self):
         wait_ready_sensors(True)
+        # to prevent compound microdrifts if correction doesn't manage to complete itself in time
+        self.initial_orientation = self.clearSensorQueues().get("GYRO").get("angle")
         super().start()
     
     def addProcessor(self, processor):
@@ -171,7 +177,7 @@ class Megamind(Processor):
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
         # take it as reference for "straightness"
-        initial_angle = gyro.queue.get().get("angle")
+        initial_angle = self.initial_orientation + self.current_direction
         for i in range(granular_iterations):
             gyro_readings = gyro.queue.get()
             if gyro_readings:
