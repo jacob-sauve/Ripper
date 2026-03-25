@@ -97,8 +97,10 @@ class Megamind(Processor):
         wait_ready_sensors(True)
         # to prevent compound microdrifts if correction doesn't manage to complete itself in time
         # include wait to let sensors initialise
-        self.initial_orientation = self.clearSensorQueues(wait=True).get("GYRO").get("angle")
-        super().start()
+        try:
+            self.initial_orientation = self.clearSensorQueues(wait=True).get("GYRO").get("angle")
+        finally:
+            super().start()
     
     def addProcessor(self, processor):
         """connect a new processor (sensor/actuator)"""
@@ -178,7 +180,10 @@ class Megamind(Processor):
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
         # take it as reference for "straightness"
-        initial_angle = self.initial_orientation + self.current_direction
+        if self.initial_orientation is None:
+            initial_angle = self.initial_orientation + self.current_direction
+        else:
+            initial_angle = gyro.queue.get().get("angle")
         for i in range(granular_iterations):
             gyro_readings = gyro.queue.get()
             if gyro_readings:
