@@ -22,13 +22,12 @@ def victor_jingle():
         ("F#4", rhythm*3/8), ("G#4", rhythm),
     ]
 
-    # pre-compute all sounds
     sounds = [Sound(duration=dur, pitch=pitch, volume=100) for pitch, dur in notes]
 
-    for s in sounds:
-        s.play()
-        s.wait_done()
-
+    song = Song(sounds)
+    song.compile()  # merges everything into one buffer
+    song.play()
+    song.wait_done()
 
 #!/usr/bin/env python3
 # main loop
