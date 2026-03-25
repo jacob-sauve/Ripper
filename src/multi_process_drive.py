@@ -239,7 +239,7 @@ class Megamind(Processor):
                 color_readings = color.queue.get()
                 if color_readings:
                     curr_color = color_readings.get("COLOR")
-                    print(f"{color_readings.get(\"RGB\") = }")
+                    print(f"{color_readings.get('RGB') = }")
                     if curr_color == "green":
                         sweeper.queue.put(("STOP",))
                         self.queue.put(("JINGLE",))
