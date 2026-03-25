@@ -11,94 +11,30 @@ from utils.sound import Sound
 # duration of a full note (float possible)
 rhythm = 0.5
 
-
 def victor_jingle():
-    tone1 = Sound(duration = rhythm/8, pitch = "A3", volume=100)
+    notes = [
+        ("A3", rhythm/8), ("B3", rhythm/8), ("C4", rhythm*3/8),
+        ("A3", rhythm*3/8), ("F3", rhythm/4), ("G3", rhythm/2),
+        ("C4", rhythm/8), ("D4", rhythm/8), ("Eb4", rhythm*3/8),
+        ("C4", rhythm*3/8), ("G#3", rhythm/4), ("Bb3", rhythm/2),
+        ("Eb4", rhythm/8), ("F4", rhythm/8), ("F#4", rhythm*3/8),
+        ("Eb4", rhythm*3/8), ("B3", rhythm/4), ("Db4", rhythm*3/8),
+        ("F#4", rhythm*3/8), ("G#4", rhythm),
+    ]
 
-    tone1.play()
+    current = Sound(duration=notes[0][1], pitch=notes[0][0], volume=100)
+    current.play()
 
-    tone1 = Sound(duration = rhythm/8, volume = 100, pitch = "B3")
+    for pitch, dur in notes[1:]:
+        # prepare next note when current is playing
+        nxt = Sound(duration=dur, pitch=pitch, volume=100)
+        current.wait_done()  # wait for current to finish
+        nxt.play()           
+        current = nxt        
 
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm*3/8, volume = 100, pitch = "C4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm*3/8, volume = 100, pitch = "A3")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm/4, volume = 100, pitch = "F3")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm/2, volume = 100, pitch = "G3")
-
-    tone1.play()
-
-
-    tone1 = Sound(duration = rhythm/8, volume = 100, pitch = "C4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm/8, volume = 100, pitch = "D4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm*3/8, volume = 100, pitch = "Eb4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm*3/8, volume = 100, pitch = "C4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm/4, volume = 100, pitch = "G#3")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm/2, volume = 100, pitch = "Bb3")
-
-    tone1.play()
-
-
-    tone1 = Sound(duration = rhythm/8, volume = 100, pitch = "Eb4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm/8, volume = 100, pitch = "F4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm*3/8, volume = 100, pitch = "F#4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm*3/8, volume = 100, pitch = "Eb4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm/4, volume = 100, pitch = "B3")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm*3/8, volume = 100, pitch = "Db4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm*3/8, volume = 100, pitch = "F#4")
-
-    tone1.play()
-
-    tone1 = Sound(duration = rhythm, volume = 100, pitch = "G#4")
-
-    tone1.play()
+    current.wait_done()
 
 #!/usr/bin/env python3
-
-
-
 # main loop
 if __name__ == "__main__":
     try:
