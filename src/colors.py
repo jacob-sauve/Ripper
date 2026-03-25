@@ -6,7 +6,9 @@ v 2.0
 """
 
 # imports
+import sys, os
 import math
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import BP, Motor, reset_brick
 
 
@@ -28,25 +30,28 @@ def classify(rgb, debugging=False):
         color       -- string indicating which colour the (R,G,B) corresponds to
     """
     # 1) normalise RGB values
-    mag = math.sqrt(rgb[0]**2 + rgb[1]**2 + rgb[2]**2)
-    if mag != 0:
-        for i in range(3):
-            rgb[i] = rgb[i] / mag
-    else:
-        return "false color mag = 0"
+    try:
+        mag = math.sqrt(rgb[0]**2 + rgb[1]**2 + rgb[2]**2)
+        if mag != 0:
+            for i in range(3):
+                rgb[i] = rgb[i] / mag
+        else:
+            return "false color mag = 0"
 
-    # 2) calculate color's 'omega' value
-    if rgb[1] != 0:
-        omega = math.atan(math.asin(rgb[2]) / math.atan(rgb[0] * rgb[2] / rgb[1]))
-    else:
-        return "false color rgb[1] = 0"
-    # 3) classify color
-    for threshold, color in OMEGA_THRESHOLDS:
-        if (omega <= threshold):
-            if debugging:
-                print(omega)
-                print(color)
-            return color
+        # 2) calculate color's 'omega' value
+        if rgb[1] != 0:
+            omega = math.atan(math.asin(rgb[2]) / math.atan(rgb[0] * rgb[2] / rgb[1]))
+        else:
+            return "false color rgb[1] = 0"
+        # 3) classify color
+        for threshold, color in OMEGA_THRESHOLDS:
+            if (omega <= threshold):
+                if debugging:
+                    print(omega)
+                    print(color)
+                return color
+    except:
+        return "bad value"
 
 if __name__ == "__main__":
     try:
