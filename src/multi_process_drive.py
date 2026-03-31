@@ -260,13 +260,13 @@ class Megamind(Processor):
 
     def _grab(self, distance, speed=MIN_SPEED):
         granular_iterations = self._distance_to_iterations(distance, radius=R_GRABBER)
-        grabber = self.processor_dict.get("grabber")
+        grabber = self.processor_dict.get("GRABBER")
 
-        grabber.queue.put(("go", speed))
+        grabber.queue.put(("GO", speed))
 
         for i in range(granular_iterations):
             print(f"waiting... iteration {i}")
-            sleep(mEGAMIND_BUFFER)
+            sleep(MEGAMIND_BUFFER)
 
         grabber.queue.put(("STOP",))
         return True
