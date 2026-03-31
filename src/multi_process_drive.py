@@ -208,6 +208,18 @@ class Megamind(Processor):
                 # flip these corrections if they're inverted
                 #print(f"{drift=}")
                 if (drift > MAX_DRIFT and speed < 0) or (drift < -MAX_DRIFT and speed > 0):
+                    # NEW LEFT DRIFT
+                   print("left drift. correcting...")
+                    # left wheel lagging
+                    #right.queue.put(("STOP",))
+                    #left.queue.put(("STOP",))
+                    right.queue.put(("GO", speed / DRIFT_CORRECTION))
+                    left.queue.put(("GO", speed * DRIFT_CORRECTION))
+                    #right.queue.put(("STOP",))
+                    #left.queue.put(("GO", speed))
+
+                elif (drift < -MAX_DRIFT and speed < 0) or (drift > MAX_DRIFT and speed > 0):
+                    # NEW RIGHT DRIFT
                     print("right drift. correcting...")
                     # right wheel lagging
                     #right.queue.put(("STOP",))
@@ -216,15 +228,7 @@ class Megamind(Processor):
                     left.queue.put(("GO", speed / DRIFT_CORRECTION))
                     #right.queue.put(("GO", speed))
                     #left.queue.put(("STOP",))
-                elif (drift < -MAX_DRIFT and speed < 0) or (drift > MAX_DRIFT and speed > 0):
-                    print("left drift. correcting...")
-                    # left wheel lagging
-                    #right.queue.put(("STOP",))
-                    #left.queue.put(("STOP",))
-                    right.queue.put(("GO", speed / DRIFT_CORRECTION))
-                    left.queue.put(("GO", speed * DRIFT_CORRECTION))
-                    #right.queue.put(("STOP",))
-                    #left.queue.put(("GO", speed))
+
                 else:
                     # all good
                     left.queue.put(("GO", speed))
