@@ -31,7 +31,7 @@ COLOR_THRESHOLDS = [
     (55,   165, 0.25, 0.15, "green"),
 ]
 
-def classify(rgb, min_saturation=0.25, min_value = 0.15):
+def classify(rgb, debugging = False):
     try:
         if 0 in rgb:
             return "false_color 0 in rgb"
@@ -41,6 +41,9 @@ def classify(rgb, min_saturation=0.25, min_value = 0.15):
 
         for hue_min, hue_max, sat_min, val_min, color in COLOR_THRESHOLDS:
             if hue_min <= hue <= hue_max and s >= sat_min and v >= val_min:
+                if debugging:
+                    print(f"hsv:{h},{s},{v}")
+                    print(color)
                 return color
         return "ambiguous"
 
