@@ -564,7 +564,9 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        brain.queue.put_nowait(("TURN", 90))
+        while True:
+            desired_turn = int(input("turn angle desired: "))
+            brain.queue.put_nowait(("TURN", desired_turn))
         #brain.queue.put_nowait(("GO", 40, 320))
         #brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
         #brain.queue.put_nowait(("GO", 15, 320))
