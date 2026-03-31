@@ -243,12 +243,15 @@ class Megamind(Processor):
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
-        gyro_readings = gyro.queue.safeGet(False)
+        gyro_readings = gyro.queue.safeGet(True)
         
         direction = DIRECTION if degrees > 0 else -DIRECTION
         target_angle = (self.current_direction + degrees) % 360
         curr_angle = gyro_readings.get("angle")
         while (curr_angle != target_angle):
+            gyro_readings = gyro.queue.safeGet(False)
+            if gyro_readings not is None:
+                curr_angle = gyro_readings.get("angle")
             left.queue.put(("GO", direction * speed))
             right.queue.put(("GO", -direction * speed))
             sleep(MEGAMIND_BUFFER)
