@@ -20,7 +20,8 @@ from musical import victor_jingle
 
 
 # constants
-R_GRABBER = 1.8
+DIRECTION = -1          # defines which way is forward versus backwards (e.g. -1 means negative speed --> forward motion)
+R_GRABBER = 1.8         # grabber motor turn radius in cm
 R_WHEEL = 2.2           # wheel radius in cm
 R_ROBOT = 7.52          # middle wheel to middle wheel in cm
 MIN_SPEED = 270         # wheel rotation speed in degrees.s-1
@@ -182,7 +183,8 @@ class Megamind(Processor):
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
-        speed = -speed
+        # account for way the wheels are mounted when determining what is fw/bw
+        speed = DIRECTION * speed
         left.queue.put(("GO", speed))
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
@@ -501,14 +503,15 @@ class Vision(Processor):
 if __name__ == "__main__":
     processors = {
             "GYRO": Vision("GYRO", 3),
-            "LEFT": Driver("LEFT", "A"),
-            "RIGHT": Driver("RIGHT", "D"),
+            "LEFT": Driver("LEFT", "D"),
+            "RIGHT": Driver("RIGHT", "A"),
             "GRABBER": Driver("GRABBER", "B"),
             "SWEEPER": Driver("SWEEPER", "C"),
-            "COLOR": Vision("COLOR", 2)
+            "COLOR": Vision("COLOR", 1)
         }
     brain = Megamind(processors)
-    stop = TouchSensor(1)
+    # EMERGENCY STOP (managed by main loop)
+    stop = TouchSensor(2)
     try:
         import titlecard
         titlecard.show()
