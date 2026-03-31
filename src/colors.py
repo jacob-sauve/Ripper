@@ -23,12 +23,15 @@ OMEGA_THRESHOLDS = [
         ]
 
 # (hue_min, hue_max, sat_min, val_min, color_name)
+# hue really defines the colour, while saturation and brightness depend on lighting.
+# So guards for sat and brightness can be adjusted to a pretty low value
+# we just need those two low enough so it takes out outliers
 COLOR_THRESHOLDS = [
-    (0,    10,  0.25, 0.15, "red"),
-    (340,  360, 0.25, 0.15, "red"),
-    (10,   25,  0.25, 0.15, "orange"),
-    (25,   55,  0.25, 0.15, "yellow"),
-    (55,   165, 0.25, 0.15, "green"),
+    (0,    10,  0.1, 0.05, "red"),
+    (340,  360, 0.1, 0.05, "red"),
+    (10,   25,  0.1, 0.05, "orange"),
+    (25,   55,  0.1, 0.05, "yellow"),
+    (55,   165, 0.1, 0.05, "green"),
 ]
 
 def classify(rgb, debugging = False):
