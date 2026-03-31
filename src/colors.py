@@ -11,11 +11,11 @@ from utils.brick import BP, Motor, reset_brick
 
 
 # constants
-OMEGA_THRESHOLDS = [        # max omega values at which colors are classified
-        (0.2, "red"),
-        (0.5, "orange"),
-        (0.79, "yellow"),
-        (1.1, "green") # i.e., all omega values below 1.1 are green
+OMEGA_THRESHOLDS = [        # range of omega values at which colors are classified
+        (0.15, 0.25, "red"),
+        (0.42, 0.60, "orange"),
+        (0.68, 0.75, "yellow"),
+        (0.91, 1.1, "green") # i.e., all omega values 0.91<=w<=1.1 are green
         ]
 
 
@@ -42,8 +42,8 @@ def classify(rgb, debugging=False):
         else:
             return "false color rgb[1] = 0"
         # 3) classify color
-        for threshold, color in OMEGA_THRESHOLDS:
-            if (omega <= threshold):
+        for minimum, maximum, color in OMEGA_THRESHOLDS:
+            if (minimum <= omega and omega <= maximum):
                 if debugging:
                     print(omega)
                     print(color)
