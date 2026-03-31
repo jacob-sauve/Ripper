@@ -33,9 +33,6 @@ COLOR_THRESHOLDS = [
 
 def classify(rgb, debugging = False):
     try:
-        if 0 in rgb:
-            return "false_color 0 in rgb"
-
         h, s, v = rgb_to_hsv(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255)
         hue = h*360
 
