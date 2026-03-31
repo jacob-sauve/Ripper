@@ -45,6 +45,9 @@ def classify(rgb, debugging = False):
                     print(f"hsv:{h},{s},{v}")
                     print(color)
                 return color
+            else:
+                if debugging:
+                    print(f"hsv:{h},{s},{v}")
         return "ambiguous"
 
     except Exception:
