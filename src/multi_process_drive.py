@@ -209,7 +209,7 @@ class Megamind(Processor):
                 #print(f"{drift=}")
                 if (drift > MAX_DRIFT and speed < 0) or (drift < -MAX_DRIFT and speed > 0):
                     # NEW LEFT DRIFT
-                   print("left drift. correcting...")
+                    print("left drift. correcting...")
                     # left wheel lagging
                     #right.queue.put(("STOP",))
                     #left.queue.put(("STOP",))
