@@ -20,7 +20,7 @@ from musical import victor_jingle
 
 
 # constants
-DIRECTION = -1          # defines which way is forward versus backwards (e.g. -1 means negative speed --> forward motion)
+DIRECTION = 1           # defines which way is forward versus backwards (e.g. -1 means negative speed --> forward motion)
 R_GRABBER = 1.8         # grabber motor turn radius in cm
 R_WHEEL = 2.2           # wheel radius in cm
 R_ROBOT = 7.52          # middle wheel to middle wheel in cm
@@ -39,6 +39,14 @@ SWEEPS_PER_SWEEP = 2    # number of full ROMs swept per call of Megamind._sweep(
 FW_PER_SWEEP = 10       # centimeters of straight-line motion between every sweep
 
 
+def safeGet(self, wait=False):
+    """Get from queue wrapped in empty check, None if empty"""
+    if not self.empty():
+        return self.get(wait)
+    return None
+
+
+
 class Processor:
     """Parent class for all process wrapper classes"""
     def __init__(self, name):
@@ -47,6 +55,8 @@ class Processor:
         self.process = Process(target=self.manage_queue)    # start process with queue parsing loop
 
     def start(self):
+        # add safeGet method at RunTime
+        self.queue.safeGet = safeGet
         self.process.start()
 
     def manage_queue(self):
@@ -143,19 +153,19 @@ class Megamind(Processor):
         for sensor in sensors:
             if not (sensor is None):
                 try:
-                    queue_front = sensor.queue.get(wait)
-                #queue_front = sensor.queue.get()
+                    queue_front = sensor.queue.safeGet(wait)
+                #queue_front = sensor.queue.safeGet()
                 except:
                     queue_front = None
                 while not (sensor.queue.empty()):
                     queue_front_dict[sensor] = queue_front
-                    queue_front = sensor.queue.get(wait)
+                    queue_front = sensor.queue.safeGet(wait)
         return queue_front_dict
 
     def manage_queue(self):
         """probably should rework --> could easily get stuck in busy mode"""
         while True: 
-            instruction = self.queue.get()
+            instruction = self.queue.safeGet()
             if instruction:
                 print(instruction)
                 funcname, args = instruction[0], instruction[1:]
@@ -190,9 +200,9 @@ class Megamind(Processor):
         if not (self.initial_orientation is None):
             initial_angle = self.initial_orientation + self.current_direction
         else:
-            initial_angle = gyro.queue.get().get("angle")
+            initial_angle = gyro.queue.safeGet(True).get("angle")
         for i in range(granular_iterations):
-            gyro_readings = gyro.queue.get(False)
+            gyro_readings = gyro.queue.safeGet(False)
             if gyro_readings:
                 drift =  gyro_readings.get("angle") - initial_angle
                 # flip these corrections if they're inverted
@@ -229,7 +239,7 @@ class Megamind(Processor):
         left, right, gyro = (self.processor_dict.get("LEFT"),
             self.processor_dict.get("RIGHT"),
             self.processor_dict.get("GYRO"))
-        gyro_readings = gyro.queue.get(False)        
+        gyro_readings = gyro.queue.safeGet(False)        
         while True:
             if (degrees > 0 and gyro_readings is not None):
                 # turn right
@@ -275,7 +285,7 @@ class Megamind(Processor):
         for i in range(SWEEPS_PER_SWEEP):
             for degrees in range(start, range_of_motion + start, increment):
                 sweeper.queue.put(("ANGLE", degrees, speed))
-                color_readings = color.queue.get()
+                color_readings = color.queue.safeGet()
                 if color_readings:
                     curr_color = color_readings.get("color")
                     print(f"{color_readings.get('rgb') = }")
@@ -324,10 +334,10 @@ class Megamind(Processor):
         if not (self.initial_orientation is None):
             initial_angle = self.initial_orientation + self.current_direction
         else:
-            initial_angle = gyro.queue.get().get("angle")
+            initial_angle = gyro.queue.safeGet().get("angle")
         for i in range(granular_iterations):
-            gyro_readings = gyro.queue.get(False)
-            color_readings = color.queue.get(False)
+            gyro_readings = gyro.queue.safeGet(False)
+            color_readings = color.queue.safeGet(False)
             if color_readings:
                 curr_color = color_readings.get("color")
                 if curr_color and curr_color == "orange":
@@ -438,7 +448,7 @@ class Driver(Processor):
 
     def manage_queue(self):
         while True:
-            instruction = self.queue.get()
+            instruction = self.queue.safeGet()
             if instruction:
                 funcname, args = instruction[0], instruction[1:]
                 self.funcdict[funcname](*args)
