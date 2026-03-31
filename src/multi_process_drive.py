@@ -564,10 +564,11 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        brain.queue.put_nowait(("GO", 40, 320))
-        brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
-        brain.queue.put_nowait(("GO", 15, 320))
-        brain.queue.put_nowait(("SWEEP", 180, True, 90))
+        brain.queue.put_nowait(("TURN", 90))
+        #brain.queue.put_nowait(("GO", 40, 320))
+        #brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
+        #brain.queue.put_nowait(("GO", 15, 320))
+        #brain.queue.put_nowait(("SWEEP", 180, True, 90))
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
