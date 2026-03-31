@@ -306,8 +306,8 @@ class Megamind(Processor):
         else:
             initial_angle = gyro.queue.get().get("angle")
         for i in range(granular_iterations):
-            gyro_readings = gyro.queue.get()
-            color_readings = color.queue.get()
+            gyro_readings = gyro.queue.get(False)
+            color_readings = color.queue.get(False)
             if color_readings:
                 curr_color = color_readings.get("color")
                 if curr_color and curr_color == "orange":
