@@ -250,7 +250,7 @@ class Megamind(Processor):
         curr_angle = gyro_readings.get("angle")
         while (curr_angle != target_angle):
             gyro_readings = gyro.queue.safeGet(False)
-            if gyro_readings not is None:
+            if not (gyro_readings is None):
                 curr_angle = gyro_readings.get("angle")
             left.queue.put(("GO", direction * speed))
             right.queue.put(("GO", -direction * speed))
