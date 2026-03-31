@@ -251,12 +251,17 @@ class Megamind(Processor):
                     left.queue.put(("GO", speed * DIRECTION)) 
                     right.queue.put(("GO", -speed * DIRECTION))
                     sleep(MEGAMIND_BUFFER)
+                    print(f"{gyro_readings=}")
+                    color_readings = color.queue.safeGet(False)
             elif (degrees < 0 and gyro_readings is not None):
                 # turn left
                 while (gyro_readings.get("angle") - self.current_direction) % 360 > degrees:
                     left.queue.put(("GO", -speed * DIRECTION))
                     right.queue.put(("GO", speed * DIRECTION))
                     sleep(MEGAMIND_BUFFER)
+                    print(f"{gyro_readings=}")
+                    color_readings = color.queue.safeGet(False)
+        print(f"stopped turning, final gyro reading: {gyro_readings}")
         self.current_direction = (self.current_direction + degrees) % 360
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
