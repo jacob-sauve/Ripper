@@ -243,22 +243,23 @@ class Megamind(Processor):
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
-        while True:
-            gyro_readings = gyro.queue.safeGet(False)        
-            if (degrees > 0 and gyro_readings is not None):
-                # turn right
-                while (gyro_readings.get("angle") - self.current_direction) % 360 < degrees:
-                    left.queue.put(("GO", speed * DIRECTION)) 
-                    right.queue.put(("GO", -speed * DIRECTION))
-                    sleep(MEGAMIND_BUFFER)
-                    print(f"{gyro_readings=}")
-            elif (degrees < 0 and gyro_readings is not None):
-                # turn left
-                while (gyro_readings.get("angle") - self.current_direction) % 360 > degrees:
-                    left.queue.put(("GO", -speed * DIRECTION))
-                    right.queue.put(("GO", speed * DIRECTION))
-                    sleep(MEGAMIND_BUFFER)
-                    print(f"{gyro_readings=}")
+        gyro_readings = gyro.queue.safeGet(False)        
+        if (degrees > 0 and gyro_readings is not None):
+            # turn right
+            while (gyro_readings.get("angle") - self.current_direction) % 360 < degrees:
+                gyro_readings = gyro.queue.safeGet(False)        
+                left.queue.put(("GO", speed * DIRECTION)) 
+                right.queue.put(("GO", -speed * DIRECTION))
+                sleep(MEGAMIND_BUFFER)
+                print(f"{gyro_readings=}")
+        elif (degrees < 0 and gyro_readings is not None):
+            # turn left
+            while (gyro_readings.get("angle") - self.current_direction) % 360 > degrees:
+                gyro_readings = gyro.queue.safeGet(False)        
+                left.queue.put(("GO", -speed * DIRECTION))
+                right.queue.put(("GO", speed * DIRECTION))
+                sleep(MEGAMIND_BUFFER)
+                print(f"{gyro_readings=}")
         print(f"stopped turning, final gyro reading: {gyro_readings}")
         self.current_direction = (self.current_direction + degrees) % 360
         left.queue.put(("STOP",))
