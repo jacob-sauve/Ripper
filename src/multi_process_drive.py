@@ -246,7 +246,7 @@ class Megamind(Processor):
         gyro_readings = gyro.queue.safeGet(True)
         
         direction = DIRECTION if degrees > 0 else -DIRECTION
-        target_angle = (self.current_direction + degrees) % 360
+        target_angle = self.current_direction + degrees # gyro does not mod by 360
         curr_angle = gyro_readings.get("angle")
         while (curr_angle != target_angle):
             gyro_readings = gyro.queue.safeGet(False)
