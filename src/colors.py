@@ -27,11 +27,11 @@ OMEGA_THRESHOLDS = [
 # So guards for sat and brightness can be adjusted to a pretty low value
 # we just need those two low enough so it takes out outliers
 COLOR_THRESHOLDS = [
-    (0,    10,  0.1, 0.05, "red"),
-    (340,  360, 0.1, 0.05, "red"),
-    (10,   25,  0.1, 0.05, "orange"),
-    (25,   55,  0.1, 0.05, "yellow"),
-    (55,   165, 0.1, 0.05, "green"),
+    (0,    10,  0.65, 0.7, "red"),
+    (340,  360, 0.65, 0.7, "red"),
+    (10,   25,  0.65, 0.7, "orange"),
+    (25,   55,  0.65, 0.7, "yellow"),
+    (55,   165, 0.65, 0.7, "green"),
 ]
 
 def classify(rgb, debugging = False):
@@ -109,12 +109,6 @@ def rgb_to_hsv(r,g,b):
         hue = 4.0+sg-sr
     hue = (hue/6.0) % 1.0
     return hue, saturation, brightness
-
-
-
-
-
-
 
 if __name__ == "__main__":
     try:
