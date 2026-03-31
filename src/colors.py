@@ -22,8 +22,37 @@ OMEGA_THRESHOLDS = [
         (0.91, 1.1, "green")
         ]
 
+# (hue_min, hue_max, sat_min, val_min, color_name)
+COLOR_THRESHOLDS = [
+    (0,    10,  0.25, 0.15, "red"),
+    (340,  360, 0.25, 0.15, "red"),
+    (10,   25,  0.25, 0.15, "orange"),
+    (25,   55,  0.25, 0.15, "yellow"),
+    (55,   165, 0.25, 0.15, "green"),
+]
 
-def classify(rgb, debugging=False):
+def classify(rgb, min_saturation=0.25, min_value = 0.15):
+    try:
+        if 0 in rgb:
+            return "false_color 0 in rgb"
+
+        h, s, v = rgb_to_hsv(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255)
+        hue = h*360
+
+        for hue_min, hue_max, sat_min, val_min, color in COLOR_THRESHOLDS:
+            if hue_min <= hue <= hue_max and s >= sat_min and v >= val_min:
+                return color
+        return "ambiguous"
+
+    except Exception:
+        return "bad value"
+
+
+
+
+
+
+def classify_color(rgb, debugging=False):
     """Classify rgb value as one of the four saved colours
     Keyword arguments:
         rgb         -- list of (R,G,B) values to be classified
@@ -54,6 +83,34 @@ def classify(rgb, debugging=False):
                 return color
     except Exception:
         return "bad value"
+
+# Very inspired by colorsys
+def rgb_to_hsv(r,g,b):
+    """TO DO
+        """
+    maxval = max(r,g,b)
+    minval = min(r,g,b)
+    rangeval = maxval - minval
+    brightness = maxval
+    if maxval == minval:
+        return 0.0,0.0, brightness
+    saturation = rangeval / maxval
+    sr = (maxval-r)/ rangeval
+    sg = (maxval-g)/ rangeval
+    sb = (maxval-b)/ rangeval
+    if r == maxval:
+        hue = sb - sg
+    elif g == maxval:
+        hue = 2.0+sr - sb
+    else:
+        hue = 4.0+sg-sr
+    hue = (hue/6.0) % 1.0
+    return hue, saturation, brightness
+
+
+
+
+
 
 
 if __name__ == "__main__":
