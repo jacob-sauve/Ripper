@@ -25,8 +25,6 @@ R_GRABBER = 1.8         # grabber motor turn radius in cm
 R_WHEEL = 2.2           # wheel radius in cm
 R_ROBOT = 7.52          # middle wheel to middle wheel in cm
 MIN_SPEED = 270         # wheel rotation speed in degrees.s-1
-LEFT = -1               # multiplier for correct rotations of left wheel
-RIGHT = -1              # multiplier for correct rotations of right wheel
 GRABBER = -1            # multiplier for correct rotations of grabber (should be pickup direction)
 SWEEPER = +1            # multiplier for correct rotations of front-mounted colour sensor sweep motor
 MEGAMIND_BUFFER = 0.005 # seconds between Megamind queue parsings
@@ -194,7 +192,7 @@ class Megamind(Processor):
         else:
             initial_angle = gyro.queue.get().get("angle")
         for i in range(granular_iterations):
-            gyro_readings = gyro.queue.get()
+            gyro_readings = gyro.queue.get(False)
             if gyro_readings:
                 drift =  gyro_readings.get("angle") - initial_angle
                 # flip these corrections if they're inverted
