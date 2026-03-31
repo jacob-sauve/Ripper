@@ -39,12 +39,11 @@ SWEEPS_PER_SWEEP = 2    # number of full ROMs swept per call of Megamind._sweep(
 FW_PER_SWEEP = 10       # centimeters of straight-line motion between every sweep
 
 
-def safeGet(self, wait=False):
-    """Get from queue wrapped in empty check, None if empty"""
-    if not self.empty():
-        return self.get(wait)
-    return None
-
+def safeGet(queue):
+    """Get from queue wrapped in empty check, None if empty
+    returns the method that will be called in future
+    """
+    return lambda wait=False: queue.get(wait) if not queue.empty() else None
 
 
 class Processor:
@@ -56,7 +55,7 @@ class Processor:
 
     def start(self):
         # add safeGet method at RunTime
-        self.queue.safeGet = safeGet
+        self.queue.safeGet = safeGet(self.queue)
         self.process.start()
 
     def manage_queue(self):
