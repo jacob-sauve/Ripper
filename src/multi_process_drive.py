@@ -6,7 +6,8 @@ Implemented using multiprocessing.
 """
 
 # imports
-import sys, os
+import sys
+import os
 import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -323,7 +324,7 @@ class Megamind(Processor):
                                     self.processor_dict.get("RIGHT"),
                                     self.processor_dict.get("GYRO"),
                                     self.processor_dict.get("COLOR"))
-        speed = -speed
+        speed = DIRECTION * speed
         left.queue.put(("GO", speed))
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
