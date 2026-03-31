@@ -92,14 +92,14 @@ class Megamind(Processor):
         # dictionnary mapping processor (sensor or actuator) name to Processor object
         self.processor_dict = processor_dict
         self.funcdict = {
-            "GO": self._go_with_sensors,
-            "TURN": self._turn_with_sensors,
-            "GRAB": self._grab,
-            "SWEEP": self._sweep,
-            "JINGLE": victor_jingle,
-            "GO_DOOR": self._go_to_door
+                "GO": self._go_with_sensors,
+                "TURN": self._turn_with_sensors,
+                "GRAB": self._grab,
+                "SWEEP": self._sweep,
+                "JINGLE": victor_jingle,
+                "GO_DOOR": self._go_to_door
 
-        }
+                }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
         self.initial_orientation = None # for calibration of direction over multiple func calls
@@ -117,7 +117,7 @@ class Megamind(Processor):
             pass
         finally:
             super().start()
-    
+
     def addProcessor(self, processor):
         """connect a new processor (sensor/actuator)"""
         if processor is None:
@@ -237,8 +237,8 @@ class Megamind(Processor):
 
     def _turn_with_sensors(self, degrees, speed=MIN_SPEED):
         left, right, gyro = (self.processor_dict.get("LEFT"),
-            self.processor_dict.get("RIGHT"),
-            self.processor_dict.get("GYRO"))
+                             self.processor_dict.get("RIGHT"),
+                             self.processor_dict.get("GYRO"))
         gyro_readings = gyro.queue.safeGet(False)        
         while True:
             if (degrees > 0 and gyro_readings is not None):
@@ -349,15 +349,8 @@ class Megamind(Processor):
                 # flip these corrections if they're inverted
                 #print(f"{drift=}")
                 if (drift > MAX_DRIFT and speed < 0) or (drift < -MAX_DRIFT and speed > 0):
-                    print("right drift. correcting...")
-                    # right wheel lagging
-                    #right.queue.put(("STOP",))
-                    #left.queue.put(("STOP",))
-                    right.queue.put(("GO", speed * DRIFT_CORRECTION))
-                    left.queue.put(("GO", speed / DRIFT_CORRECTION))
-                    #right.queue.put(("GO", speed))
-                    #left.queue.put(("STOP",))
-                elif (drift < -MAX_DRIFT and speed < 0) or (drift > MAX_DRIFT and speed > 0):
+                    # NEW LEFT DRIFT
+
                     print("left drift. correcting...")
                     # left wheel lagging
                     #right.queue.put(("STOP",))
@@ -366,6 +359,17 @@ class Megamind(Processor):
                     left.queue.put(("GO", speed * DRIFT_CORRECTION))
                     #right.queue.put(("STOP",))
                     #left.queue.put(("GO", speed))
+
+                elif (drift < -MAX_DRIFT and speed < 0) or (drift > MAX_DRIFT and speed > 0):
+                    # NEW RIGHT DRIFT
+                    print("right drift. correcting...")
+                 # right wheel lagging
+                    #right.queue.put(("STOP",))
+                    #left.queue.put(("STOP",))
+                    right.queue.put(("GO", speed * DRIFT_CORRECTION))
+                    left.queue.put(("GO", speed / DRIFT_CORRECTION))
+                    #right.queue.put(("GO", speed))
+                    #left.queue.put(("STOP",))
                 else:
                     # all good
                     left.queue.put(("GO", speed))
@@ -502,7 +506,7 @@ class Vision(Processor):
             return False
         is_pressed = self.sensor_pin.is_pressed()
         if is_pressed:
-                return {"press":is_pressed}
+            return {"press":is_pressed}
 
     def color_measure(self, *args):
         sleep(0.01)
@@ -538,7 +542,7 @@ if __name__ == "__main__":
             "GRABBER": Driver("GRABBER", "B"),
             "SWEEPER": Driver("SWEEPER", "C"),
             "COLOR": Vision("COLOR", 1)
-        }
+            }
     brain = Megamind(processors)
     # EMERGENCY STOP (managed by main loop)
     stop = TouchSensor(2)
