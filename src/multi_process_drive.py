@@ -259,7 +259,7 @@ class Megamind(Processor):
         return True
 
     def _grab(self, distance, speed=MIN_SPEED):
-        granular_iterations = self._distance_to_iterations(distance, radius=r_grabber)
+        granular_iterations = self._distance_to_iterations(distance, radius=R_GRABBER)
         grabber = self.processor_dict.get("grabber")
 
         grabber.queue.put(("go", speed))
