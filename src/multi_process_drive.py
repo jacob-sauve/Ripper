@@ -17,7 +17,7 @@ from math import pi
 from time import sleep
 from multiprocess import cpu_count, Process, Queue
 from colors import classify
-from musical import victor_jingle
+from musical import victor_jingle, delivery_jingle
 
 
 # constants
@@ -519,7 +519,7 @@ class Vision(Processor):
         rgb = self.sensor_pin.get_rgb()
         output = dict()
         if rgb != None and not None in rgb:
-            color = classify(rgb, debugging=False) # SET TO TRUE FOR CALIBRATION
+            color = classify(rgb, debugging=True) # SET TO TRUE FOR CALIBRATION
             output["color"] = color
             output["rgb"] = rgb
         return output
@@ -554,13 +554,13 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        while True:
-            desired_turn = int(input("turn angle desired: "))
-            brain.queue.put_nowait(("TURN", desired_turn))
-        #brain.queue.put_nowait(("GO", 40, 320))
-        #brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
-        #brain.queue.put_nowait(("GO", 15, 320))
-        #brain.queue.put_nowait(("SWEEP", 180, True, 90))
+        """
+        brain.queue.put_nowait(("TURN", 360))
+        brain.queue.put_nowait(("GO_DOOR", 40, 320))
+        brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
+        brain.queue.put_nowait(("GO", 15, 320))
+        brain.queue.put_nowait(("SWEEP", 180, True, 90))
+        """ 
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
