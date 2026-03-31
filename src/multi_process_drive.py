@@ -267,7 +267,7 @@ class Megamind(Processor):
                 sleep(MEGAMIND_BUFFER)
                 print(f"{gyro_readings=}")
         print(f"stopped turning, final gyro reading: {gyro_readings}")
-        self.current_direction = (self.current_direction + degrees) % 360
+        self.current_direction = gyro_readings.get("angle")
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
         return True
