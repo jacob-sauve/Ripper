@@ -243,29 +243,16 @@ class Megamind(Processor):
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
-        gyro_readings = gyro.queue.safeGet(False)        
-        if (degrees > 0 and gyro_readings is not None):
-            # turn right
-            curr_angle = gyro_readings.get("angle")
-            while (curr_angle - self.current_direction) % 360 < degrees:
-                gyro_readings = gyro.queue.safeGet(False)
-                if gyro_readings is not None:
-                    curr_angle = gyro_readings.get("angle")
-                left.queue.put(("GO", speed * DIRECTION)) 
-                right.queue.put(("GO", -speed * DIRECTION))
-                sleep(MEGAMIND_BUFFER)
-                print(f"{gyro_readings=}")
-        elif (degrees < 0 and gyro_readings is not None):
-            # turn left
-            curr_angle = gyro_readings.get("angle")
-            while (curr_angle - self.current_direction) % 360 < degrees % 360:
-                gyro_readings = gyro.queue.safeGet(False)
-                if gyro_readings is not None:
-                    curr_angle = gyro_readings.get("angle")
-                left.queue.put(("GO", -speed * DIRECTION))
-                right.queue.put(("GO", speed * DIRECTION))
-                sleep(MEGAMIND_BUFFER)
-                print(f"{gyro_readings=}")
+        gyro_readings = gyro.queue.safeGet(True)
+        
+        direction = DIRECTION if degrees > 0 else -DIRECTION
+        target_angle = (self.current_direction + degrees) % 360
+        curr_angle = gyro_readings.get("angle")
+        while (curr_angle != target_angle):
+            left.queue.put(("GO", direction * speed))
+            right.queue.put(("GO", -direction * speed))
+            sleep(MEGAMIND_BUFFER)
+            print(f"{gyro_readings=}")
         print(f"stopped turning, final gyro reading: {gyro_readings}")
         self.current_direction = gyro_readings.get("angle")
         left.queue.put(("STOP",))
