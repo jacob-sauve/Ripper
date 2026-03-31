@@ -12,7 +12,6 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import reset_brick, Motor, EV3ColorSensor, EV3GyroSensor, TouchSensor, wait_ready_sensors
-from vision import _read_rgb, is_orange
 from math import pi
 from time import sleep
 from multiprocess import cpu_count, Process, Queue
@@ -30,12 +29,12 @@ GRABBER = -1            # multiplier for correct rotations of grabber (should be
 SWEEPER = +1            # multiplier for correct rotations of front-mounted colour sensor sweep motor
 MEGAMIND_BUFFER = 0.005 # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectilinear trajectory
-DRIFT_CORRECTION = 1.25 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
+DRIFT_CORRECTION = 1.15 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12         # length of a bed in centimeters
 START_SWEEP_ANGLE = 0   # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
-MAX_ROOM_DISTANCE = 50  # centimeters of straight-line motion before robot can safely assume it is in a room
+MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can safely assume it is in a room
 SWEEPS_PER_SWEEP = 2    # number of full ROMs swept per call of Megamind._sweep()
 FW_PER_SWEEP = 10       # centimeters of straight-line motion between every sweep
 
@@ -289,6 +288,7 @@ class Megamind(Processor):
         for i in range(SWEEPS_PER_SWEEP):
             for degrees in range(start, range_of_motion + start, increment):
                 sweeper.queue.put(("ANGLE", degrees, speed))
+                sleep(MEGAMIND_BUFFER*2)
                 color_readings = color.queue.safeGet(False)
                 if color_readings:
                     curr_color = color_readings.get("color")
@@ -301,10 +301,10 @@ class Megamind(Processor):
                     elif curr_color == "red":
                         # exit room if patient invalid
                         sweeper.queue.put(("STOP",))
-                        self.queue.put(("GO", 10, -speed))
-                        self.queue.put(("GO_DOOR", -speed))
+                        self.queue.put(("GO", 10, -MIN_SPEED))
+                        self.queue.put(("GO_DOOR", -MIN_SPEED))
                         return True
-            sleep(MEGAMIND_BUFFER*10)
+            sleep(MEGAMIND_BUFFER*20)
             start *= -1
             range_of_motion *= -1
             increment *= -1
@@ -316,7 +316,7 @@ class Megamind(Processor):
         #return
         # false if not found
         # queue instructions again
-        self.queue.put(("GO", FW_PER_SWEEP, speed))
+        self.queue.put(("GO", FW_PER_SWEEP, MIN_SPEED))
         self.queue.put(("SWEEP", range_of_motion, center, speed))
         sleep(0.5)
         return False
@@ -519,7 +519,7 @@ class Vision(Processor):
         rgb = self.sensor_pin.get_rgb()
         output = dict()
         if rgb != None and not None in rgb:
-            color = classify(rgb, debugging=True) # SET TO TRUE FOR CALIBRATION
+            color = classify(rgb, debugging=False) # SET TO TRUE FOR CALIBRATION
             output["color"] = color
             output["rgb"] = rgb
         return output
@@ -554,14 +554,11 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
-        # wait for color calibration
-        while not stop.is_pressed():
-            sleep(0.01)
-        brain.queue.put_nowait(("TURN", 360))
-        brain.queue.put_nowait(("GO_DOOR", 40, 320))
+        #brain.queue.put_nowait(("TURN", 720))
+        brain.queue.put_nowait(("GO_DOOR", 320))
         brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
         brain.queue.put_nowait(("GO", 15, 320))
-        brain.queue.put_nowait(("SWEEP", 180, True, 90))
+        brain.queue.put_nowait(("SWEEP", 190, True, 90))
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
