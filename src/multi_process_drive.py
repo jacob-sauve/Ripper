@@ -337,6 +337,7 @@ class Megamind(Processor):
             initial_angle = gyro.queue.safeGet().get("angle")
         for i in range(granular_iterations):
             gyro_readings = gyro.queue.safeGet(False)
+            print(f"{gyro_readings=}")
             color_readings = color.queue.safeGet(False)
             if color_readings:
                 curr_color = color_readings.get("color")
@@ -344,6 +345,7 @@ class Megamind(Processor):
                     break
             if gyro_readings:
                 drift =  gyro_readings.get("angle") - initial_angle
+                print(f"{drift=}")
                 # flip these corrections if they're inverted
                 #print(f"{drift=}")
                 if (drift > MAX_DRIFT and speed < 0) or (drift < -MAX_DRIFT and speed > 0):
