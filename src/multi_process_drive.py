@@ -258,7 +258,7 @@ class Megamind(Processor):
         elif (degrees < 0 and gyro_readings is not None):
             # turn left
             curr_angle = gyro_readings.get("angle")
-            while (curr_angle - self.current_direction) % 360 > degrees % 360:
+            while (curr_angle - self.current_direction) % 360 < degrees % 360:
                 gyro_readings = gyro.queue.safeGet(False)
                 if gyro_readings is not None:
                     curr_angle = gyro_readings.get("angle")
