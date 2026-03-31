@@ -9,8 +9,8 @@ import array
 
 from utils.sound import Sound, Song
 
-def make_sounds():
-# duration of a full note (float possible)
+def make_sounds_victor():
+    # duration of a full note (float possible)
     rhythm = 0.75
 
     chord_dur = 4*rhythm
@@ -33,7 +33,7 @@ def make_sounds():
             ("C4", rhythm*3/8), ("G#3", rhythm/4), ("Bb3", rhythm/2),
             ("Eb4", rhythm/2), ("F4", rhythm/2), ("F#4", rhythm*3/8),
             ("Eb4", rhythm*3/8), ("B3", rhythm/4), ("Db4", rhythm*3/8),
-            ("F#4", rhythm*3/8), ("G#4", rhythm),
+            ("F#4", rhythm*3/8), ("G#4", rhythm)
         ]
 
     sounds = [Sound(duration=dur, pitch=pitch, volume=100) for pitch, dur in notes] 
@@ -43,11 +43,30 @@ def make_sounds():
     song.compile()  # merges everything into one buffer
     return song
 
-song = make_sounds()
+def make_sounds_delivery():
+    # duration of a full note (float possible)
+    rhythm = 0.75
+
+    notes = [
+        ("D3", rhythm / 8), ("E3", rhythm / 8), ("F3", rhythm / 8),
+        ("E3", rhythm * 3 / 8), ("D3", rhythm *3/ 8), ("C3", rhythm *3/ 8),
+        ("G3", rhythm)
+    ]
+    sounds = [Sound(duration=dur, pitch=pitch, volume=100) for pitch, dur in notes]
+    song = Song(sounds)
+    song.compile()
+    return song
+
+song1 = make_sounds_victor()
+song2 = make_sounds_delivery()
+
+def delivery_jingle():
+    song2.play()
+    song2.wait_done()
 
 def victor_jingle():
-    song.play()
-    song.wait_done()
+    song1.play()
+    song1.wait_done()
 
 #!/usr/bin/env python3
 # main loop
