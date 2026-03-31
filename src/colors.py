@@ -1,21 +1,25 @@
 """
 Color classification script.
-Uses 'omega value' calculated according to our formula and checks against saved standard values.
+Uses 'omega value' calculated according to our formula and checks against saved
+standard values.
 """
 
 # imports
-import sys, os
+import sys
+import os
 import math
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from utils.brick import BP, Motor, reset_brick
+from utils.brick import reset_brick
 
 
 # constants
-OMEGA_THRESHOLDS = [        # range of omega values at which colors are classified
+# range of omega values at which colors are classified
+OMEGA_THRESHOLDS = [
         (0.15, 0.25, "red"),
         (0.42, 0.60, "orange"),
         (0.68, 0.75, "yellow"),
-        (0.91, 1.1, "green") # i.e., all omega values 0.91<=w<=1.1 are green
+        # i.e., all omega values 0.91<=w<=1.1 are green
+        (0.91, 1.1, "green")
         ]
 
 
@@ -23,9 +27,9 @@ def classify(rgb, debugging=False):
     """Classify rgb value as one of the four saved colours
     Keyword arguments:
         rgb         -- list of (R,G,B) values to be classified
-        debugging   -- flag to toggle informative print statements on/off when True/False (default False)
+        debugging   -- flag to toggle informative printing on/off (default off)
     Outputs:
-        color       -- string indicating which colour the (R,G,B) corresponds to
+        color       -- string indicating corresponding colour
     """
     # 1) normalise RGB values
     try:
@@ -48,8 +52,9 @@ def classify(rgb, debugging=False):
                     print(omega)
                     print(color)
                 return color
-    except:
+    except Exception:
         return "bad value"
+
 
 if __name__ == "__main__":
     try:
