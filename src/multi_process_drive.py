@@ -556,8 +556,8 @@ if __name__ == "__main__":
         print(f"{cpu_count()=}\n\n")
         brain.queue.put_nowait(("GO", 10))
         brain.queue.put_nowait(("GRAB", 10, 500))
-        brain.queue.put_nowait(("GO", -15))
-        brain.queue.put_nowait(("GRAB", -10, 500))
+        brain.queue.put_nowait(("GO", 15, -320))
+        brain.queue.put_nowait(("GRAB", 10, -500))
         #brain.queue.put_nowait(("TURN", 720))
         #brain.queue.put_nowait(("GO_DOOR", 320))
         #brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
