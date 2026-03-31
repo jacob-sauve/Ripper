@@ -382,9 +382,9 @@ class Driver(Processor):
                 }
         self.name = name.upper()
         if self.name == "LEFT":
-            self.direction = LEFT
+            self.direction = DIRECTION
         elif self.name == "RIGHT":
-            self.direction = RIGHT
+            self.direction = DIRECTION
         elif self.name == "GRABBER":
             # grabber
             self.direction = GRABBER
