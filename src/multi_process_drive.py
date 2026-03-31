@@ -44,7 +44,7 @@ def safeGet(queue):
     """Get from queue wrapped in empty check, None if empty
     returns the method that will be called in future
     """
-    return lambda wait=False: queue.get(wait) if not queue.empty() else None
+    return lambda wait: queue.get(wait) if not queue.empty() else None
 
 
 class Processor:
@@ -165,7 +165,7 @@ class Megamind(Processor):
     def manage_queue(self):
         """probably should rework --> could easily get stuck in busy mode"""
         while True: 
-            instruction = self.queue.safeGet()
+            instruction = self.queue.safeGet(False)
             if instruction:
                 print(instruction)
                 funcname, args = instruction[0], instruction[1:]
@@ -286,7 +286,7 @@ class Megamind(Processor):
         for i in range(SWEEPS_PER_SWEEP):
             for degrees in range(start, range_of_motion + start, increment):
                 sweeper.queue.put(("ANGLE", degrees, speed))
-                color_readings = color.queue.safeGet()
+                color_readings = color.queue.safeGet(False)
                 if color_readings:
                     curr_color = color_readings.get("color")
                     print(f"{color_readings.get('rgb') = }")
@@ -335,7 +335,7 @@ class Megamind(Processor):
         if not (self.initial_orientation is None):
             initial_angle = self.initial_orientation + self.current_direction
         else:
-            initial_angle = gyro.queue.safeGet().get("angle")
+            initial_angle = gyro.queue.safeGet(False).get("angle")
         for i in range(granular_iterations):
             gyro_readings = gyro.queue.safeGet(False)
             print(f"{gyro_readings=}")
@@ -455,7 +455,7 @@ class Driver(Processor):
 
     def manage_queue(self):
         while True:
-            instruction = self.queue.safeGet()
+            instruction = self.queue.safeGet(False)
             if instruction:
                 funcname, args = instruction[0], instruction[1:]
                 self.funcdict[funcname](*args)
