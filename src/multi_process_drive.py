@@ -554,11 +554,18 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
+
+        brain.queue.put_nowait(("GO", 50))
+        brain.queue.put_nowait(("TURN", 90))
+        brain.queue.put_nowait(("GO", 20))
+        brain.queue.put_nowait(("TURN", 90))
+
+        brain.queue.put_nowait(("GO", 20))
+        brain.queue.put_nowait(("GRAB", 10, 500))
+        #brain.queue.put_nowait(("TURN", 15))
         brain.queue.put_nowait(("GO", 10))
-        brain.queue.put_nowait(("GRAB", 7, 500))
-        brain.queue.put_nowait(("GO", 10, 500))
-        brain.queue.put_nowait(("GRAB", 7, 500))
-        brain.queue.put_nowait(("GO", 15, -320))
+        brain.queue.put_nowait(("GRAB", 12, 500))
+        brain.queue.put_nowait(("GO", 20, -320))
         brain.queue.put_nowait(("GRAB", 10, -500))
         brain.queue.put_nowait(("GO", 15, -320))
         brain.queue.put_nowait(("GRAB", 10, -500))
