@@ -225,18 +225,38 @@ class Megamind(Processor):
         right.queue.put(("STOP",))
         return True
 
-    def _turn_with_sensors(self):
+    def _turn_with_sensors(self, degrees, speed=MIN_SPEED):
+        left, right, gyro = (self.processor_dict.get("LEFT"),
+            self.processor_dict.get("RIGHT"),
+            self.processor_dict.get("GYRO"))
+        gyro_readings = gyro.queue.get(False)        
+        while True:
+            if (degrees > 0 and gyro_readings is not None):
+                # turn right
+                while (gyro_readings.get("angle") - self.current_direction) % 360 < degrees:
+                    left.queue.put(("GO", speed * DIRECTION)) 
+                    right.queue.put(("GO", -speed * DIRECTION))
+                    sleep(MEGAMIND_BUFFER)
+            elif (degrees < 0 and gyro_readings is not None):
+                # turn left
+                while (gyro_readings.get("angle") - self.current_direction) % 360 > degrees:
+                    left.queue.put(("GO", -speed * DIRECTION))
+                    right.queue.put(("GO", speed * DIRECTION))
+                    sleep(MEGAMIND_BUFFER)
+        self.current_direction = (self.current_direction + degrees) % 360
+        left.queue.put(("STOP",))
+        right.queue.put(("STOP",))
         return True
 
-    def _grab(self, distance, speed=MIN_SPEED):
-        granular_iterations = self._distance_to_iterations(distance, radius=R_GRABBER)
-        grabber = self.processor_dict.get("GRABBER")
+    def _grab(self, distance, speed=min_speed):
+        granular_iterations = self._distance_to_iterations(distance, radius=r_grabber)
+        grabber = self.processor_dict.get("grabber")
 
-        grabber.queue.put(("GO", speed))
+        grabber.queue.put(("go", speed))
 
         for i in range(granular_iterations):
             print(f"waiting... iteration {i}")
-            sleep(MEGAMIND_BUFFER)
+            sleep(mEGAMIND_BUFFER)
 
         grabber.queue.put(("STOP",))
         return True
