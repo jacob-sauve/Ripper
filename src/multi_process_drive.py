@@ -9,6 +9,7 @@ Implemented using multiprocessing.
 import sys
 import os
 import time
+import operator
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import reset_brick, Motor, EV3ColorSensor, EV3GyroSensor, TouchSensor, wait_ready_sensors
@@ -247,7 +248,11 @@ class Megamind(Processor):
         direction = DIRECTION if degrees > 0 else -DIRECTION
         target_angle = self.current_direction + degrees # gyro does not mod by 360
         curr_angle = gyro_readings.get("angle")
-        while (curr_angle != target_angle):
+        # use Python builtin operator functions, set based on turn direction
+        compare = operator.ge
+        if direction < 0:
+            compare = operator.le
+        while (not compare(curr_angle, target_angle)):
             gyro_readings = gyro.queue.safeGet(False)
             if not (gyro_readings is None):
                 curr_angle = gyro_readings.get("angle")
