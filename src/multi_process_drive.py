@@ -261,8 +261,6 @@ class Megamind(Processor):
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
         self.current_direction = gyro_readings.get("angle")
-        for i in range(1000):
-            print(f"current direction: {self.current_direction}")
         return True
 
     def _grab(self, distance, speed=MIN_SPEED):
@@ -507,7 +505,7 @@ class Vision(Processor):
                 output["angle"] = data[0]
             if mode == "dps":
                 output["dps"] = data[1]
-        print(f"{output}")
+        #print(f"{output}")
         return output
 
     def touch_measure(self, *args):
@@ -579,9 +577,10 @@ if __name__ == "__main__":
         #brain.queue.put_nowait(("GO", 15, 320))
         #brain.queue.put_nowait(("SWEEP", 190, True, 90))
         while True:
-            turnDeg = input("Enter turn degrees")
-            speed = input("Enter speed")
-            brain.queue.put_nowait(("TURN", int(turnDeg), int(speed)))
+            command, arg_one, arg_two = input("enter command: \n").split()
+            brain.queue.put_nowait((command, arg_one, arg_two))
+            #turnDeg = input("Enter turn degrees")
+            #speed = input("Enter speed")
 
         while not stop.is_pressed():
             sleep(0.01)
