@@ -32,7 +32,7 @@ MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectiline
 DRIFT_CORRECTION = 1.15 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12         # length of a bed in centimeters
 START_SWEEP_ANGLE = 0   # initial angle of sweeper
-SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
+SWEEP_MINIMUM_TURN = 5 # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can safely assume it is in a room
 SWEEPS_PER_SWEEP = 2    # number of full ROMs swept per call of Megamind._sweep()
@@ -260,7 +260,8 @@ class Megamind(Processor):
         print(f"stopped turning, final gyro reading: {gyro_readings}")
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
-        self.current_direction = gyro_readings.get("angle")
+        #self.current_direction = gyro_readings.get("angle")
+        self.current_direction = target_angle
         return True
 
     def _grab(self, distance, speed=MIN_SPEED):
@@ -290,7 +291,7 @@ class Megamind(Processor):
         for i in range(SWEEPS_PER_SWEEP):
             for degrees in range(start, range_of_motion + start, increment):
                 sweeper.queue.put(("ANGLE", degrees, speed))
-                sleep(MEGAMIND_BUFFER*2)
+                sleep(MEGAMIND_BUFFER*4)
                 color_readings = color.queue.safeGet(False)
                 if color_readings:
                     curr_color = color_readings.get("color")
@@ -430,7 +431,7 @@ class Driver(Processor):
         speed = self.direction*speed if speed is not None else self.min_speed
         self.motor_pin.set_limits(dps=speed)
         try:
-            power = 100*(self.direction * speed)/self.motor_pin.MAX_SPEED
+            power = 150*(self.direction * speed)/self.motor_pin.MAX_SPEED
             #print(power)
             self.motor_pin.set_power(power)
             self.is_moving = True
@@ -505,7 +506,7 @@ class Vision(Processor):
                 output["angle"] = data[0]
             if mode == "dps":
                 output["dps"] = data[1]
-        #print(f"{output}")
+        print(f"{output}")
         return output
 
     def touch_measure(self, *args):
@@ -577,8 +578,8 @@ if __name__ == "__main__":
         #brain.queue.put_nowait(("GO", 15, 320))
         #brain.queue.put_nowait(("SWEEP", 190, True, 90))
         while True:
-            command, arg_one, arg_two = input("enter command: \n").split()
-            brain.queue.put_nowait((command.upper(), int(arg_one), int(arg_two)))
+            command, *args = input("enter command: \n").split()
+            brain.queue.put_nowait((command.upper(), *list(map(int, args))))
             #turnDeg = input("Enter turn degrees")
             #speed = input("Enter speed")
 
