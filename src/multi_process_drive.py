@@ -255,6 +255,7 @@ class Megamind(Processor):
             right.queue.put(("GO", -direction * speed))
             sleep(MEGAMIND_BUFFER)
             print(f"{gyro_readings=}")
+        sleep(0.5)
         print(f"stopped turning, final gyro reading: {gyro_readings}")
         self.current_direction = gyro_readings.get("angle")
         left.queue.put(("STOP",))
@@ -503,7 +504,6 @@ class Vision(Processor):
                 output["angle"] = data[0]
             if mode == "dps":
                 output["dps"] = data[1]
-        print(f"gyro data: {output}")
         return output
 
     def touch_measure(self, *args):
