@@ -503,6 +503,7 @@ class Vision(Processor):
                 output["angle"] = data[0]
             if mode == "dps":
                 output["dps"] = data[1]
+        print(f"gyro data: {output}")
         return output
 
     def touch_measure(self, *args):
