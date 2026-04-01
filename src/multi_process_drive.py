@@ -558,6 +558,7 @@ if __name__ == "__main__":
         import titlecard
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
+        """
         brain.queue.put_nowait(("GO", 50))
         brain.queue.put_nowait(("TURN", 90))
         brain.queue.put_nowait(("GO", 20))
@@ -566,6 +567,7 @@ if __name__ == "__main__":
         brain.queue.put_nowait(("TURN", 90))
         brain.queue.put_nowait(("GO", 20))
         brain.queue.put_nowait(("TURN", 90))
+        """
         #brain.queue.put_nowait(("GRAB", 10, 500))
         #brain.queue.put_nowait(("TURN", 15))
         #brain.queue.put_nowait(("GO", 10))
@@ -579,13 +581,11 @@ if __name__ == "__main__":
         #brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
         #brain.queue.put_nowait(("GO", 15, 320))
         #brain.queue.put_nowait(("SWEEP", 190, True, 90))
-        """
         while True:
             command, *args = input("enter command: \n").split()
             brain.queue.put_nowait((command.upper(), *list(map(int, args))))
             #turnDeg = input("Enter turn degrees")
             #speed = input("Enter speed")
-        """
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
