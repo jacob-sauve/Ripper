@@ -544,7 +544,7 @@ class Vision(Processor):
 # main loop
 if __name__ == "__main__":
     processors = {
-            "GYRO": Vision("GYRO", 3, 0.01),
+            "GYRO": Vision("GYRO", 3, 0.0075),
             "LEFT": Driver("LEFT", "D"),
             "RIGHT": Driver("RIGHT", "A"),
             "GRABBER": Driver("GRABBER", "B"),
