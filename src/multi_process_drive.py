@@ -252,7 +252,7 @@ class Megamind(Processor):
             if not (gyro_readings is None):
                 curr_angle = gyro_readings.get("angle")
             if (abs(curr_angle - target_angle) < 10):
-                speed = 100
+                speed = 130
             left.queue.put(("GO", direction * speed))
             right.queue.put(("GO", -direction * speed))
             sleep(MEGAMIND_BUFFER)
