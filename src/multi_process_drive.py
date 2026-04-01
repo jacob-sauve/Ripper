@@ -575,7 +575,7 @@ if __name__ == "__main__":
         #brain.queue.put_nowait(("GO", 15, 320))
         #brain.queue.put_nowait(("SWEEP", 190, True, 90))
         
-        brain.queue.put_nowait(("TURN", 90))
+        brain.queue.put_nowait(("TURN", 90, 180))
 
         while not stop.is_pressed():
             sleep(0.01)
