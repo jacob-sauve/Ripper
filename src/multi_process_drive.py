@@ -588,7 +588,10 @@ if __name__ == "__main__":
         #brain.queue.put_nowait(("SWEEP", 190, True, 90))
         while True:
             command, *args = input("enter command: \n").split()
-            brain.queue.put_nowait((command.upper(), *list(map(int, args))))
+            if (not command.upper() in brain.funcdict):
+                print("learn to type bro")
+            else:
+                brain.queue.put_nowait((command.upper(), *list(map(int, args))))
             #turnDeg = input("Enter turn degrees")
             #speed = input("Enter speed")
         while not stop.is_pressed():
