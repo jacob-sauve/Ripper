@@ -575,8 +575,10 @@ if __name__ == "__main__":
         #brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
         #brain.queue.put_nowait(("GO", 15, 320))
         #brain.queue.put_nowait(("SWEEP", 190, True, 90))
-        
-        brain.queue.put_nowait(("TURN", 90, 180))
+        while True:
+            turnDeg = input("Enter turn degrees")
+            speed = input("Enter speed")
+            brain.queue.put_nowait(("TURN", turnDeg, speed))
 
         while not stop.is_pressed():
             sleep(0.01)
