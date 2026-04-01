@@ -577,7 +577,7 @@ if __name__ == "__main__":
         while True:
             turnDeg = input("Enter turn degrees")
             speed = input("Enter speed")
-            brain.queue.put_nowait(("TURN", turnDeg, speed))
+            brain.queue.put_nowait(("TURN", int(turnDeg), int(speed)))
 
         while not stop.is_pressed():
             sleep(0.01)
