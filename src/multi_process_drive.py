@@ -261,8 +261,8 @@ class Megamind(Processor):
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
         self.current_direction = gyro_readings.get("angle")
-        for i in range(100):
-            print(self.current_direction)
+        for i in range(1000):
+            print(f"current direction: {self.current_direction}")
         return True
 
     def _grab(self, distance, speed=MIN_SPEED):
