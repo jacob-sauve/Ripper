@@ -38,8 +38,6 @@ MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can s
 SWEEPS_PER_SWEEP = 2    # number of full ROMs swept per call of Megamind._sweep()
 FW_PER_SWEEP = 10       # centimeters of straight-line motion between every sweep
 
-isTurning = False
-
 
 def safeGet(queue):
     """Get from queue wrapped in empty check, None if empty
@@ -241,7 +239,6 @@ class Megamind(Processor):
         return True
 
     def _turn_with_sensors(self, degrees, speed=MIN_SPEED):
-        isTurning = True
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
                              self.processor_dict.get("GYRO"))
@@ -262,7 +259,6 @@ class Megamind(Processor):
         self.current_direction = gyro_readings.get("angle")
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
-        isTurning = False
         return True
 
     def _grab(self, distance, speed=MIN_SPEED):
@@ -496,6 +492,7 @@ class Vision(Processor):
         super().start()
 
     def gyro_measure(self, *args):
+        sleep(0.01)
         if self.name != "GYRO":
             return False
         data = self.sensor_pin.get_both_measure()
@@ -507,8 +504,6 @@ class Vision(Processor):
                 output["angle"] = data[0]
             if mode == "dps":
                 output["dps"] = data[1]
-        if isTurning:
-            print(f"gyro reading: {output}")
         return output
 
     def touch_measure(self, *args):
