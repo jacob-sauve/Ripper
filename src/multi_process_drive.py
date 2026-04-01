@@ -261,6 +261,15 @@ class Megamind(Processor):
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
         self.current_direction = gyro_readings.get("angle")
+
+        sleep(1)
+        while self.current_direction > target_angle:
+            left.queue.put(("GO", -direction * speed))
+            right.queue.put(("GO", direction * speed))
+            self.current_direction = gyro.queue.safeGet(True).get("angle")
+            sleep(MEGAMIND_BUFFER)
+        left.queue.put(("STOP",))
+        right.queue.put(("STOP",))
         return True
 
     def _grab(self, distance, speed=MIN_SPEED):
