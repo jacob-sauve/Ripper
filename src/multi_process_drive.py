@@ -579,7 +579,7 @@ if __name__ == "__main__":
         #brain.queue.put_nowait(("SWEEP", 190, True, 90))
         while True:
             command, arg_one, arg_two = input("enter command: \n").split()
-            brain.queue.put_nowait((command, int(arg_one), int(arg_two)))
+            brain.queue.put_nowait((command.upper(), int(arg_one), int(arg_two)))
             #turnDeg = input("Enter turn degrees")
             #speed = input("Enter speed")
 
