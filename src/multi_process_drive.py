@@ -43,7 +43,7 @@ def safeGet(queue):
     """Get from queue wrapped in empty check, None if empty
     returns the method that will be called in future
     """
-    return lambda wait: queue.get(wait) if not queue.empty() else None
+    return lambda wait: queue.get(wait) if (not queue.empty() and (not queue is None)) else None
 
 
 class Processor:
