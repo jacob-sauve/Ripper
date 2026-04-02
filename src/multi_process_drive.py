@@ -32,7 +32,7 @@ MEGAMIND_BUFFER = 0.005 # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectilinear trajectory
 DRIFT_CORRECTION = 1.15 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12         # length of a bed in centimeters
-START_SWEEP_ANGLE = 85  # initial angle of sweeper
+START_SWEEP_ANGLE = 15  # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can safely assume it is in a room
@@ -318,6 +318,7 @@ class Megamind(Processor):
                 color_readings = color.queue.safeGet(False)
                 if color_readings:
                     curr_color = color_readings.get("color")
+                    print(f"{curr_color =}")
                     #print(f"{color_readings.get('rgb') = }")
                     if curr_color == "green":
                         # play happy sounds if patient found
