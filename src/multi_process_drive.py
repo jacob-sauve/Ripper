@@ -316,7 +316,6 @@ class Megamind(Processor):
             color_readings = sensor_outputs.get(color)
             for degrees in range(start, range_of_motion + start, increment):
                 self._angle_sweeper(degrees, speed)
-                sleep(MEGAMIND_BUFFER*2)
                 if color_readings:
                     curr_color = color_readings.get("color")
                     print(f"{curr_color =}")
@@ -334,12 +333,13 @@ class Megamind(Processor):
                         self._go_to_door("GO_DOOR", -MIN_SPEED)
                         return True
                 color_readings = color.queue.safeGet(False)
-                sleep(MEGAMIND_BUFFER*200)
+                sleep(MEGAMIND_BUFFER*2)
             start *= -1
             range_of_motion *= -1
             increment *= -1
         # false if not found
         # check if room fully traversed
+        sleep(0.5)      
         if (distance_advanced >= MAX_ROOM_DEPTH):
             # if so, leave
             self._go_to_door(-MIN_SPEED)
@@ -347,7 +347,6 @@ class Megamind(Processor):
             # if not, queue sweep instructions again
             self._go_with_sensors(FW_PER_SWEEP, MIN_SPEED)
             self._sweep(range_of_motion, center, speed, distance_advanced + FW_PER_SWEEP)
-        sleep(0.5)
         return False
 
 
