@@ -123,6 +123,9 @@ class Megamind(Processor):
         # include wait to let sensors initialise
         try:
             self.initial_orientation = self.clearSensorQueues(wait=True).get("GYRO").get("angle")
+            sweeper = self.processor_dict.get("SWEEPER")
+            if not sweeper is None:
+                sweeper.motor_pin.reset_position()
         except:
             pass
         finally:
