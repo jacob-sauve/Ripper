@@ -555,7 +555,6 @@ class Vision(Processor):
 
 
     def color_measure(self, *args):
-        sleep(0.01)
         if self.name != "COLOR":
             return False
         rgb = self.sensor_pin.get_rgb()

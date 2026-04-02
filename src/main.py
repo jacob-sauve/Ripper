@@ -31,7 +31,7 @@ if __name__ == "__main__":
             "RIGHT": Driver("RIGHT", "A"),
             "GRABBER": Driver("GRABBER", "B"),
             "SWEEPER": Driver("SWEEPER", "C"),
-            "COLOR": Vision("COLOR", 1)
+            "COLOR": Vision("COLOR", 1, 0.05)
             }
     brain = Megamind(processors)
     stop = TouchSensor(2)
