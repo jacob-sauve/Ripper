@@ -312,13 +312,11 @@ class Megamind(Processor):
         self._angle_sweeper(start, speed)
         increment = SWEEP_MINIMUM_TURN
         for i in range(SWEEPS_PER_SWEEP):
+            sensor_outputs = self.clearSensorQueues(False)
+            color_readings = sensor_outputs.get(color)
             for degrees in range(start, range_of_motion + start, increment):
                 self._angle_sweeper(degrees, speed)
                 sleep(MEGAMIND_BUFFER*2)
-                sensor_outputs = self.clearSensorQueues(False)
-                print(f"{sensor_outputs = }")
-                color_readings = sensor_outputs.get(color)
-                print(f"{color_readings = }")
                 if color_readings:
                     curr_color = color_readings.get("color")
                     print(f"{curr_color =}")
@@ -335,7 +333,8 @@ class Megamind(Processor):
                         self._go_with_sensors(10, -MIN_SPEED)
                         self._go_to_door("GO_DOOR", -MIN_SPEED)
                         return True
-            sleep(MEGAMIND_BUFFER*200)
+                color_readings = color.queue.safeGet(False)
+                sleep(MEGAMIND_BUFFER*200)
             start *= -1
             range_of_motion *= -1
             increment *= -1
