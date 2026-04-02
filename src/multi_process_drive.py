@@ -301,6 +301,7 @@ class Megamind(Processor):
         sweeper, color = (self.processor_dict.get("SWEEPER"), self.processor_dict.get("COLOR"))
 
         if center:
+            print("CENTERED\n"*10)
             start = START_SWEEP_ANGLE - range_of_motion // 2
         else:
             start = START_SWEEP_ANGLE
@@ -309,7 +310,7 @@ class Megamind(Processor):
         increment = SWEEP_MINIMUM_TURN
         for i in range(SWEEPS_PER_SWEEP):
             for degrees in range(start, range_of_motion + start, increment):
-                sweeper.queue.put(("ANGLE", degrees, speed))
+                self._angle_sweeper(degrees, speed)
                 sleep(MEGAMIND_BUFFER*2)
                 color_readings = color.queue.safeGet(False)
                 if color_readings:
