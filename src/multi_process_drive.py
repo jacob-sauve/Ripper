@@ -317,7 +317,7 @@ class Megamind(Processor):
                 sleep(MEGAMIND_BUFFER*2)
                 sensor_outputs = self.clearSensorQueues(False)
                 print(f"{sensor_outputs = }")
-                color_readings = sensor_outputs.get("COLOR")
+                color_readings = sensor_outputs.get(color)
                 print(f"{color_readings = }")
                 if color_readings:
                     curr_color = color_readings.get("color")
