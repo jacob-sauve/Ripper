@@ -18,7 +18,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import BP, Motor, EV3ColorSensor, reset_brick, wait_ready_sensors, TouchSensor
 import time
 from multi_process_drive import Megamind, Vision, Driver
-import line_follower as lf
 
 # constants
 # 1- ports
