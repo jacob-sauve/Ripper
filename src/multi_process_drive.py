@@ -301,9 +301,9 @@ class Megamind(Processor):
         sweeper, color = (self.processor_dict.get("SWEEPER"), self.processor_dict.get("COLOR"))
 
         if center:
-            start = START_SWEEP_ANGLE + range_of_motion // 2
+            start = sweeper._get_angle() - range_of_motion // 2
         else:
-            start = START_SWEEP_ANGLE
+            start = sweeper._get_angle()
         # set start angle 
         sweeper.queue.put(("ANGLE", start-START_SWEEP_ANGLE, speed))
         increment = SWEEP_MINIMUM_TURN
