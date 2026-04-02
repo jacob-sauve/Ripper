@@ -105,6 +105,7 @@ class Megamind(Processor):
                 "JINGLE": victor_jingle,
                 "GO_DOOR": self._go_to_door,
                 "FINAL_JINGLE": delivery_jingle,
+                "ANGLE_SWEEPER": self._angle_sweeper,
                 }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
@@ -226,24 +227,14 @@ class Megamind(Processor):
                     # NEW LEFT DRIFT
                     print("left drift. correcting...")
                     # left wheel lagging
-                    #right.queue.put(("STOP",))
-                    #left.queue.put(("STOP",))
                     right.queue.put(("GO", speed / DRIFT_CORRECTION))
                     left.queue.put(("GO", speed * DRIFT_CORRECTION))
-                    #right.queue.put(("STOP",))
-                    #left.queue.put(("GO", speed))
-
                 elif (drift < -MAX_DRIFT and speed < 0) or (drift > MAX_DRIFT and speed > 0):
                     # NEW RIGHT DRIFT
                     print("right drift. correcting...")
                     # right wheel lagging
-                    #right.queue.put(("STOP",))
-                    #left.queue.put(("STOP",))
                     right.queue.put(("GO", speed * DRIFT_CORRECTION))
                     left.queue.put(("GO", speed / DRIFT_CORRECTION))
-                    #right.queue.put(("GO", speed))
-                    #left.queue.put(("STOP",))
-
                 else:
                     # all good
                     left.queue.put(("GO", speed))
@@ -412,10 +403,11 @@ class Megamind(Processor):
         return True
 
 
-    def _angle_sweep(self, degrees, speed=MIN_SPEED):
+    def _angle_sweeper(self, degrees, speed=MIN_SPEED):
         """Set sweeper to face a given angle in degrees. 0 = straight ahead"""
         sweeper = self.processor_dict.get("SWEEPER")
         sweeper.queue.put(("ANGLE", degrees, speed))
+
 
 
 
@@ -620,6 +612,9 @@ if __name__ == "__main__":
         #brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
         #brain.queue.put_nowait(("GO", 15, 320))
         #brain.queue.put_nowait(("SWEEP", 190, True, 90))
+
+
+        # REMOVE THIS WHILE TRUE FOR ACTUAL IMPLEMENTATION (EMERGENCY STOP!!!)
         while True:
             command, *args = input("enter command: \n").split()
             if (not command.upper() in brain.funcdict):
