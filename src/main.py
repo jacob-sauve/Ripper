@@ -8,19 +8,21 @@
   :   : : :    :        :       : :: :::  :   : :
 
 Main loop
-v2.4.0
-2026-04-01
+v2.5.0
+2026-04-02
 """
 
 # imports
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import BP, Motor, EV3ColorSensor, reset_brick, wait_ready_sensors, TouchSensor
-import time
+from time import sleep
 from multi_process_drive import Megamind, Vision, Driver
+from command_parser import parse_commandfile
 
 # constants
-# 1- ports
+# N/A
+
 
 if __name__ == "__main__":
     processors = {
@@ -37,18 +39,13 @@ if __name__ == "__main__":
     try:
         import titlecard
         titlecard.show()
-        with open("commands.txt", "rt") as f:
-            lines = f.read()
-        commands = lines.splitlines()
+        
+        # get commands from file
+        commands = parse_commandfile("commands.txt", brain.funcdict, debug=True)
+        for command in commands:
+            brain.queue.put_nowait(command)
 
-        for command, *args in commands:
-            check = len(args) == len(list(filter(lambda x: x.isdecimal(), args)))
-            if (not command.upper() in brain.funcdict) or (not check):
-                print(f"Invalid command: {command}")
-            else:
-                print(f"Executing command: {command}")
-                brain.queue.put_nowait((command.upper(), *list(map(int, args))))
-
+        # main loop (emergency stop)
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
