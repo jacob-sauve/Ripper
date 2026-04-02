@@ -29,48 +29,37 @@ STOP   = TouchSensor(2)
 wait_ready_sensors(True)
 
 if __name__ == "__main__":
-    # REWORK BASED ON NEW MPD.PY STRUCTURE
+    processors = {
+            "GYRO": Vision("GYRO", 3, 0.01),
+            "LEFT": Driver("LEFT", "D"),
+            "RIGHT": Driver("RIGHT", "A"),
+            "GRABBER": Driver("GRABBER", "B"),
+            "SWEEPER": Driver("SWEEPER", "C"),
+            "COLOR": Vision("COLOR", 1)
+            }
+    brain = Megamind(processors)
+    stop = TouchSensor(2)
+
     try:
         import titlecard
         titlecard.show()
+        print(f"{cpu_count()=}\n\n")
+        with open("commands.txt", "rt") as f:
+            lines = f.read()
+        commands = lines.splitlines()
 
-        print("Select mode:")
-        print("  1 - Manual move + rotate")
-        print("  2 - Line follower")
-        mode = input("Mode: ").strip()
-        brain, left, right = launch_drivers(LEFT, RIGHT)
-
-        if mode == "1":
-            while not STOP.is_pressed():
-                d = float(input("How far should Ripper move? (cm): "))
-                brain.move(d)
-                d = float(input("Turn how many degrees (algebraic): "))
-                brain.rotate_in_place(d)
-
-        elif mode == "2":
-            calibrate = input("Calibrate sensor? (y/n): ").strip().lower()
-            if calibrate == "y":
-                white_val, black_val, orange_val = lf.calibrate(COLOR)
+        for command, *args in commands:
+            check = len(args) == len(list(filter(lambda x: x.isdecimal(), args)))
+            if (not command.upper() in brain.funcdict) or (not check):
+                print(f"Invalid command: {command}")
             else:
-                white_val  = lf.DEFAULT_WHITE
-                black_val  = lf.DEFAULT_BLACK
-                orange_val = lf.DEFAULT_ORANGE
-
-            duration_str = input("Run for how many seconds? (Enter for unlimited): ").strip()
-            duration = float(duration_str) if duration_str else None
-
-            lf.follow_line(LEFT, RIGHT, COLOR,
-                           white_val=white_val,
-                           black_val=black_val,
-                           orange_val=orange_val,
-                           touch=TOUCH,
-                           duration=duration)
-        #elif mode == "3":
-        #    ts.orange_loop(LEFT, RIGHT, COLOR)
-        else:
-            print("Unknown mode.")
+                print(f"Executing command: {command}")
+                brain.queue.put_nowait((command.upper(), *list(map(int, args))))
 
     except BaseException as e:
         print(e)
     finally:
+        print("killing...")
+        brain.killAll()
+        print("killed.")
         reset_brick()

@@ -1,0 +1,15 @@
+go 15 200
+turn -12 200
+go 15 200
+grab 7 500
+go 15 -200
+turn 24 200
+go 15 200
+grab 7 500
+go 15 -200
+turn -12 200
+go 10 -200
+turn -90 200
+go_door
+sweep 270 1 90
+
