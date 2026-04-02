@@ -39,6 +39,7 @@ MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can s
 SWEEPS_PER_SWEEP = 2    # number of full ROMs swept per call of Megamind._sweep()
 FW_PER_SWEEP = 10       # centimeters of straight-line motion between every sweep
 MAX_ROOM_DEPTH = 40     # centimeters of max forward movement during sweeping before giving up on a room
+TURN_DEADZONE = 2       # max degrees (+/-) considered acceptable turn deviations in a given direction
 
 
 
@@ -272,7 +273,7 @@ class Megamind(Processor):
             sleep(MEGAMIND_BUFFER)
             print(f"{gyro_readings=}")
         curr_angle = gyro.queue.get(True).get("angle") #blocking queue read
-        if curr_angle != target_angle:
+        if abs(curr_angle - target_angle) > TURN_DEADZONE:
             self.queue.put(("TURN", target_angle-curr_angle, speed))
         print(f"stopped turning, final gyro reading: {gyro_readings}")
         left.queue.put(("STOP",))
