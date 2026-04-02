@@ -8,7 +8,7 @@ def parse_commandfile(filename, funcdict, debug=False):
             print(lines)
     commands = list()
     for commandstring in lines:
-        command, *args = commandstring.rstrip('\n').split(' ')
+        command, *args = commandstring.strip().split(' ')
         check = len(args) == len(list(filter(lambda x: x.lstrip('-').isdecimal(), args)))
         if (not command.upper() in funcdict) or (not check):
             if debug:
