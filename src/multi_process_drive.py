@@ -96,8 +96,6 @@ class Megamind(Processor):
     """
     def __init__(self, processor_dict=dict()):
         super().__init__("MEGAMIND")
-        self.is_busy = False
-        self.active_command = None
         # dictionnary mapping processor (sensor or actuator) name to Processor object
         self.processor_dict = processor_dict
         self.funcdict = {
@@ -115,6 +113,7 @@ class Megamind(Processor):
         self.initial_orientation = None # for calibration of direction over multiple func calls
         # to keep track of where we WANT to be facing
         self.current_direction = START_DIRECTION # for DESIRED direction, NOT true direction
+        self.bed_direction = None # angle at which bed is detected
         self.start()
 
 
@@ -320,6 +319,7 @@ class Megamind(Processor):
                         # play happy sounds if patient found
                         sweeper.queue.put(("STOP",))
                         self.funcdict.get("JINGLE")()
+                        self.bed_direction = self.sweeper._get_angle()
                         return True
                     elif curr_color == "red":
                         # exit room if patient invalid
@@ -380,23 +380,15 @@ class Megamind(Processor):
 
                     print("left drift. correcting...")
                     # left wheel lagging
-                    #right.queue.put(("STOP",))
-                    #left.queue.put(("STOP",))
                     right.queue.put(("GO", speed / DRIFT_CORRECTION))
                     left.queue.put(("GO", speed * DRIFT_CORRECTION))
-                    #right.queue.put(("STOP",))
-                    #left.queue.put(("GO", speed))
 
                 elif (drift < -MAX_DRIFT and speed < 0) or (drift > MAX_DRIFT and speed > 0):
                     # NEW RIGHT DRIFT
                     print("right drift. correcting...")
-                 # right wheel lagging
-                    #right.queue.put(("STOP",))
-                    #left.queue.put(("STOP",))
+                    # right wheel lagging
                     right.queue.put(("GO", speed * DRIFT_CORRECTION))
                     left.queue.put(("GO", speed / DRIFT_CORRECTION))
-                    #right.queue.put(("GO", speed))
-                    #left.queue.put(("STOP",))
                 else:
                     # all good
                     left.queue.put(("GO", speed))
@@ -474,6 +466,11 @@ class Driver(Processor):
         self.motor_pin.set_limits(dps=speed)
         # turn!
         self.motor_pin.set_position(degrees)
+
+    
+    def _get_angle(self):
+        """retrieve current encoder angle (degrees)"""
+        return self.motor_pin.get_position()
 
 
     def _stop(self):
