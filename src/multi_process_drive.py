@@ -316,6 +316,7 @@ class Megamind(Processor):
                 self._angle_sweeper(degrees, speed)
                 sleep(MEGAMIND_BUFFER*2)
                 color_readings = self.clearSensorQueues(False).get("COLOR")
+                print(color_readings)
                 if color_readings:
                     curr_color = color_readings.get("color")
                     print(f"{curr_color =}")
