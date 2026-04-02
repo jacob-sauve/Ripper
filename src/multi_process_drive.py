@@ -312,7 +312,7 @@ class Megamind(Processor):
                 color_readings = color.queue.safeGet(False)
                 if color_readings:
                     curr_color = color_readings.get("color")
-                    print(f"{color_readings.get('rgb') = }")
+                    #print(f"{color_readings.get('rgb') = }")
                     if curr_color == "green":
                         # play happy sounds if patient found
                         sweeper.queue.put(("STOP",))

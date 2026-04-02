@@ -58,7 +58,7 @@ def classify(rgb, debugging = False):
 
 
 
-def classify_color(rgb, debugging=False):
+def classify_color(rgb, debugging=True):
     """Classify rgb value as one of the four saved colours
     Keyword arguments:
         rgb         -- list of (R,G,B) values to be classified
