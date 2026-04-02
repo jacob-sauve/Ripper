@@ -47,6 +47,8 @@ def safeGet(queue):
     return lambda wait: queue.get(wait) if not queue.empty() else None
 
 
+
+
 class Processor:
     """Parent class for all process wrapper classes"""
     def __init__(self, name):
@@ -54,14 +56,18 @@ class Processor:
         self.name = name
         self.process = Process(target=self.manage_queue)    # start process with queue parsing loop
 
+
     def start(self):
         # add safeGet method at RunTime
         self.queue.safeGet = safeGet(self.queue)
         self.process.start()
 
+
     def manage_queue(self):
         # implemented differently for actuators (get from queue) and sensors (put)
         pass
+
+
 
 
 class Megamind(Processor):
@@ -97,8 +103,8 @@ class Megamind(Processor):
                 "GRAB": self._grab,
                 "SWEEP": self._sweep,
                 "JINGLE": victor_jingle,
-                "GO_DOOR": self._go_to_door
-
+                "GO_DOOR": self._go_to_door,
+                "FINAL_JINGLE": delivery_jingle,
                 }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
@@ -106,6 +112,7 @@ class Megamind(Processor):
         # to keep track of where we WANT to be facing
         self.current_direction = START_DIRECTION # for DESIRED direction, NOT true direction
         self.start()
+
 
     def start(self):
         wait_ready_sensors(True)
@@ -117,6 +124,7 @@ class Megamind(Processor):
             pass
         finally:
             super().start()
+
 
     def addProcessor(self, processor):
         """connect a new processor (sensor/actuator)"""
@@ -134,9 +142,11 @@ class Megamind(Processor):
         processor.process.terminate() # kill active process
         return True
 
+
     def killProcessorByName(self, name):
         processor = self.processor_dict.get(name)
         return self.killProcessor(processor)
+
 
     def killAll(self):
         for name in self.processor_dict:
@@ -162,6 +172,7 @@ class Megamind(Processor):
                     queue_front = sensor.queue.safeGet(wait)
         return queue_front_dict
 
+
     def manage_queue(self):
         """probably should rework --> could easily get stuck in busy mode"""
         while True: 
@@ -174,6 +185,7 @@ class Megamind(Processor):
             self.latest_readings = self.clearSensorQueues()
             sleep(MEGAMIND_BUFFER)
 
+
     def _distance_to_iterations(self, distance, speed=MIN_SPEED, radius=R_WHEEL):
         # calculate how much motor rotation is necessary to move distance
         n_rotations = abs(distance / (radius * pi * 2))
@@ -181,9 +193,11 @@ class Megamind(Processor):
         # calculate amount of iterations with delay equal to constant buffer are needed
         return int(abs(spin_time / MEGAMIND_BUFFER))
 
+
     def _degrees_to_iterations(self, degrees, speed=MIN_SPEED):
         spin_time = degrees / speed
         return int(abs(spin_time/MEGAMIND_BUFFER))
+
 
     def _go_with_sensors(self, distance, speed=MIN_SPEED):
         """go a certain distance in a straight line. uses gyro for drift mgmt."""
@@ -240,6 +254,7 @@ class Megamind(Processor):
         right.queue.put(("STOP",))
         return True
 
+
     def _turn_with_sensors(self, degrees, speed=MIN_SPEED):
         left, right, gyro = (self.processor_dict.get("LEFT"),
                              self.processor_dict.get("RIGHT"),
@@ -270,6 +285,7 @@ class Megamind(Processor):
         self.current_direction = target_angle
         return True
 
+
     def _grab(self, distance, speed=MIN_SPEED):
         granular_iterations = self._distance_to_iterations(distance, radius=R_GRABBER)
         grabber = self.processor_dict.get("GRABBER")
@@ -282,6 +298,7 @@ class Megamind(Processor):
 
         grabber.queue.put(("STOP",))
         return True
+
 
     def _sweep(self, range_of_motion, center=True, speed=MIN_SPEED):
         #granular_iterations = self._degrees_to_iterations(degrees, speed)
@@ -329,6 +346,7 @@ class Megamind(Processor):
         self.queue.put(("SWEEP", range_of_motion, center, speed))
         sleep(0.5)
         return False
+
 
     def _go_to_door(self, speed=MIN_SPEED):
         """advance until orange is detected; then proceed to room logic"""
@@ -394,7 +412,10 @@ class Megamind(Processor):
         return True
 
 
-
+    def _angle_sweep(self, degrees, speed=MIN_SPEED):
+        """Set sweeper to face a given angle in degrees. 0 = straight ahead"""
+        sweeper = self.processor_dict.get("SWEEPER")
+        sweeper.queue.put(("ANGLE", degrees, speed))
 
 
 
@@ -426,10 +447,12 @@ class Driver(Processor):
         super().__init__(self.name)
         self.start()
 
+
     def start(self):
         """Start process, initialise Motor output pin"""
         self.motor_pin = Motor(self.motor_pin_name)
         super().start()
+
 
     def _go(self, speed=None):
         """start moving"""
@@ -446,6 +469,7 @@ class Driver(Processor):
         except:
             return False
 
+
     def _angle(self, degrees, speed=None):
         """face a certain angle""" 
         # limit speed
@@ -453,6 +477,7 @@ class Driver(Processor):
         self.motor_pin.set_limits(dps=speed)
         # turn!
         self.motor_pin.set_position(degrees)
+
 
     def _stop(self):
         """stop moving"""
@@ -464,6 +489,7 @@ class Driver(Processor):
             return True
         except:
             return False
+
 
     def manage_queue(self):
         while True:
@@ -495,10 +521,12 @@ class Vision(Processor):
         super().__init__(self.name)
         self.start()
 
+
     def start(self):
         # setup sensor pin
         self.sensor_pin = self.setup_function(self.sensor_pin_number)
         super().start()
+
 
     def gyro_measure(self, *args):
         if self.name != "GYRO":
@@ -515,12 +543,14 @@ class Vision(Processor):
         #print(f"{output}")
         return output
 
+
     def touch_measure(self, *args):
         if self.name != "TOUCH":
             return False
         is_pressed = self.sensor_pin.is_pressed()
         if is_pressed:
             return {"press":is_pressed}
+
 
     def color_measure(self, *args):
         sleep(0.01)
@@ -534,6 +564,7 @@ class Vision(Processor):
             output["rgb"] = rgb
         return output
 
+
     def manage_queue(self):
         while True:
             args = []
@@ -546,6 +577,8 @@ class Vision(Processor):
                     #print("I'm alive!!!")
                 self.queue.put(measurement)
                 time.sleep(self.poll_period)
+
+
 
 # main loop
 if __name__ == "__main__":
