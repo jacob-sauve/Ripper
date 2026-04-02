@@ -37,7 +37,6 @@ if __name__ == "__main__":
     try:
         import titlecard
         titlecard.show()
-        print(f"{cpu_count()=}\n\n")
         with open("commands.txt", "rt") as f:
             lines = f.read()
         commands = lines.splitlines()
