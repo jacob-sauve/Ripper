@@ -310,6 +310,8 @@ class Megamind(Processor):
             start = START_SWEEP_ANGLE
         # set start angle 
         self._angle_sweeper(start, speed)
+        # wait for sweeper to reach start position before beginning sweep
+        sleep(1.0)
         increment = SWEEP_MINIMUM_TURN
         for i in range(SWEEPS_PER_SWEEP):
             sensor_outputs = self.clearSensorQueues(False)
