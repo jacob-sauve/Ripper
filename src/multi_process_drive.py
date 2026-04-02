@@ -271,7 +271,7 @@ class Megamind(Processor):
             sleep(MEGAMIND_BUFFER)
             print(f"{gyro_readings=}")
         if curr_angle != target_angle:
-            self.queue.put(("TURN", curr_angle-target_angle, speed))
+            self.queue.put(("TURN", target_angle-curr_angle, speed))
         print(f"stopped turning, final gyro reading: {gyro_readings}")
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
