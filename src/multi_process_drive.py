@@ -41,6 +41,7 @@ FW_PER_SWEEP = 10       # centimeters of straight-line motion between every swee
 MAX_ROOM_DEPTH = 40     # centimeters of max forward movement during sweeping before giving up on a room
 
 
+
 def safeGet(queue):
     """Get from queue wrapped in empty check, None if empty
     returns the method that will be called in future
@@ -309,7 +310,7 @@ class Megamind(Processor):
         for i in range(SWEEPS_PER_SWEEP):
             for degrees in range(start, range_of_motion + start, increment):
                 sweeper.queue.put(("ANGLE", degrees, speed))
-                sleep(MEGAMIND_BUFFER*4)
+                sleep(MEGAMIND_BUFFER*400)
                 color_readings = color.queue.safeGet(False)
                 if color_readings:
                     curr_color = color_readings.get("color")
@@ -317,13 +318,13 @@ class Megamind(Processor):
                     if curr_color == "green":
                         # play happy sounds if patient found
                         sweeper.queue.put(("STOP",))
-                        self.queue.put(("JINGLE",))
+                        self.funcdict.get("JINGLE")()
                         return True
                     elif curr_color == "red":
                         # exit room if patient invalid
                         sweeper.queue.put(("STOP",))
-                        self.queue.put(("GO", 10, -MIN_SPEED))
-                        self.queue.put(("GO_DOOR", -MIN_SPEED))
+                        self._go_with_sensors(10, -MIN_SPEED)
+                        self._go_to_door("GO_DOOR", -MIN_SPEED)
                         return True
             sleep(MEGAMIND_BUFFER*20)
             start *= -1
@@ -333,11 +334,11 @@ class Megamind(Processor):
         # check if room fully traversed
         if (distance_advanced >= MAX_ROOM_DEPTH):
             # if so, leave
-            self.queue.put("GO_DOOR", -MIN_SPEED)
+            self._go_to_door(-MIN_SPEED)
         else:
             # if not, queue sweep instructions again
-            self.queue.put(("GO", FW_PER_SWEEP, MIN_SPEED))
-            self.queue.put(("SWEEP", range_of_motion, center, speed, distance_advanced + FW_PER_SWEEP))
+            self._go_with_sensors(FW_PER_SWEEP, MIN_SPEED)
+            self._sweep(range_of_motion, center, speed, distance_advanced + FW_PER_SWEEP)
         sleep(0.5)
         return False
 
