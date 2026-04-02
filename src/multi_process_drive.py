@@ -310,7 +310,7 @@ class Megamind(Processor):
         for i in range(SWEEPS_PER_SWEEP):
             for degrees in range(start, range_of_motion + start, increment):
                 sweeper.queue.put(("ANGLE", degrees, speed))
-                sleep(MEGAMIND_BUFFER*400)
+                sleep(MEGAMIND_BUFFER*4)
                 color_readings = color.queue.safeGet(False)
                 if color_readings:
                     curr_color = color_readings.get("color")
@@ -327,7 +327,7 @@ class Megamind(Processor):
                         self._go_with_sensors(10, -MIN_SPEED)
                         self._go_to_door("GO_DOOR", -MIN_SPEED)
                         return True
-            sleep(MEGAMIND_BUFFER*20)
+            sleep(MEGAMIND_BUFFER*200)
             start *= -1
             range_of_motion *= -1
             increment *= -1
