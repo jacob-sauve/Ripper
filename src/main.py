@@ -21,11 +21,6 @@ from multi_process_drive import Megamind, Vision, Driver
 
 # constants
 # 1- ports
-RIGHT  = "A"
-LEFT   = "D"
-COLOR  = EV3ColorSensor(4, mode="red")
-STOP   = TouchSensor(2)
-wait_ready_sensors(True)
 
 if __name__ == "__main__":
     processors = {
