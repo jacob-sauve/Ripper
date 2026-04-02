@@ -315,8 +315,10 @@ class Megamind(Processor):
             for degrees in range(start, range_of_motion + start, increment):
                 self._angle_sweeper(degrees, speed)
                 sleep(MEGAMIND_BUFFER*2)
-                color_readings = self.clearSensorQueues(False).get("COLOR")
-                print(color_readings)
+                sensor_outputs = self.clearSensorQueues(False)
+                print(f"{sensor_outputs = }")
+                color_readings = sensor_outputs.get("COLOR")
+                print(f"{color_readings = }")
                 if color_readings:
                     curr_color = color_readings.get("color")
                     print(f"{curr_color =}")
