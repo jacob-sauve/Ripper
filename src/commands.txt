@@ -1,4 +1,4 @@
-angle_sweeper -90
+angle_sweeper 180
 go 15 200
 turn -12 200
 go 15 200
