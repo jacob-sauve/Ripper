@@ -574,6 +574,14 @@ class Vision(Processor):
 
 # main loop
 if __name__ == "__main__":
+    processors = {
+            "GYRO": Vision("GYRO", 3, 0.01),
+            "LEFT": Driver("LEFT", "D"),
+            "RIGHT": Driver("RIGHT", "A"),
+            "GRABBER": Driver("GRABBER", "B"),
+            "SWEEPER": Driver("SWEEPER", "C"),
+            "COLOR": Vision("COLOR", 1)
+            }   
     brain = Megamind(processors)
     # EMERGENCY STOP (managed by main loop)
     stop = TouchSensor(2)

@@ -17,7 +17,7 @@ import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import BP, Motor, EV3ColorSensor, reset_brick, wait_ready_sensors, TouchSensor
 import time
-from multi_process_drive import Megamind
+from multi_process_drive import Megamind, Vision, Driver
 import line_follower as lf
 
 # constants
@@ -55,6 +55,10 @@ if __name__ == "__main__":
             else:
                 print(f"Executing command: {command}")
                 brain.queue.put_nowait((command.upper(), *list(map(int, args))))
+
+        while not stop.is_pressed():
+            sleep(0.01)
+        raise Exception()
 
     except BaseException as e:
         print(e)
