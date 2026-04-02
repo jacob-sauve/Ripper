@@ -33,11 +33,12 @@ MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectiline
 DRIFT_CORRECTION = 1.15 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12         # length of a bed in centimeters
 START_SWEEP_ANGLE = 0   # initial angle of sweeper
-SWEEP_MINIMUM_TURN = 5 # degrees of smallest sweep increment
+SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can safely assume it is in a room
 SWEEPS_PER_SWEEP = 2    # number of full ROMs swept per call of Megamind._sweep()
 FW_PER_SWEEP = 10       # centimeters of straight-line motion between every sweep
+MAX_ROOM_DEPTH = 40     # centimeters of max forward movement during sweeping before giving up on a room
 
 
 def safeGet(queue):
@@ -291,7 +292,7 @@ class Megamind(Processor):
         return True
 
 
-    def _sweep(self, range_of_motion, center=True, speed=MIN_SPEED):
+    def _sweep(self, range_of_motion, center=True, speed=MIN_SPEED, distance_advanced=0):
         #granular_iterations = self._degrees_to_iterations(degrees, speed)
         sweeper, color = (self.processor_dict.get("SWEEPER"), self.processor_dict.get("COLOR"))
 
@@ -325,16 +326,15 @@ class Megamind(Processor):
             start *= -1
             range_of_motion *= -1
             increment *= -1
-        #turn(degrees)
-        #forward(5cm)
-        #grabber(-speed)
-        #backward(5cm)
-        #turn(-degrees)
-        #return
         # false if not found
-        # queue instructions again
-        self.queue.put(("GO", FW_PER_SWEEP, MIN_SPEED))
-        self.queue.put(("SWEEP", range_of_motion, center, speed))
+        # check if room fully traversed
+        if (distance_advanced >= MAX_ROOM_DEPTH):
+            # if so, leave
+            self.queue.put("GO_DOOR", -MIN_SPEED)
+        else:
+            # if not, queue sweep instructions again
+            self.queue.put(("GO", FW_PER_SWEEP, MIN_SPEED))
+            self.queue.put(("SWEEP", range_of_motion, center, speed, distance_advanced + FW_PER_SWEEP))
         sleep(0.5)
         return False
 
