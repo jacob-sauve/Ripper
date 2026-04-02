@@ -10,7 +10,7 @@ def parse_commandfile(filename, funcdict, debug=False):
     for commandstring in lines:
         command, *args = commandstring.rstrip('\n').split(' ')
         check = len(args) == len(list(filter(lambda x: x.lstrip('-').isdecimal(), args)))
-        if (not command.upper() in brain.funcdict) or (not check):
+        if (not command.upper() in funcdict) or (not check):
             if debug:
                 print(f"Invalid command: '{command}'")
         else:

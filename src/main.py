@@ -51,8 +51,7 @@ if __name__ == "__main__":
         raise Exception()
 
     except BaseException as e:
-        raise e
-        #print(e)
+        print(e)
     finally:
         print("killing...")
         brain.killAll()
