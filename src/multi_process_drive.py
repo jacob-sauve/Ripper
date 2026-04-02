@@ -358,7 +358,7 @@ class Megamind(Processor):
         if not (self.initial_orientation is None):
             initial_angle = self.initial_orientation + self.current_direction
         else:
-            initial_angle = gyro.queue.safeGet(False).get("angle")
+            initial_angle = gyro.queue.get(True).get("angle")
         for i in range(granular_iterations):
             gyro_readings = gyro.queue.safeGet(False)
             print(f"{gyro_readings=}")
