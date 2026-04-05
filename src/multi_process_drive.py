@@ -468,9 +468,8 @@ class Driver(Processor):
     def start(self):
         """Start process, initialise Motor output pin"""
         self.motor_pin = Motor(self.motor_pin_name)
-        sweeper = self.processor_dict.get("SWEEPER")
-        if not sweeper is None:
-            sweeper.motor_pin.reset_position()
+        if self.name == "SWEEPER":
+            self.motor_pin.reset_position()
 
         super().start()
 
