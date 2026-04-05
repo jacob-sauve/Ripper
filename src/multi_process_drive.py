@@ -189,7 +189,6 @@ class Megamind(Processor):
         return queue_front_dict
 
     def manage_queue(self):
-        """probably should rework --> could easily get stuck in busy mode"""
         while True:
             instruction = self.queue.safeGet(False)
             if instruction:
@@ -268,10 +267,15 @@ class Megamind(Processor):
             self.processor_dict.get("RIGHT"),
             self.processor_dict.get("GYRO"),
         )
-        gyro_readings = gyro.queue.get(True)
+        sensor_outputs = self.clearSensorQueues(False)
+        gyro_readings = sensor_outputs.get(gyro)
         direction = DIRECTION if degrees > 0 else -DIRECTION
         target_angle = self.current_direction + degrees  # gyro does not mod by 360
-        curr_angle = gyro_readings.get("angle")
+        if gyro_readings:
+            curr_angle = gyro_readings.get("angle")
+        else:
+            # in case of empty queue
+            curr_angle = gyro.queue.safeGet(True).get("angle")
         # use Python builtin operator functions, set based on turn direction
         compare = operator.ge
         if direction < 0:
