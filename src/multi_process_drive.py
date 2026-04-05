@@ -137,6 +137,7 @@ class Megamind(Processor):
             self.initial_orientation = (
                 self.clearSensorQueues(wait=True).get("GYRO").get("angle")
             )
+            print(f"{self.initial_orientation=}")
             # moved sweeper encoder reset to Driver.start()
             # sweeper = self.processor_dict.get("SWEEPER")
             # if not sweeper is None:
@@ -335,13 +336,13 @@ class Megamind(Processor):
                         print(f"{self.bed_direction =}")
                         # drop block on bed
                         # calibrate the constant to get the right turn angle given sweeper angle
-                        self._turn_with_sensors(-self.bed_direction / 5)
                         print(f"turning towards bed, angle: {-self.bed_direction / 5}")
+                        self._turn_with_sensors(-self.bed_direction // 5)
                         self._go_with_sensors(BED_LENGTH / 2)
                         self._grab(6, -500)
                         self._go_with_sensors(BED_LENGTH / 2, -MIN_SPEED)
                         print(f"turning away from bed, angle: {self.bed_direction / 5}")
-                        self._turn_with_sensors(self.bed_direction / 5)
+                        self._turn_with_sensors(self.bed_direction // 5)
                         self._go_to_door(-MIN_SPEED)
                         return True
                     elif curr_color == "red":
