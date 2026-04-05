@@ -365,7 +365,7 @@ class Megamind(Processor):
                 sleep(MEGAMIND_BUFFER * 2)
         # false if not found
         # check if room fully traversed
-        sleep(0.5)
+        sleep(1)
         if distance_advanced >= MAX_ROOM_DEPTH:
             # if so, leave
             self._go_to_door(-MIN_SPEED)
