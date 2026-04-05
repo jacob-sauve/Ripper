@@ -363,7 +363,7 @@ class Megamind(Processor):
                 color_readings = color.queue.safeGet(False)
                 sleep(MEGAMIND_BUFFER * 2)
             sweep_dir *= -1
-            start *= -1
+            # start *= -1
             range_of_motion *= -1
             increment *= -1
         # false if not found
