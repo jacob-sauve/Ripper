@@ -332,6 +332,7 @@ class Megamind(Processor):
             sleep(1.0)
         """
         # set sweeper to one side
+        print("setting sweeper to start angle: -90")
         self._angle_sweeper(-90, speed)
         sleep(1.0)
         increment = SWEEP_MINIMUM_TURN
@@ -362,9 +363,8 @@ class Megamind(Processor):
                         return True
                 color_readings = color.queue.safeGet(False)
                 sleep(MEGAMIND_BUFFER * 2)
-            sweep_dir *= -1
-            # start *= -1
-            range_of_motion *= -1
+            start *= -1
+            # range_of_motion *= -1
             increment *= -1
         # false if not found
         # check if room fully traversed
