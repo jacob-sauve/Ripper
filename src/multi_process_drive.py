@@ -313,7 +313,7 @@ class Megamind(Processor):
         grabber.queue.put(("STOP",))
         return True
 
-    def _sweep(self, speed=MIN_SPEED, distance_advanced=0):
+    def _sweep(self, speed=230, distance_advanced=0):
         sweeper, color = (
             self.processor_dict.get("SWEEPER"),
             self.processor_dict.get("COLOR"),
