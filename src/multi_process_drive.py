@@ -313,7 +313,7 @@ class Megamind(Processor):
         grabber.queue.put(("STOP",))
         return True
 
-    def _sweep(self, speed=230, distance_advanced=0):
+    def _sweep(self, speed=200, distance_advanced=0):
         sweeper, color = (
             self.processor_dict.get("SWEEPER"),
             self.processor_dict.get("COLOR"),
@@ -358,7 +358,7 @@ class Megamind(Processor):
                         self._go_to_door("GO_DOOR", -MIN_SPEED)
                         return True
                 color_readings = color.queue.safeGet(False)
-                sleep(MEGAMIND_BUFFER * 2)
+                sleep(MEGAMIND_BUFFER)
             sweep_dir *= -1
             increment *= -1
         # false if not found
