@@ -321,6 +321,8 @@ class Megamind(Processor):
         # THIS METHOD ASSUMES STARTING POSITION OF -90 DEGREES, CALL "angle_sweeper -90" BEFORE CALLING THIS METHOD TO ENSURE THIS
         increment = SWEEP_MINIMUM_TURN
         sweep_dir = 1
+        if distance_advanced == 0:
+            self._angle_sweeper(-90)
         for i in range(SWEEPS_PER_SWEEP):
             sensor_outputs = self.clearSensorQueues(False)
             color_readings = sensor_outputs.get(color)
@@ -350,6 +352,7 @@ class Megamind(Processor):
                         self._go_with_sensors(10, -MIN_SPEED)
                         print(f"turning away from bed, angle: {turn_angle}")
                         self._turn_with_sensors(turn_angle, 350)
+
                         self._go_with_sensors(10, -MIN_SPEED)
                         self._angle_sweeper(0)
                         self._go_to_door(-MIN_SPEED)
