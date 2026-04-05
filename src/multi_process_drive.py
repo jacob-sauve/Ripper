@@ -318,7 +318,7 @@ class Megamind(Processor):
             self.processor_dict.get("COLOR"),
         )
 
-        if center:
+        if center and distance_advanced == 0:
             print("CENTERED\n" * 10)
             start = START_SWEEP_ANGLE - range_of_motion // 2
         else:
