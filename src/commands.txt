@@ -1,20 +1,20 @@
 angle_sweeper 90
 go 40 350
-grab 5 500
+grab 6 500
 go 10 -350
 turn 30 300
-go 12
+go 12 350
 grab 7 500
-go 12 -270
+go 12 -350
 turn -30 400
-go 30 -270
+go 30 -350
 turn -90 400
 angle_sweeper 0
 go_door
 sweep
-go 5 -270
+go 5 -350
 turn 90 300
-go 45
+go 60 350
 turn -90 400
 go_door
 sweep
