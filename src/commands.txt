@@ -1,2 +1,2 @@
-sweep 180 1 90 0
-
+angle_sweeper -90
+sweep
