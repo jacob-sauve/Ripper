@@ -317,16 +317,18 @@ class Megamind(Processor):
             self.processor_dict.get("SWEEPER"),
             self.processor_dict.get("COLOR"),
         )
-
-        if center and distance_advanced == 0:
-            print("CENTERED\n" * 10)
-            start = START_SWEEP_ANGLE - range_of_motion // 2
-        else:
-            start = START_SWEEP_ANGLE
-        # set start angle
-        self._angle_sweeper(start, speed)
-        # wait for sweeper to reach start position before beginning sweep
-        sleep(1.0)
+        # only center sweeper on first call
+        if distance_advanced == 0:
+            if center:
+                print("CENTERED\n" * 10)
+                start = START_SWEEP_ANGLE - range_of_motion // 2
+            else:
+                start = START_SWEEP_ANGLE
+            # set start angle
+            print(f"setting sweeper to start angle: {start}")
+            self._angle_sweeper(start, speed)
+            # wait for sweeper to reach start position before beginning sweep
+            sleep(1.0)
         increment = SWEEP_MINIMUM_TURN
         for i in range(SWEEPS_PER_SWEEP):
             sensor_outputs = self.clearSensorQueues(False)
