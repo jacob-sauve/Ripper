@@ -1,4 +1,4 @@
-turn 12
-turn -12
+go 2
+grab 6 500
 angle_sweeper -90
 sweep
