@@ -267,7 +267,7 @@ class Megamind(Processor):
             self.processor_dict.get("RIGHT"),
             self.processor_dict.get("GYRO"),
         )
-        sensor_outputs = self.clearSensorQueues(False)
+        sensor_outputs = self.clearSensorQueues(True)
         gyro_readings = sensor_outputs.get(gyro)
         direction = DIRECTION if degrees > 0 else -DIRECTION
         target_angle = self.current_direction + degrees  # gyro does not mod by 360
