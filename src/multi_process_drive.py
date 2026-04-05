@@ -331,7 +331,7 @@ class Megamind(Processor):
                         # play happy sounds if patient found
                         sweeper.queue.put(("STOP",))
                         self.funcdict.get("JINGLE")()
-                        self.bed_direction = self.sweeper._get_angle()
+                        self.bed_direction = sweeper._get_angle()
                         print(f"{self.bed_direction =}")
                         return True
                     elif curr_color == "red":
