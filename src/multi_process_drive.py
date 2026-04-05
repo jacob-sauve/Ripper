@@ -41,7 +41,7 @@ MAX_DRIFT = 0.5  # max degrees of drift acceptable from desired rectilinear traj
 DRIFT_CORRECTION = 1.15  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12  # length of a bed in centimeters
 START_SWEEP_ANGLE = 0  # initial angle of sweeper
-SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
+SWEEP_MINIMUM_TURN = 4  # degrees of smallest sweep increment
 START_DIRECTION = 0  # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can safely assume it is in a room
 SWEEPS_PER_SWEEP = 2  # number of full ROMs swept per call of Megamind._sweep()
@@ -313,7 +313,7 @@ class Megamind(Processor):
         grabber.queue.put(("STOP",))
         return True
 
-    def _sweep(self, speed=200, distance_advanced=0):
+    def _sweep(self, speed=180, distance_advanced=0):
         sweeper, color = (
             self.processor_dict.get("SWEEPER"),
             self.processor_dict.get("COLOR"),
@@ -334,7 +334,7 @@ class Megamind(Processor):
                     if curr_color == "green":
                         # play happy sounds if patient found
                         sweeper.queue.put(("STOP",))
-                        self.funcdict.get("JINGLE")()
+                        # self.funcdict.get("JINGLE")()
                         self.bed_direction = sweeper._get_angle()
                         print(f"{self.bed_direction =}")
                         # drop block on bed
@@ -358,7 +358,7 @@ class Megamind(Processor):
                         self._go_to_door("GO_DOOR", -MIN_SPEED)
                         return True
                 color_readings = color.queue.safeGet(False)
-                sleep(MEGAMIND_BUFFER)
+                sleep(MEGAMIND_BUFFER * 2)
             sweep_dir *= -1
             increment *= -1
         # false if not found
