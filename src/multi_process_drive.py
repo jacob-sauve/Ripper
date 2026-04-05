@@ -341,7 +341,7 @@ class Megamind(Processor):
                         self._go_to_door("GO_DOOR", -MIN_SPEED)
                         return True
                 color_readings = color.queue.safeGet(False)
-                sleep(MEGAMIND_BUFFER * 6)
+                sleep(MEGAMIND_BUFFER * 5)
             sweep_dir *= -1
             increment *= -1
         # false if not found
