@@ -312,60 +312,57 @@ class Megamind(Processor):
     def _sweep(
         self, range_of_motion=180, center=True, speed=MIN_SPEED, distance_advanced=0
     ):
-        # granular_iterations = self._degrees_to_iterations(degrees, speed)
         sweeper, color = (
             self.processor_dict.get("SWEEPER"),
             self.processor_dict.get("COLOR"),
         )
-        """
-        # only center sweeper on first call
-        if distance_advanced == 0:
-            if center:
-                print("CENTERED\n" * 10)
-                start = START_SWEEP_ANGLE - range_of_motion // 2
-            else:
-                start = START_SWEEP_ANGLE
-            # set start angle
-            print(f"setting sweeper to start angle: {start}")
-            self._angle_sweeper(start, speed)
-            # wait for sweeper to reach start position before beginning sweep
-            sleep(1.0)
-        """
-        # set sweeper to one side
-        self._angle_sweeper(-90, speed)
-        sleep(1.0)
-        increment = SWEEP_MINIMUM_TURN
-        sweep_dir = 1
+        start_angle = -90
+        end_angle = start_angle + abs(range_of_motion)
+        increment = abs(SWEEP_MINIMUM_TURN)
+
+        # bed detection helper function
+        def _check_color_detection(color_readings):
+            if not color_readings:
+                return False
+            curr_color = color_readings.get("color")
+            if curr_color == "green":
+                sweeper.queue.put(("STOP",))
+                self.funcdict.get("JINGLE")()
+                self.bed_direction = sweeper._get_angle()
+                print(f"{self.bed_direction =}")
+                return True
+            if curr_color == "red":
+                sweeper.queue.put(("STOP",))
+                self._go_with_sensors(10, -MIN_SPEED)
+                self._go_to_door(-MIN_SPEED)
+                return True
+            return False
+
         for i in range(SWEEPS_PER_SWEEP):
+            # Start every sweep cycle from the same left-side reference angle.
+            self._angle_sweeper(start_angle, speed)
+            sleep(1.0)
+
             sensor_outputs = self.clearSensorQueues(False)
             color_readings = sensor_outputs.get(color)
-            # for degrees in range(start, range_of_motion + start, increment):
-            # sweep back and forth 180 deg
-            for degrees in range(0, 180 * sweep_dir, increment):
+
+            # Sweep from -90 to +90
+            for degrees in range(start_angle, end_angle + increment, increment):
                 self._angle_sweeper(degrees, speed)
-                if color_readings:
-                    curr_color = color_readings.get("color")
-                    #                    print(f"{curr_color =}")
-                    # print(f"{color_readings.get('rgb') = }")
-                    if curr_color == "green":
-                        # play happy sounds if patient found
-                        sweeper.queue.put(("STOP",))
-                        self.funcdict.get("JINGLE")()
-                        self.bed_direction = self.sweeper._get_angle()
-                        print(f"{self.bed_direction =}")
-                        return True
-                    elif curr_color == "red":
-                        # exit room if patient invalid
-                        sweeper.queue.put(("STOP",))
-                        self._go_with_sensors(10, -MIN_SPEED)
-                        self._go_to_door("GO_DOOR", -MIN_SPEED)
-                        return True
+                if _check_color_detection(color_readings):
+                    return True
                 color_readings = color.queue.safeGet(False)
                 sleep(MEGAMIND_BUFFER * 2)
-            sweep_dir *= -1
-            # start *= -1
-            range_of_motion *= -1
-            increment *= -1
+
+            # Return from +90 back to -90 before next cycle.
+            for degrees in range(
+                end_angle - increment, start_angle - increment, -increment
+            ):
+                self._angle_sweeper(degrees, speed)
+                if _check_color_detection(color_readings):
+                    return True
+                color_readings = color.queue.safeGet(False)
+                sleep(MEGAMIND_BUFFER * 2)
         # false if not found
         # check if room fully traversed
         sleep(0.5)
