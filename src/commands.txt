@@ -1,2 +1,4 @@
+turn 12
+turn -12
 angle_sweeper -90
 sweep
