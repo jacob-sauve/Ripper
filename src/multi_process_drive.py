@@ -40,7 +40,7 @@ MEGAMIND_BUFFER = 0.005  # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5  # max degrees of drift acceptable from desired rectilinear trajectory
 DRIFT_CORRECTION = 1.15  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12  # length of a bed in centimeters
-START_SWEEP_ANGLE = 0  # initial angle of sweeper
+START_SWEEP_ANGLE = -45  # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0  # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can safely assume it is in a room
@@ -137,9 +137,10 @@ class Megamind(Processor):
             self.initial_orientation = (
                 self.clearSensorQueues(wait=True).get("GYRO").get("angle")
             )
-            sweeper = self.processor_dict.get("SWEEPER")
-            if not sweeper is None:
-                sweeper.motor_pin.reset_position()
+            # moved sweeper encoder reset to Driver.start()
+            # sweeper = self.processor_dict.get("SWEEPER")
+            # if not sweeper is None:
+            #     sweeper.motor_pin.reset_position()
         except:
             pass
         finally:
@@ -467,6 +468,10 @@ class Driver(Processor):
     def start(self):
         """Start process, initialise Motor output pin"""
         self.motor_pin = Motor(self.motor_pin_name)
+        sweeper = self.processor_dict.get("SWEEPER")
+        if not sweeper is None:
+            sweeper.motor_pin.reset_position()
+
         super().start()
 
     def _go(self, speed=None):
@@ -573,11 +578,11 @@ class Vision(Processor):
         rgb = self.sensor_pin.get_rgb()
         output = dict()
         if rgb != None and not None in rgb:
-            color = classify(rgb, debugging=True)  # SET TO TRUE FOR CALIBRATION
+            color = classify(rgb, debugging=False)  # SET TO TRUE FOR CALIBRATION
             output["color"] = color
             output["rgb"] = rgb
-            print(f"{color = }")
-            print(f"{rgb = }")
+            # print(f"{color = }")
+            # print(f"{rgb = }")
         return output
 
     def manage_queue(self):
