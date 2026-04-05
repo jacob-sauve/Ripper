@@ -34,8 +34,8 @@ R_ROBOT = 7.52  # middle wheel to middle wheel in cm
 MIN_SPEED = 270  # wheel rotation speed in degrees.s-1
 GRABBER = -1  # multiplier for correct rotations of grabber (should be pickup direction)
 SWEEPER = (
-    +1
-)  # multiplier for correct rotations of front-mounted colour sensor sweep motor
+    1  # multiplier for correct rotations of front-mounted colour sensor sweep motor
+)
 MEGAMIND_BUFFER = 0.005  # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5  # max degrees of drift acceptable from desired rectilinear trajectory
 DRIFT_CORRECTION = 1.15  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
@@ -269,7 +269,6 @@ class Megamind(Processor):
             self.processor_dict.get("GYRO"),
         )
         gyro_readings = gyro.queue.get(True)
-
         direction = DIRECTION if degrees > 0 else -DIRECTION
         target_angle = self.current_direction + degrees  # gyro does not mod by 360
         curr_angle = gyro_readings.get("angle")
@@ -337,12 +336,12 @@ class Megamind(Processor):
                         # drop block on bed
                         # calibrate the constant to get the right turn angle given sweeper angle
                         print(f"turning towards bed, angle: {-self.bed_direction / 5}")
-                        self._turn_with_sensors(-self.bed_direction // 5)
+                        self._turn_with_sensors(-self.bed_direction // 5, 350)
                         self._go_with_sensors(BED_LENGTH / 2)
                         self._grab(6, -500)
                         self._go_with_sensors(BED_LENGTH / 2, -MIN_SPEED)
                         print(f"turning away from bed, angle: {self.bed_direction / 5}")
-                        self._turn_with_sensors(self.bed_direction // 5)
+                        self._turn_with_sensors(self.bed_direction // 5, 350)
                         self._go_to_door(-MIN_SPEED)
                         return True
                     elif curr_color == "red":
