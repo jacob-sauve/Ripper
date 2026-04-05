@@ -587,7 +587,7 @@ class Vision(Processor):
         rgb = self.sensor_pin.get_rgb()
         output = dict()
         if rgb != None and not None in rgb:
-            color = classify(rgb, debugging=False)  # SET TO TRUE FOR CALIBRATION
+            color = classify(rgb, debugging=True)  # SET TO TRUE FOR CALIBRATION
             output["color"] = color
             output["rgb"] = rgb
             # print(f"{color = }")
