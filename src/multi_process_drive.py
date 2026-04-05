@@ -339,14 +339,14 @@ class Megamind(Processor):
                         print(f"{self.bed_direction =}")
                         # drop block on bed
                         # calibrate the constant to get the right turn angle given sweeper angle
-                        self._angle_sweeper(90)
+                        self._angle_sweeper(-90)
                         print(f"turning towards bed, angle: {-self.bed_direction / 5}")
-                        self._turn_with_sensors(-self.bed_direction // 5, 350)
+                        self._turn_with_sensors(-self.bed_direction // 4, 350)
                         self._go_with_sensors(9)
                         self._grab(7, -500)
                         self._go_with_sensors(9, -MIN_SPEED)
                         print(f"turning away from bed, angle: {self.bed_direction / 5}")
-                        self._turn_with_sensors(self.bed_direction // 5, 350)
+                        self._turn_with_sensors(self.bed_direction // 4, 350)
                         self._go_with_sensors(10, -MIN_SPEED)
                         self._angle_sweeper(0)
                         self._go_to_door(-MIN_SPEED)
