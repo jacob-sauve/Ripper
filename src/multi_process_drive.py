@@ -342,7 +342,7 @@ class Megamind(Processor):
                         print(f"turning towards bed, angle: {-self.bed_direction / 5}")
                         self._turn_with_sensors(-self.bed_direction // 5, 350)
                         self._go_with_sensors(BED_LENGTH / 2)
-                        self._grab(6, -500)
+                        self._grab(7, -500)
                         self._go_with_sensors(BED_LENGTH / 2, -MIN_SPEED)
                         print(f"turning away from bed, angle: {self.bed_direction / 5}")
                         self._turn_with_sensors(self.bed_direction // 5, 350)

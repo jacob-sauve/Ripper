@@ -1,4 +1,4 @@
 go 2
-grab 6 500
+grab 5 500
 angle_sweeper -90
 sweep
