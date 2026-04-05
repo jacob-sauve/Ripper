@@ -1,12 +1,12 @@
 angle_sweeper 90
-go 35
+go 40
 grab 5 500
 go 10 -270
-turn 40
+turn 30
 go 12
 grab 6 500
 go 12 -270
-turn -40
+turn -30
 go 6 -270
 turn -90
 go_door
