@@ -352,7 +352,7 @@ class Megamind(Processor):
                 if _check_color_detection(color_readings):
                     return True
                 color_readings = color.queue.safeGet(False)
-                sleep(MEGAMIND_BUFFER * 2)
+                sleep(MEGAMIND_BUFFER * 4)
 
             # Return from +90 back to -90 before next cycle.
             for degrees in range(
@@ -362,7 +362,7 @@ class Megamind(Processor):
                 if _check_color_detection(color_readings):
                     return True
                 color_readings = color.queue.safeGet(False)
-                sleep(MEGAMIND_BUFFER * 2)
+                sleep(MEGAMIND_BUFFER * 4)
         # false if not found
         # check if room fully traversed
         sleep(1)
