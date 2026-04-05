@@ -362,7 +362,7 @@ class Megamind(Processor):
                         self._go_to_door("GO_DOOR", -MIN_SPEED)
                         return True
                 color_readings = color.queue.safeGet(False)
-                sleep(MEGAMIND_BUFFER * 4)
+                sleep(MEGAMIND_BUFFER * 6)
             # start *= -1
             sweep_dir *= -1
             # range_of_motion *= -1
