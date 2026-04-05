@@ -332,9 +332,9 @@ class Megamind(Processor):
             sleep(1.0)
         """
         # set sweeper to one side
-        print("setting sweeper to start angle: -90")
-        self._angle_sweeper(-90, speed)
-        sleep(1.0)
+        # print("setting sweeper to start angle: -90")
+        # self._angle_sweeper(-90, speed)
+        # sleep(1.0)
         increment = SWEEP_MINIMUM_TURN
         sweep_dir = 1
         for i in range(SWEEPS_PER_SWEEP):
