@@ -11,36 +11,47 @@ import os
 import time
 import operator
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from utils.brick import reset_brick, Motor, EV3ColorSensor, EV3GyroSensor, TouchSensor, wait_ready_sensors
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from utils.brick import (
+    reset_brick,
+    Motor,
+    EV3ColorSensor,
+    EV3GyroSensor,
+    TouchSensor,
+    wait_ready_sensors,
+)
 from math import pi
 from time import sleep
 from multiprocess import cpu_count, Process, Queue
 from colors import classify
 from musical import victor_jingle, delivery_jingle
 
-
 # constants
-DIRECTION = 1           # defines which way is forward versus backwards (e.g. -1 means negative speed --> forward motion)
-R_GRABBER = 1.8         # grabber motor turn radius in cm
-R_WHEEL = 2.2           # wheel radius in cm
-R_ROBOT = 7.52          # middle wheel to middle wheel in cm
-MIN_SPEED = 270         # wheel rotation speed in degrees.s-1
-GRABBER = -1            # multiplier for correct rotations of grabber (should be pickup direction)
-SWEEPER = +1            # multiplier for correct rotations of front-mounted colour sensor sweep motor
-MEGAMIND_BUFFER = 0.005 # seconds between Megamind queue parsings
-MAX_DRIFT = 0.5         # max degrees of drift acceptable from desired rectilinear trajectory
-DRIFT_CORRECTION = 1.15 # percentage (decimal form) of desired speed applied to lagging wheel if drifting
-BED_LENGTH = 12         # length of a bed in centimeters
+DIRECTION = 1  # defines which way is forward versus backwards (e.g. -1 means negative speed --> forward motion)
+R_GRABBER = 1.8  # grabber motor turn radius in cm
+R_WHEEL = 2.2  # wheel radius in cm
+R_ROBOT = 7.52  # middle wheel to middle wheel in cm
+MIN_SPEED = 270  # wheel rotation speed in degrees.s-1
+GRABBER = -1  # multiplier for correct rotations of grabber (should be pickup direction)
+SWEEPER = (
+    +1
+)  # multiplier for correct rotations of front-mounted colour sensor sweep motor
+MEGAMIND_BUFFER = 0.005  # seconds between Megamind queue parsings
+MAX_DRIFT = 0.5  # max degrees of drift acceptable from desired rectilinear trajectory
+DRIFT_CORRECTION = 1.15  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
+BED_LENGTH = 12  # length of a bed in centimeters
 START_SWEEP_ANGLE = 15  # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
-START_DIRECTION = 0     # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
+START_DIRECTION = 0  # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can safely assume it is in a room
-SWEEPS_PER_SWEEP = 2    # number of full ROMs swept per call of Megamind._sweep()
-FW_PER_SWEEP = 10       # centimeters of straight-line motion between every sweep
-MAX_ROOM_DEPTH = 40     # centimeters of max forward movement during sweeping before giving up on a room
-TURN_DEADZONE = 2       # max degrees (+/-) considered acceptable turn deviations in a given direction
-
+SWEEPS_PER_SWEEP = 2  # number of full ROMs swept per call of Megamind._sweep()
+FW_PER_SWEEP = 10  # centimeters of straight-line motion between every sweep
+MAX_ROOM_DEPTH = (
+    40  # centimeters of max forward movement during sweeping before giving up on a room
+)
+TURN_DEADZONE = (
+    2  # max degrees (+/-) considered acceptable turn deviations in a given direction
+)
 
 
 def safeGet(queue):
@@ -50,79 +61,82 @@ def safeGet(queue):
     return lambda wait: queue.get(wait) if not queue.empty() else None
 
 
-
-
 class Processor:
     """Parent class for all process wrapper classes"""
-    def __init__(self, name):
-        self.queue = Queue()                                # queue for interprocess comms through Megamind
-        self.name = name
-        self.process = Process(target=self.manage_queue)    # start process with queue parsing loop
 
+    def __init__(self, name):
+        self.queue = Queue()  # queue for interprocess comms through Megamind
+        self.name = name
+        self.process = Process(
+            target=self.manage_queue
+        )  # start process with queue parsing loop
 
     def start(self):
         # add safeGet method at RunTime
         self.queue.safeGet = safeGet(self.queue)
         self.process.start()
 
-
     def manage_queue(self):
         # implemented differently for actuators (get from queue) and sensors (put)
         pass
 
 
-
-
 class Megamind(Processor):
     """
-    Dispatcher/controller
-    Reads main instruction queue and
-        L-> sends instructions to motors
-        L-> polls sensors
-    ⢘⣾⣾⣿⣾⣽⣯⣼⣿⣿⣴⣽⣿⣽⣭⣿⣿⣿⣿⣿⣧
-⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠀⠠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠀⣰⣯⣾⣿⣿⡼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿
-⠀⠀⠛⠛⠋⠁⣠⡼⡙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁
-⠀⠀⠀⠤⣶⣾⣿⣿⣿⣦⡈⠉⠉⠉⠙⠻⣿⣿⣿⣿⣿⠿⠁⠀
-⠀⠀⠀⠀⠈⠟⠻⢛⣿⣿⣿⣷⣶⣦⣄⠀⠸⣿⣿⣿⠗⠀⠀⠀
-⠀⠀⠀⠀⠀⣼⠀⠄⣿⡿⠋⣉⠈⠙⢿⣿⣦⣿⠏⡠⠂⠀⠀⠀
-⠀⠀⠀⠀⢰⡌⠀⢠⠏⠇⢸⡇⠐⠀⡄⣿⣿⣃⠈⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠈⣻⣿⢫⢻⡆⡀⠁⠀⢈⣾⣿⠏⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢀⣿⣻⣷⣾⣿⣿⣷⢾⣽⢭⣍⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⣼⣿⣿⣿⣿⡿⠈⣹⣾⣿⡞⠐⠁⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠨⣟⣿⢟⣯⣶⣿⣆⣘⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⡆⠀⠐⠶⠮⡹⣸⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        Dispatcher/controller
+        Reads main instruction queue and
+            L-> sends instructions to motors
+            L-> polls sensors
+        ⢘⣾⣾⣿⣾⣽⣯⣼⣿⣿⣴⣽⣿⣽⣭⣿⣿⣿⣿⣿⣧
+    ⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+    ⠀⠀⠠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+    ⠀⠀⣰⣯⣾⣿⣿⡼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿
+    ⠀⠀⠛⠛⠋⠁⣠⡼⡙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁
+    ⠀⠀⠀⠤⣶⣾⣿⣿⣿⣦⡈⠉⠉⠉⠙⠻⣿⣿⣿⣿⣿⠿⠁⠀
+    ⠀⠀⠀⠀⠈⠟⠻⢛⣿⣿⣿⣷⣶⣦⣄⠀⠸⣿⣿⣿⠗⠀⠀⠀
+    ⠀⠀⠀⠀⠀⣼⠀⠄⣿⡿⠋⣉⠈⠙⢿⣿⣦⣿⠏⡠⠂⠀⠀⠀
+    ⠀⠀⠀⠀⢰⡌⠀⢠⠏⠇⢸⡇⠐⠀⡄⣿⣿⣃⠈⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠀⠈⣻⣿⢫⢻⡆⡀⠁⠀⢈⣾⣿⠏⠀⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠀⢀⣿⣻⣷⣾⣿⣿⣷⢾⣽⢭⣍⠀⠀⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠀⣼⣿⣿⣿⣿⡿⠈⣹⣾⣿⡞⠐⠁⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠨⣟⣿⢟⣯⣶⣿⣆⣘⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠀⠀⡆⠀⠐⠶⠮⡹⣸⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     """
+
     def __init__(self, processor_dict=dict()):
         super().__init__("MEGAMIND")
         # dictionnary mapping processor (sensor or actuator) name to Processor object
         self.processor_dict = processor_dict
         self.funcdict = {
-                "GO": self._go_with_sensors,
-                "TURN": self._turn_with_sensors,
-                "GRAB": self._grab,
-                "SWEEP": self._sweep,
-                "JINGLE": victor_jingle,
-                "GO_DOOR": self._go_to_door,
-                "FINAL_JINGLE": delivery_jingle,
-                "ANGLE_SWEEPER": self._angle_sweeper,
-                }
+            "GO": self._go_with_sensors,
+            "TURN": self._turn_with_sensors,
+            "GRAB": self._grab,
+            "SWEEP": self._sweep,
+            "JINGLE": victor_jingle,
+            "GO_DOOR": self._go_to_door,
+            "FINAL_JINGLE": delivery_jingle,
+            "ANGLE_SWEEPER": self._angle_sweeper,
+        }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
-        self.initial_orientation = None # for calibration of direction over multiple func calls
+        self.initial_orientation = (
+            None  # for calibration of direction over multiple func calls
+        )
         # to keep track of where we WANT to be facing
-        self.current_direction = START_DIRECTION # for DESIRED direction, NOT true direction
-        self.bed_direction = None # angle at which bed is detected
+        self.current_direction = (
+            START_DIRECTION  # for DESIRED direction, NOT true direction
+        )
+        self.bed_direction = None  # angle at which bed is detected
         self.start()
-
 
     def start(self):
         wait_ready_sensors(True)
         # to prevent compound microdrifts if correction doesn't manage to complete itself in time
         # include wait to let sensors initialise
         try:
-            self.initial_orientation = self.clearSensorQueues(wait=True).get("GYRO").get("angle")
+            self.initial_orientation = (
+                self.clearSensorQueues(wait=True).get("GYRO").get("angle")
+            )
             sweeper = self.processor_dict.get("SWEEPER")
             if not sweeper is None:
                 sweeper.motor_pin.reset_position()
@@ -130,7 +144,6 @@ class Megamind(Processor):
             pass
         finally:
             super().start()
-
 
     def addProcessor(self, processor):
         """connect a new processor (sensor/actuator)"""
@@ -140,19 +153,16 @@ class Megamind(Processor):
         print(self.processor_dict)
         return True
 
-
     def killProcessor(self, processor):
         """kill processor object passed as arg"""
         if processor is None:
             return False
-        processor.process.terminate() # kill active process
+        processor.process.terminate()  # kill active process
         return True
-
 
     def killProcessorByName(self, name):
         processor = self.processor_dict.get(name)
         return self.killProcessor(processor)
-
 
     def killAll(self):
         for name in self.processor_dict:
@@ -160,17 +170,15 @@ class Megamind(Processor):
         # kill itself
         self.process.terminate()
 
-
-    def clearSensorQueues(self, wait = False):
+    def clearSensorQueues(self, wait=False):
         """Empty all sensor queues to have up-to-date data at front of queue"""
-        sensors = (self.processor_dict.get("GYRO"),
-                   self.processor_dict.get("COLOR"))
-        queue_front_dict = dict(zip(sensors, [None]*len(sensors)))
+        sensors = (self.processor_dict.get("GYRO"), self.processor_dict.get("COLOR"))
+        queue_front_dict = dict(zip(sensors, [None] * len(sensors)))
         for sensor in sensors:
             if not (sensor is None):
                 try:
                     queue_front = sensor.queue.safeGet(wait)
-                #queue_front = sensor.queue.safeGet()
+                # queue_front = sensor.queue.safeGet()
                 except:
                     queue_front = None
                 while not (sensor.queue.empty()):
@@ -178,10 +186,9 @@ class Megamind(Processor):
                     queue_front = sensor.queue.safeGet(wait)
         return queue_front_dict
 
-
     def manage_queue(self):
         """probably should rework --> could easily get stuck in busy mode"""
-        while True: 
+        while True:
             instruction = self.queue.safeGet(False)
             if instruction:
                 print(instruction)
@@ -191,7 +198,6 @@ class Megamind(Processor):
             self.latest_readings = self.clearSensorQueues()
             sleep(MEGAMIND_BUFFER)
 
-
     def _distance_to_iterations(self, distance, speed=MIN_SPEED, radius=R_WHEEL):
         # calculate how much motor rotation is necessary to move distance
         n_rotations = abs(distance / (radius * pi * 2))
@@ -199,18 +205,18 @@ class Megamind(Processor):
         # calculate amount of iterations with delay equal to constant buffer are needed
         return int(abs(spin_time / MEGAMIND_BUFFER))
 
-
     def _degrees_to_iterations(self, degrees, speed=MIN_SPEED):
         spin_time = degrees / speed
-        return int(abs(spin_time/MEGAMIND_BUFFER))
-
+        return int(abs(spin_time / MEGAMIND_BUFFER))
 
     def _go_with_sensors(self, distance, speed=MIN_SPEED):
         """go a certain distance in a straight line. uses gyro for drift mgmt."""
         granular_iterations = self._distance_to_iterations(distance, speed)
-        left, right, gyro = (self.processor_dict.get("LEFT"),
-                             self.processor_dict.get("RIGHT"),
-                             self.processor_dict.get("GYRO"))
+        left, right, gyro = (
+            self.processor_dict.get("LEFT"),
+            self.processor_dict.get("RIGHT"),
+            self.processor_dict.get("GYRO"),
+        )
         # account for way the wheels are mounted when determining what is fw/bw
         speed = DIRECTION * speed
         left.queue.put(("GO", speed))
@@ -225,16 +231,20 @@ class Megamind(Processor):
         for i in range(granular_iterations):
             gyro_readings = gyro.queue.safeGet(False)
             if gyro_readings:
-                drift =  gyro_readings.get("angle") - initial_angle
+                drift = gyro_readings.get("angle") - initial_angle
                 # flip these corrections if they're inverted
-                #print(f"{drift=}")
-                if (drift > MAX_DRIFT and speed < 0) or (drift < -MAX_DRIFT and speed > 0):
+                # print(f"{drift=}")
+                if (drift > MAX_DRIFT and speed < 0) or (
+                    drift < -MAX_DRIFT and speed > 0
+                ):
                     # NEW LEFT DRIFT
                     print("left drift. correcting...")
                     # left wheel lagging
                     right.queue.put(("GO", speed / DRIFT_CORRECTION))
                     left.queue.put(("GO", speed * DRIFT_CORRECTION))
-                elif (drift < -MAX_DRIFT and speed < 0) or (drift > MAX_DRIFT and speed > 0):
+                elif (drift < -MAX_DRIFT and speed < 0) or (
+                    drift > MAX_DRIFT and speed > 0
+                ):
                     # NEW RIGHT DRIFT
                     print("right drift. correcting...")
                     # right wheel lagging
@@ -244,46 +254,46 @@ class Megamind(Processor):
                     # all good
                     left.queue.put(("GO", speed))
                     right.queue.put(("GO", speed))
-            #print("about to sleep, iterating...")
+            # print("about to sleep, iterating...")
             sleep(MEGAMIND_BUFFER)
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
         return True
 
-
     def _turn_with_sensors(self, degrees, speed=MIN_SPEED):
-        left, right, gyro = (self.processor_dict.get("LEFT"),
-                             self.processor_dict.get("RIGHT"),
-                             self.processor_dict.get("GYRO"))
+        left, right, gyro = (
+            self.processor_dict.get("LEFT"),
+            self.processor_dict.get("RIGHT"),
+            self.processor_dict.get("GYRO"),
+        )
         gyro_readings = gyro.queue.get(True)
-        
+
         direction = DIRECTION if degrees > 0 else -DIRECTION
-        target_angle = self.current_direction + degrees # gyro does not mod by 360
+        target_angle = self.current_direction + degrees  # gyro does not mod by 360
         curr_angle = gyro_readings.get("angle")
         # use Python builtin operator functions, set based on turn direction
         compare = operator.ge
         if direction < 0:
             compare = operator.le
-        while (not compare(curr_angle, target_angle)):
+        while not compare(curr_angle, target_angle):
             gyro_readings = gyro.queue.safeGet(False)
             if not (gyro_readings is None):
                 curr_angle = gyro_readings.get("angle")
             if (abs(curr_angle - target_angle) < 15) and speed > 130:
-                speed = speed * .95
+                speed = speed * 0.95
             left.queue.put(("GO", direction * speed))
             right.queue.put(("GO", -direction * speed))
             sleep(MEGAMIND_BUFFER)
             print(f"{gyro_readings=}")
-        curr_angle = gyro.queue.get(True).get("angle") #blocking queue read
+        curr_angle = gyro.queue.get(True).get("angle")  # blocking queue read
         if abs(curr_angle - target_angle) > TURN_DEADZONE:
-            self.queue.put(("TURN", target_angle-curr_angle, speed))
+            self.queue.put(("TURN", target_angle - curr_angle, speed))
         print(f"stopped turning, final gyro reading: {gyro_readings}")
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
-        #self.current_direction = gyro_readings.get("angle")
+        # self.current_direction = gyro_readings.get("angle")
         self.current_direction = target_angle
         return True
-
 
     def _grab(self, distance, speed=MIN_SPEED):
         granular_iterations = self._distance_to_iterations(distance, radius=R_GRABBER)
@@ -298,17 +308,21 @@ class Megamind(Processor):
         grabber.queue.put(("STOP",))
         return True
 
-
-    def _sweep(self, range_of_motion, center=True, speed=MIN_SPEED, distance_advanced=0):
-        #granular_iterations = self._degrees_to_iterations(degrees, speed)
-        sweeper, color = (self.processor_dict.get("SWEEPER"), self.processor_dict.get("COLOR"))
+    def _sweep(
+        self, range_of_motion, center=True, speed=MIN_SPEED, distance_advanced=0
+    ):
+        # granular_iterations = self._degrees_to_iterations(degrees, speed)
+        sweeper, color = (
+            self.processor_dict.get("SWEEPER"),
+            self.processor_dict.get("COLOR"),
+        )
 
         if center:
-            print("CENTERED\n"*10)
+            print("CENTERED\n" * 10)
             start = START_SWEEP_ANGLE - range_of_motion // 2
         else:
             start = START_SWEEP_ANGLE
-        # set start angle 
+        # set start angle
         self._angle_sweeper(start, speed)
         # wait for sweeper to reach start position before beginning sweep
         sleep(1.0)
@@ -320,13 +334,14 @@ class Megamind(Processor):
                 self._angle_sweeper(degrees, speed)
                 if color_readings:
                     curr_color = color_readings.get("color")
-                    print(f"{curr_color =}")
-                    #print(f"{color_readings.get('rgb') = }")
+                    #                    print(f"{curr_color =}")
+                    # print(f"{color_readings.get('rgb') = }")
                     if curr_color == "green":
                         # play happy sounds if patient found
                         sweeper.queue.put(("STOP",))
                         self.funcdict.get("JINGLE")()
                         self.bed_direction = self.sweeper._get_angle()
+                        print(f"{self.bed_direction =}")
                         return True
                     elif curr_color == "red":
                         # exit room if patient invalid
@@ -335,30 +350,33 @@ class Megamind(Processor):
                         self._go_to_door("GO_DOOR", -MIN_SPEED)
                         return True
                 color_readings = color.queue.safeGet(False)
-                sleep(MEGAMIND_BUFFER*2)
+                sleep(MEGAMIND_BUFFER * 2)
             start *= -1
             range_of_motion *= -1
             increment *= -1
         # false if not found
         # check if room fully traversed
-        sleep(0.5)      
-        if (distance_advanced >= MAX_ROOM_DEPTH):
+        sleep(0.5)
+        if distance_advanced >= MAX_ROOM_DEPTH:
             # if so, leave
             self._go_to_door(-MIN_SPEED)
         else:
             # if not, queue sweep instructions again
             self._go_with_sensors(FW_PER_SWEEP, MIN_SPEED)
-            self._sweep(range_of_motion, center, speed, distance_advanced + FW_PER_SWEEP)
+            self._sweep(
+                range_of_motion, center, speed, distance_advanced + FW_PER_SWEEP
+            )
         return False
-
 
     def _go_to_door(self, speed=MIN_SPEED):
         """advance until orange is detected; then proceed to room logic"""
         granular_iterations = self._distance_to_iterations(MAX_ROOM_DISTANCE, speed)
-        left, right, gyro, color = (self.processor_dict.get("LEFT"),
-                                    self.processor_dict.get("RIGHT"),
-                                    self.processor_dict.get("GYRO"),
-                                    self.processor_dict.get("COLOR"))
+        left, right, gyro, color = (
+            self.processor_dict.get("LEFT"),
+            self.processor_dict.get("RIGHT"),
+            self.processor_dict.get("GYRO"),
+            self.processor_dict.get("COLOR"),
+        )
         speed = DIRECTION * speed
         left.queue.put(("GO", speed))
         right.queue.put(("GO", speed))
@@ -379,11 +397,13 @@ class Megamind(Processor):
                 if curr_color and curr_color == "orange":
                     break
             if gyro_readings:
-                drift =  gyro_readings.get("angle") - initial_angle
+                drift = gyro_readings.get("angle") - initial_angle
                 print(f"{drift=}")
                 # flip these corrections if they're inverted
-                #print(f"{drift=}")
-                if (drift > MAX_DRIFT and speed < 0) or (drift < -MAX_DRIFT and speed > 0):
+                # print(f"{drift=}")
+                if (drift > MAX_DRIFT and speed < 0) or (
+                    drift < -MAX_DRIFT and speed > 0
+                ):
                     # NEW LEFT DRIFT
 
                     print("left drift. correcting...")
@@ -391,7 +411,9 @@ class Megamind(Processor):
                     right.queue.put(("GO", speed / DRIFT_CORRECTION))
                     left.queue.put(("GO", speed * DRIFT_CORRECTION))
 
-                elif (drift < -MAX_DRIFT and speed < 0) or (drift > MAX_DRIFT and speed > 0):
+                elif (drift < -MAX_DRIFT and speed < 0) or (
+                    drift > MAX_DRIFT and speed > 0
+                ):
                     # NEW RIGHT DRIFT
                     print("right drift. correcting...")
                     # right wheel lagging
@@ -401,12 +423,11 @@ class Megamind(Processor):
                     # all good
                     left.queue.put(("GO", speed))
                     right.queue.put(("GO", speed))
-            #print("about to sleep, iterating...")
+            # print("about to sleep, iterating...")
             sleep(MEGAMIND_BUFFER)
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
         return True
-
 
     def _angle_sweeper(self, degrees, speed=MIN_SPEED):
         """Set sweeper to face a given angle in degrees. 0 = straight ahead"""
@@ -414,19 +435,14 @@ class Megamind(Processor):
         sweeper.queue.put(("ANGLE", degrees, speed))
 
 
-
-
 class Driver(Processor):
     """One driver per motor; worker class for process management"""
+
     def __init__(self, name, motor_pin_name, min_speed=MIN_SPEED):
         self.motor_pin_name = motor_pin_name
         self.is_moving = False
         # dict mapping funcnames to funcs for safe pickling
-        self.funcdict = {
-                "GO": self._go,
-                "STOP": self._stop,
-                "ANGLE": self._angle
-                }
+        self.funcdict = {"GO": self._go, "STOP": self._stop, "ANGLE": self._angle}
         self.name = name.upper()
         if self.name == "LEFT":
             self.direction = DIRECTION
@@ -439,47 +455,44 @@ class Driver(Processor):
             # sweeper colour sensor
             self.direction = SWEEPER
         else:
-            raise ValueError(f"Invalid Motor name: '{self.name}'. Should be one of: 'LEFT', 'RIGHT', 'GRABBER'")
+            raise ValueError(
+                f"Invalid Motor name: '{self.name}'. Should be one of: 'LEFT', 'RIGHT', 'GRABBER'"
+            )
         self.min_speed = min_speed * self.direction
         super().__init__(self.name)
         self.start()
-
 
     def start(self):
         """Start process, initialise Motor output pin"""
         self.motor_pin = Motor(self.motor_pin_name)
         super().start()
 
-
     def _go(self, speed=None):
         """start moving"""
         # set default speed value
-        speed = self.direction*speed if speed is not None else self.min_speed
+        speed = self.direction * speed if speed is not None else self.min_speed
         self.motor_pin.set_limits(dps=speed)
         try:
-            power = 150*(self.direction * speed)/self.motor_pin.MAX_SPEED
-            #print(power)
+            power = 150 * (self.direction * speed) / self.motor_pin.MAX_SPEED
+            # print(power)
             self.motor_pin.set_power(power)
             self.is_moving = True
-           #print(self.name + " moving")
+            # print(self.name + " moving")
             return True
         except:
             return False
 
-
     def _angle(self, degrees, speed=None):
-        """face a certain angle""" 
+        """face a certain angle"""
         # limit speed
-        speed = self.direction*speed if speed is not None else self.min_speed
+        speed = self.direction * speed if speed is not None else self.min_speed
         self.motor_pin.set_limits(dps=speed)
         # turn!
         self.motor_pin.set_position(degrees)
 
-    
     def _get_angle(self):
         """retrieve current encoder angle (degrees)"""
         return self.motor_pin.get_position()
-
 
     def _stop(self):
         """stop moving"""
@@ -492,7 +505,6 @@ class Driver(Processor):
         except:
             return False
 
-
     def manage_queue(self):
         while True:
             instruction = self.queue.safeGet(False)
@@ -503,6 +515,7 @@ class Driver(Processor):
 
 class Vision(Processor):
     """One Vision object per sensor; worker class for process management"""
+
     def __init__(self, name, sensor_pin_number, poll_period=MEGAMIND_BUFFER):
         self.sensor_pin_number = sensor_pin_number
         self.name = name.upper()
@@ -519,16 +532,16 @@ class Vision(Processor):
             self.setup_function = EV3ColorSensor
             self.read = self.color_measure
         else:
-            raise ValueError(f"Invalid Sensor name: '{self.name}'. Should be one of: 'GYRO', 'TOUCH', 'COLOR'")
+            raise ValueError(
+                f"Invalid Sensor name: '{self.name}'. Should be one of: 'GYRO', 'TOUCH', 'COLOR'"
+            )
         super().__init__(self.name)
         self.start()
-
 
     def start(self):
         # setup sensor pin
         self.sensor_pin = self.setup_function(self.sensor_pin_number)
         super().start()
-
 
     def gyro_measure(self, *args):
         if self.name != "GYRO":
@@ -542,17 +555,15 @@ class Vision(Processor):
                 output["angle"] = data[0]
             if mode == "dps":
                 output["dps"] = data[1]
-        #print(f"{output}")
+        # print(f"{output}")
         return output
-
 
     def touch_measure(self, *args):
         if self.name != "TOUCH":
             return False
         is_pressed = self.sensor_pin.is_pressed()
         if is_pressed:
-            return {"press":is_pressed}
-
+            return {"press": is_pressed}
 
     def color_measure(self, *args):
         if self.name != "COLOR":
@@ -560,13 +571,12 @@ class Vision(Processor):
         rgb = self.sensor_pin.get_rgb()
         output = dict()
         if rgb != None and not None in rgb:
-            color = classify(rgb, debugging=True) # SET TO TRUE FOR CALIBRATION
+            color = classify(rgb, debugging=True)  # SET TO TRUE FOR CALIBRATION
             output["color"] = color
             output["rgb"] = rgb
             print(f"{color = }")
             print(f"{rgb = }")
         return output
-
 
     def manage_queue(self):
         while True:
@@ -576,28 +586,28 @@ class Vision(Processor):
             measurement = self.read(*args)
             # put new reading to output queue
             if measurement:
-                #if self.name == "GYRO":
-                    #print("I'm alive!!!")
+                # if self.name == "GYRO":
+                # print("I'm alive!!!")
                 self.queue.put(measurement)
                 time.sleep(self.poll_period)
-
 
 
 # main loop
 if __name__ == "__main__":
     processors = {
-            "GYRO": Vision("GYRO", 3, 0.01),
-            "LEFT": Driver("LEFT", "D"),
-            "RIGHT": Driver("RIGHT", "A"),
-            "GRABBER": Driver("GRABBER", "B"),
-            "SWEEPER": Driver("SWEEPER", "C"),
-            "COLOR": Vision("COLOR", 1)
-            }   
+        "GYRO": Vision("GYRO", 3, 0.01),
+        "LEFT": Driver("LEFT", "D"),
+        "RIGHT": Driver("RIGHT", "A"),
+        "GRABBER": Driver("GRABBER", "B"),
+        "SWEEPER": Driver("SWEEPER", "C"),
+        "COLOR": Vision("COLOR", 1),
+    }
     brain = Megamind(processors)
     # EMERGENCY STOP (managed by main loop)
     stop = TouchSensor(2)
     try:
         import titlecard
+
         titlecard.show()
         print(f"{cpu_count()=}\n\n")
         """
@@ -610,30 +620,29 @@ if __name__ == "__main__":
         brain.queue.put_nowait(("GO", 20))
         brain.queue.put_nowait(("TURN", 90))
         """
-        #brain.queue.put_nowait(("GRAB", 10, 500))
-        #brain.queue.put_nowait(("TURN", 15))
-        #brain.queue.put_nowait(("GO", 10))
-        #brain.queue.put_nowait(("GRAB", 12, 500))
-        #brain.queue.put_nowait(("GO", 20, -320))
-        #brain.queue.put_nowait(("GRAB", 10, -500))
-        #brain.queue.put_nowait(("GO", 15, -320))
-        #brain.queue.put_nowait(("GRAB", 10, -500))
-        #brain.queue.put_nowait(("TURN", 720))
-        #brain.queue.put_nowait(("GO_DOOR", 320))
-        #brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
-        #brain.queue.put_nowait(("GO", 15, 320))
-        #brain.queue.put_nowait(("SWEEP", 190, True, 90))
-
+        # brain.queue.put_nowait(("GRAB", 10, 500))
+        # brain.queue.put_nowait(("TURN", 15))
+        # brain.queue.put_nowait(("GO", 10))
+        # brain.queue.put_nowait(("GRAB", 12, 500))
+        # brain.queue.put_nowait(("GO", 20, -320))
+        # brain.queue.put_nowait(("GRAB", 10, -500))
+        # brain.queue.put_nowait(("GO", 15, -320))
+        # brain.queue.put_nowait(("GRAB", 10, -500))
+        # brain.queue.put_nowait(("TURN", 720))
+        # brain.queue.put_nowait(("GO_DOOR", 320))
+        # brain.queue.put_nowait(("GRAB", 10, 500)) # for vibes
+        # brain.queue.put_nowait(("GO", 15, 320))
+        # brain.queue.put_nowait(("SWEEP", 190, True, 90))
 
         # REMOVE THIS WHILE TRUE FOR ACTUAL IMPLEMENTATION (EMERGENCY STOP!!!)
         while True:
             command, *args = input("enter command: \n").split()
-            if (not command.upper() in brain.funcdict):
+            if not command.upper() in brain.funcdict:
                 print("learn to type bro")
             else:
                 brain.queue.put_nowait((command.upper(), *list(map(int, args))))
-            #turnDeg = input("Enter turn degrees")
-            #speed = input("Enter speed")
+            # turnDeg = input("Enter turn degrees")
+            # speed = input("Enter speed")
         while not stop.is_pressed():
             sleep(0.01)
         raise Exception()
