@@ -310,13 +310,14 @@ class Megamind(Processor):
         return True
 
     def _sweep(
-        self, range_of_motion, center=True, speed=MIN_SPEED, distance_advanced=0
+        self, range_of_motion=180, center=True, speed=MIN_SPEED, distance_advanced=0
     ):
         # granular_iterations = self._degrees_to_iterations(degrees, speed)
         sweeper, color = (
             self.processor_dict.get("SWEEPER"),
             self.processor_dict.get("COLOR"),
         )
+        """
         # only center sweeper on first call
         if distance_advanced == 0:
             if center:
@@ -329,11 +330,18 @@ class Megamind(Processor):
             self._angle_sweeper(start, speed)
             # wait for sweeper to reach start position before beginning sweep
             sleep(1.0)
+        """
+        # set sweeper to one side
+        self._angle_sweeper(-90, speed)
+        sleep(1.0)
         increment = SWEEP_MINIMUM_TURN
+        sweep_dir = 1
         for i in range(SWEEPS_PER_SWEEP):
             sensor_outputs = self.clearSensorQueues(False)
             color_readings = sensor_outputs.get(color)
-            for degrees in range(start, range_of_motion + start, increment):
+            # for degrees in range(start, range_of_motion + start, increment):
+            # sweep back and forth 180 deg
+            for degrees in range(0, 180 * sweep_dir, increment):
                 self._angle_sweeper(degrees, speed)
                 if color_readings:
                     curr_color = color_readings.get("color")
@@ -354,6 +362,7 @@ class Megamind(Processor):
                         return True
                 color_readings = color.queue.safeGet(False)
                 sleep(MEGAMIND_BUFFER * 2)
+            sweep_dir *= -1
             start *= -1
             range_of_motion *= -1
             increment *= -1
