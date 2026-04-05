@@ -1,5 +1,5 @@
 angle_sweeper 90
-go 20
+go 35
 grab 5 500
 go 10 -270
 turn 40
