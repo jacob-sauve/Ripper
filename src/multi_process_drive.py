@@ -275,7 +275,7 @@ class Megamind(Processor):
             curr_angle = gyro_readings.get("angle")
         else:
             # in case of empty queue
-            curr_angle = gyro.queue.safeGet(True).get("angle")
+            curr_angle = gyro.queue.get(True).get("angle")
         # use Python builtin operator functions, set based on turn direction
         compare = operator.ge
         if direction < 0:
