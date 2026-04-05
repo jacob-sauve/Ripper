@@ -431,6 +431,8 @@ class Megamind(Processor):
 
     def _angle_sweeper(self, degrees, speed=MIN_SPEED):
         """Set sweeper to face a given angle in degrees. 0 = straight ahead"""
+        current_angle = self.processor_dict.get("SWEEPER")._get_angle()
+        print(f"{current_angle = }")
         sweeper = self.processor_dict.get("SWEEPER")
         sweeper.queue.put(("ANGLE", degrees, speed))
 
