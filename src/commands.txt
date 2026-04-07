@@ -1,21 +1,10 @@
-angle_sweeper 90
-go 36 350
+# grabber test
+go 5
 grab 6 500
-go 12 -350
-turn 30 300
-go 12 350
-grab 7 500
-go 12 -350
-turn -30 400
-go 19 -350
-turn -90 400
-angle_sweeper 0
-go_door
-sweep
-go 5 -350
-turn 90 300
-go 60 350
-turn -90 400
-go_door
-sweep
-
+go 10
+grab 5 500
+go 10 -270
+grab 5 -500
+go 5 -270
+grab 6 -500
+go 5 -270
