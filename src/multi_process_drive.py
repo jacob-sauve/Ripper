@@ -395,17 +395,18 @@ class Megamind(Processor):
         # take it as reference for "straightness"
         print("go to door protocol initiated")
         print(f"{granular_iterations = }")
+        # clear sensors
+        sensor_outputs = self.clearSensorQueues(False)
+        color_readings = sensor_outputs.get(color)
         if not (self.initial_orientation is None):
             initial_angle = self.initial_orientation + self.current_direction
         else:
             initial_angle = gyro.queue.get(True).get("angle")
         for i in range(granular_iterations):
-            sensor_outputs = self.clearSensorQueues(False)
-            color_readings = sensor_outputs.get(color)
             gyro_readings = gyro.queue.safeGet(False)
             print(f"{gyro_readings=}")
             # don't refill if already filled
-            # color_readings = color.queue.safeGet(False) if not color_readings else color_readings
+            color_readings = color.queue.safeGet(False)
             if color_readings:
                 curr_color = color_readings.get("color")
                 print(f"{curr_color = }")
