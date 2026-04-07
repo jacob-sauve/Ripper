@@ -37,7 +37,7 @@ COLOR_THRESHOLDS = [
 def classify(rgb, debugging = False):
     try:
         h, s, v = rgb_to_hsv(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255)
-        hue = h*360
+        hue = h
 
         for hue_min, hue_max, sat_min, val_min, color in COLOR_THRESHOLDS:
             if hue_min <= hue and hue <= hue_max and s >= sat_min and v >= val_min:
