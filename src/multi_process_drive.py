@@ -400,9 +400,12 @@ class Megamind(Processor):
         else:
             initial_angle = gyro.queue.get(True).get("angle")
         for i in range(granular_iterations):
+            sensor_outputs = self.clearSensorQueues(False)
+            color_readings = sensor_outputs.get(color)
             gyro_readings = gyro.queue.safeGet(False)
             print(f"{gyro_readings=}")
-            color_readings = color.queue.safeGet(False)
+            # don't refill if already filled
+            color_readings = color.queue.safeGet(False) if not color_readings else color_readings
             if color_readings:
                 curr_color = color_readings.get("color")
                 if curr_color and curr_color == "orange":
