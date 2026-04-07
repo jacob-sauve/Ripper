@@ -2,7 +2,7 @@
 All things musical
 """
 
-import sys, os
+import sys, os, pickle
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from utils.brick import reset_brick
 import array
@@ -57,8 +57,17 @@ def make_sounds_delivery():
     song.compile()
     return song
 
-song1 = make_sounds_victor()
-song2 = make_sounds_delivery()
+SONGS_PATH = os.path.join(os.path.dirname(__file__), "songs.pickle")
+try:
+    #If the songs are already loaded
+    with open(SONGS_PATH, "rb") as f:
+        song1, song2 = pickle.load(f)
+except FileNotFoundError:
+    #If the songs aren't loaded
+    song1 = make_sounds_victor()
+    song2 = make_sounds_delivery()
+    with open(SONGS_PATH, "wb") as f:
+        pickle.dump((song1, song2), f)
 
 def delivery_jingle():
     song2.play()
