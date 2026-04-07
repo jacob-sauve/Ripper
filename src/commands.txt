@@ -1,10 +1,1 @@
-# grabber test
-go 5
-grab 6 500
-go 10
-grab 5 500
-go 10 -270
-grab 5 -500
-go 5 -270
-grab 6 -500
-go 5 -270
+go_door
