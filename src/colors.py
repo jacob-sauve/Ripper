@@ -27,11 +27,12 @@ OMEGA_THRESHOLDS = [
 # So guards for sat and brightness can be adjusted to a pretty low value
 # we just need those two low enough so it takes out outliers
 COLOR_THRESHOLDS = [
-    (0,    10,  0.65, 0.4, "red"),
+    (0,    0.01,  0.80, 0.25, "red"),
     #(340,  360, 0.65, 0.6, "red"),
-    (10,   25,  0.65, 0.6, "orange"),
-    (25,   55,  0.65, 0.6, "yellow"),
-    (55,   165, 0.65, 0.6, "green"),
+    (0.04,   0.09,  0.80, 0.3, "orange"),
+    (0.11,   0.15,  0.80, 0.3, "yellow"),
+    (0.20,   0.28, 0.80, 0.2, "green"),
+    (0.39, 0.5, 0.3, 0.3, "blue"),
 ]
 
 def classify(rgb, debugging = False):
