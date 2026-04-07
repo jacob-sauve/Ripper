@@ -112,9 +112,9 @@ class Megamind(Processor):
             "TURN": self._turn_with_sensors,
             "GRAB": self._grab,
             "SWEEP": self._sweep,
-            "JINGLE": victor_jingle,
+            "FINAL_JINGLE": victor_jingle,
             "GO_DOOR": self._go_to_door,
-            "FINAL_JINGLE": delivery_jingle,
+            "DELIVER_JINGLE": delivery_jingle,
             "ANGLE_SWEEPER": self._angle_sweeper,
         }
         # mapping of Sensor objects to their respective most recent readings
@@ -336,7 +336,7 @@ class Megamind(Processor):
                     if curr_color == "green":
                         # play happy sounds if patient found
                         sweeper.queue.put(("STOP",))
-                        # self.funcdict.get("JINGLE")()
+                        self.funcdict.get("DELIVER_JINGLE")()
                         self.bed_direction = sweeper._get_angle()
                         print(f"{self.bed_direction =}")
                         # drop block on bed
