@@ -405,9 +405,10 @@ class Megamind(Processor):
             gyro_readings = gyro.queue.safeGet(False)
             print(f"{gyro_readings=}")
             # don't refill if already filled
-            color_readings = color.queue.safeGet(False) if not color_readings else color_readings
+            # color_readings = color.queue.safeGet(False) if not color_readings else color_readings
             if color_readings:
                 curr_color = color_readings.get("color")
+                print(f"{curr_color = }")
                 if curr_color and curr_color == "orange":
                     break
             if gyro_readings:

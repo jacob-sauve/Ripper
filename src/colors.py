@@ -40,7 +40,7 @@ def classify(rgb, debugging = False):
         hue = h*360
 
         for hue_min, hue_max, sat_min, val_min, color in COLOR_THRESHOLDS:
-            if hue_min <= hue <= hue_max and s >= sat_min and v >= val_min:
+            if hue_min <= hue and hue <= hue_max and s >= sat_min and v >= val_min:
                 if debugging:
                     print(f"hsv:{h},{s},{v}")
                     print(color)
