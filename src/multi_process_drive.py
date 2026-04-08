@@ -37,7 +37,7 @@ SWEEPER = (
 )
 MEGAMIND_BUFFER = 0.005  # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5  # max degrees of drift acceptable from desired rectilinear trajectory
-DRIFT_CORRECTION = 1.15  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
+DRIFT_CORRECTION = 1.2  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12  # length of a bed in centimeters
 START_SWEEP_ANGLE = 0  # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 4  # degrees of smallest sweep increment
