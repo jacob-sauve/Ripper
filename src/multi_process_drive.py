@@ -374,7 +374,7 @@ class Megamind(Processor):
                     elif curr_color == "red":
                         # exit room if patient invalid
                         sweeper.queue.put(("STOP",))
-                        self._go_with_sensors(15, -MIN_SPEED)
+                        self._go_with_sensors(distance_advanced-5, -MIN_SPEED)
                         self._angle_sweeper(0)
                         self._go_to_door(-MIN_SPEED)
                         return True
