@@ -351,7 +351,6 @@ class Megamind(Processor):
                     if curr_color == "green":
                         # play happy sounds if patient found
                         sweeper.queue.put(("STOP",))
-                        self.funcdict.get("DELIVER_JINGLE")()
                         self.bed_direction = sweeper._get_angle()
                         print(f"{self.bed_direction =}")
                         # drop block on bed
@@ -367,7 +366,7 @@ class Megamind(Processor):
                         self._go_with_sensors(9, -MIN_SPEED)
                         print(f"turning away from bed, angle: {turn_angle}")
                         self._turn_with_sensors(turn_angle, 350)
-
+                        self.funcdict.get("DELIVER_JINGLE")()
                         self._go_with_sensors(10, -MIN_SPEED)
                         self._angle_sweeper(0)
                         self._go_to_door(-MIN_SPEED)
