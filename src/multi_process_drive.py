@@ -30,7 +30,6 @@ from musical import victor_jingle, delivery_jingle
 DIRECTION = 1  # defines which way is forward versus backwards (e.g. -1 means negative speed --> forward motion)
 R_GRABBER = 1.8  # grabber motor turn radius in cm
 R_WHEEL = 2.2  # wheel radius in cm
-R_ROBOT = 7.52  # middle wheel to middle wheel in cm
 MIN_SPEED = 270  # wheel rotation speed in degrees.s-1
 GRABBER = -1  # multiplier for correct rotations of grabber (should be pickup direction)
 SWEEPER = (
@@ -41,7 +40,7 @@ MAX_DRIFT = 0.5  # max degrees of drift acceptable from desired rectilinear traj
 DRIFT_CORRECTION = 1.15  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12  # length of a bed in centimeters
 START_SWEEP_ANGLE = 0  # initial angle of sweeper
-SWEEP_MINIMUM_TURN = 4  # degrees of smallest sweep increment
+SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
 START_DIRECTION = 0  # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can safely assume it is in a room
 SWEEPS_PER_SWEEP = 2  # number of full ROMs swept per call of Megamind._sweep()
