@@ -115,6 +115,7 @@ class Megamind(Processor):
             "GO_DOOR": self._go_to_door,
             "DELIVER_JINGLE": delivery_jingle,
             "ANGLE_SWEEPER": self._angle_sweeper,
+            "GRAB_N_GO": self._grab_and_go,
         }
         # mapping of Sensor objects to their respective most recent readings
         self.latest_readings = dict()
@@ -311,6 +312,19 @@ class Megamind(Processor):
 
         grabber.queue.put(("STOP",))
         return True
+
+    def _grab_and_go(self, distance, speed=MIN_SPEED):
+        """run grabber AND go forward simultaneously"""
+        granular_iterations = self._distance_to_iterations(distance, radius=R_GRABBER)
+        grabber = self.processor_dict.get("GRABBER")
+
+        grabber.queue.put(("GO", speed))
+
+        self._go_with_sensors(5, 200)
+
+        grabber.queue.put(("STOP",))
+        return True
+
 
     def _sweep(self, speed=180, distance_advanced=0):
         sweeper, color = (
