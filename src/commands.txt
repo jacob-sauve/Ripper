@@ -9,7 +9,7 @@ grab_n_go 3 500
 grab 8 500
 go 12 -350
 turn -30 400
-go 18 -350
+go 16 -350
 turn -90 400
 
 # room 1
@@ -21,7 +21,7 @@ go 5 -350
 # room 2
 turn 90 300
 angle_sweeper 90
-go 58 350
+go 56 350
 turn -90 400
 angle_sweeper 0
 go_door
@@ -37,7 +37,7 @@ angle_sweeper 0
 sweep
 turn -90 400
 angle_sweeper 90
-go 21 350
+go 18 350
 turn 90 300
 angle_sweeper 0
 sweep
@@ -53,7 +53,7 @@ sweep
 go 10 350
 angle_sweeper 90
 turn 90 300
-go 90 350
+go 93 350
 turn -90 400
 angle_sweeper 0
 go_door
