@@ -26,7 +26,7 @@ from command_parser import parse_commandfile
 
 if __name__ == "__main__":
     processors = {
-            "GYRO": Vision("GYRO", 3, 0.01),
+            "GYRO": Vision("GYRO", 3, 0.015),
             "LEFT": Driver("LEFT", "A"),
             "RIGHT": Driver("RIGHT", "D"),
             "GRABBER": Driver("GRABBER", "B"),
