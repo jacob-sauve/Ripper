@@ -1,13 +1,13 @@
 # pharmacy logic
 angle_sweeper 90
 go 26 350
-grab_n_go 6 500
-go 12 -350
+grab_n_go 5 500
+go 11 -350
 turn 35 300
-go 4 350
+go 3 350
 grab_n_go 4 500
 grab 7 500
-go 12 -350
+go 11 -350
 turn -35 400
 go 25 -350
 turn -90 400
@@ -27,7 +27,7 @@ angle_sweeper 0
 go_door
 sweep
 angle_sweeper 90
-go 6 350
+go 8 350
 turn 90 300
 go 34 350
 
@@ -40,6 +40,7 @@ angle_sweeper 90
 go 22 350
 turn 90 300
 angle_sweeper 0
+turn -10 400
 sweep
 #angle_sweeper 90
 #turn -90 400
@@ -50,9 +51,10 @@ sweep
 
 # go back home
 #go 2 -350
-go 5 350
+turn 10 300
+go 10 350
 angle_sweeper 90
-turn 90 300
+turn 88 300
 go 80 350
 turn -90 400
 angle_sweeper 0
