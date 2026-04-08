@@ -8,7 +8,7 @@ go 4 350
 grab_n_go 7 500
 go 12 -350
 turn -30 400
-go 18 -350
+go 19 -350
 turn -90 400
 
 # room 1
