@@ -320,7 +320,9 @@ class Megamind(Processor):
 
         grabber.queue.put(("GO", speed))
 
-        self._go_with_sensors(5, 200)
+        # so the timing is proportional to distance
+        speed_ratio = speed // 200
+        self._go_with_sensors(distance * speed_ratio, 200)
 
         grabber.queue.put(("STOP",))
         return True
