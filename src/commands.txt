@@ -25,9 +25,9 @@ turn -90 400
 angle_sweeper 0
 go_door
 sweep
-go 3 350
-turn 90 300
 angle_sweeper 90
+go 4 350
+turn 90 300
 go 30 350
 
 # big room loop
@@ -36,15 +36,15 @@ angle_sweeper 0
 sweep
 turn -90 400
 angle_sweeper 90
-go 10 350
+go 15 350
 turn 90 300
 angle_sweeper 0
 sweep
 angle_sweeper 90
 turn -90 400
-angle_sweeper 0
 go 10 350
 turn 90 300
+angle_sweeper 0
 sweep
 
 # go back home
@@ -57,5 +57,5 @@ angle_sweeper 0
 go_door
 angle_sweeper 90
 go 7 350
-go 35 350
+go 25 350
 final_jingle

@@ -362,7 +362,7 @@ class Megamind(Processor):
                         print(f"turning towards bed, angle: {-turn_angle}")
                         self._turn_with_sensors(-turn_angle, 350)
                         self._go_with_sensors(9)
-                        self._grab(7, -500)
+                        self._grab(8, -500)
                         self._go_with_sensors(9, -MIN_SPEED)
                         print(f"turning away from bed, angle: {turn_angle}")
                         self._turn_with_sensors(turn_angle, 350)
@@ -375,6 +375,7 @@ class Megamind(Processor):
                         # exit room if patient invalid
                         sweeper.queue.put(("STOP",))
                         self._go_with_sensors(10, -MIN_SPEED)
+                        self._angle_sweeper(0)
                         self._go_to_door(-MIN_SPEED)
                         return True
                 color_readings = color.queue.safeGet(False)
