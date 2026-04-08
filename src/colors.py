@@ -28,8 +28,8 @@ OMEGA_THRESHOLDS = [
 # we just need those two low enough so it takes out outliers
 COLOR_THRESHOLDS = [
     (0,    0.01,  0.80, 0.25, "red"),
-    (0.04,   0.11,  0.80, 0.3, "orange"),
-    (0.13,   0.15,  0.80, 0.3, "yellow"),
+    (0.04,   0.08,  0.80, 0.3, "orange"),
+    (0.12,   0.14,  0.80, 0.3, "yellow"),
     (0.20,   0.28, 0.80, 0.2, "green"),
     (0.39, 0.5, 0.3, 0.3, "blue"),
 ]
