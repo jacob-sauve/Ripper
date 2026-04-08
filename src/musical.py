@@ -48,9 +48,9 @@ def make_sounds_delivery():
     rhythm = 0.75
 
     notes = [
-        ("D3", rhythm / 8), ("E3", rhythm / 8), ("F3", rhythm / 8),
-        ("E3", rhythm * 3 / 8), ("D3", rhythm *3/ 8), ("C3", rhythm *3/ 8),
-        ("G3", rhythm)
+        ("D4", rhythm / 8), ("E4", rhythm / 8), ("F4", rhythm / 8),
+        ("E4", rhythm * 3 / 8), ("D4", rhythm *3/ 8), ("C4", rhythm *3/ 8),
+        ("G4", rhythm)
     ]
     sounds = [Sound(duration=dur, pitch=pitch, volume=100) for pitch, dur in notes]
     song = Song(sounds)
