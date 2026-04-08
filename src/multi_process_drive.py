@@ -327,7 +327,6 @@ class Megamind(Processor):
         grabber.queue.put(("STOP",))
         return True
 
-
     def _sweep(self, speed=180, distance_advanced=0):
         sweeper, color = (
             self.processor_dict.get("SWEEPER"),
@@ -358,12 +357,12 @@ class Megamind(Processor):
                         sleep(0.2)
                         self._angle_sweeper(-90)
                         sleep(0.2)
-                        turn_angle = self.bed_direction // 5
+                        turn_angle = self.bed_direction // 4
                         print(f"turning towards bed, angle: {-turn_angle}")
                         self._turn_with_sensors(-turn_angle, 350)
-                        self._go_with_sensors(8)
-                        self._grab(9, -500)
-                        self._go_with_sensors(10, -MIN_SPEED)
+                        self._go_with_sensors(9)
+                        self._grab(8, -500)
+                        self._go_with_sensors(11, -MIN_SPEED)
                         print(f"turning away from bed, angle: {turn_angle}")
                         self._turn_with_sensors(turn_angle, 450)
                         self.funcdict.get("DELIVER_JINGLE")()
@@ -374,7 +373,7 @@ class Megamind(Processor):
                     elif curr_color == "red":
                         # exit room if patient invalid
                         sweeper.queue.put(("STOP",))
-                        self._go_with_sensors(distance_advanced-5, -MIN_SPEED)
+                        self._go_with_sensors(distance_advanced - 5, -MIN_SPEED)
                         self._angle_sweeper(0)
                         self._go_to_door(-MIN_SPEED)
                         return True
@@ -609,11 +608,11 @@ class Vision(Processor):
         rgb = self.sensor_pin.get_rgb()
         output = dict()
         if rgb != None and not None in rgb:
-            color = classify(rgb, debugging=True)  # SET TO TRUE FOR CALIBRATION
+            color = classify(rgb, debugging=False)  # SET TO TRUE FOR CALIBRATION
             output["color"] = color
             output["rgb"] = rgb
-            #print(f"{color = }")
-            #print(f"{rgb = }")
+            # print(f"{color = }")
+            # print(f"{rgb = }")
         return output
 
     def manage_queue(self):

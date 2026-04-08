@@ -1,11 +1,11 @@
 # pharmacy logic
 angle_sweeper 90
 go 26 350
-grab_n_go 5 500
+grab_n_go 4 500
 go 12 -350
 turn 30 300
 go 5 350
-grab_n_go 3 500
+grab_n_go 4 500
 grab 8 500
 go 12 -350
 turn -30 400
@@ -19,9 +19,9 @@ sweep
 go 5 -350
 
 # room 2
-turn 90 300
+turn 90 270
 angle_sweeper 90
-go 56 350
+go 50 350
 turn -90 400
 angle_sweeper 0
 go_door
@@ -29,7 +29,7 @@ sweep
 angle_sweeper 90
 go 8 350
 turn 90 300
-go 29 350
+go 28 350
 
 # big room loop
 turn 90 300
