@@ -35,11 +35,11 @@ turn 90 300
 angle_sweeper 0
 sweep
 turn -90 400
-go 15 350
+go 9 350
 turn 90 300
 sweep
 turn -90 400
-go 15 350
+go 9 350
 turn 90 300
 sweep
 
