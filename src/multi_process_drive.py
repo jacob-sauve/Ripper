@@ -342,7 +342,7 @@ class Megamind(Processor):
             sensor_outputs = self.clearSensorQueues(False)
             color_readings = sensor_outputs.get(color)
             # sweep back and forth 180 deg
-            for degrees in range(-90 * sweep_dir, 900 * sweep_dir, increment):
+            for degrees in range(-90 * sweep_dir, 90 * sweep_dir, increment):
                 self._angle_sweeper(degrees, speed)
                 if color_readings:
                     curr_color = color_readings.get("color")
