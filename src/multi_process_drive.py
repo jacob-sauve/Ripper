@@ -40,7 +40,7 @@ MAX_DRIFT = 0.5  # max degrees of drift acceptable from desired rectilinear traj
 DRIFT_CORRECTION = 1.15  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12  # length of a bed in centimeters
 START_SWEEP_ANGLE = 0  # initial angle of sweeper
-SWEEP_MINIMUM_TURN = 5  # degrees of smallest sweep increment
+SWEEP_MINIMUM_TURN = 4  # degrees of smallest sweep increment
 START_DIRECTION = 0  # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can safely assume it is in a room
 SWEEPS_PER_SWEEP = 2  # number of full ROMs swept per call of Megamind._sweep()
@@ -343,7 +343,7 @@ class Megamind(Processor):
                         sleep(0.2)
                         self._angle_sweeper(-90)
                         sleep(0.2)
-                        turn_angle = self.bed_direction // 5
+                        turn_angle = self.bed_direction // 6
                         print(f"turning towards bed, angle: {-turn_angle}")
                         self._turn_with_sensors(-turn_angle, 350)
                         self._go_with_sensors(10)
