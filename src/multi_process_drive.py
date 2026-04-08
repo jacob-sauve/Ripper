@@ -337,12 +337,12 @@ class Megamind(Processor):
         increment = SWEEP_MINIMUM_TURN
         sweep_dir = 1
         if distance_advanced == 0:
-            self._angle_sweeper(-90)
+            self._angle_sweeper(-100)
         for i in range(SWEEPS_PER_SWEEP):
             sensor_outputs = self.clearSensorQueues(False)
             color_readings = sensor_outputs.get(color)
             # sweep back and forth 180 deg
-            for degrees in range(-90 * sweep_dir, 90 * sweep_dir, increment):
+            for degrees in range(-100 * sweep_dir, 100 * sweep_dir, increment):
                 self._angle_sweeper(degrees, speed)
                 if color_readings:
                     curr_color = color_readings.get("color")
@@ -360,12 +360,12 @@ class Megamind(Processor):
                         sleep(0.2)
                         turn_angle = self.bed_direction // 5
                         print(f"turning towards bed, angle: {-turn_angle}")
-                        self._turn_with_sensors(-turn_angle, 300)
+                        self._turn_with_sensors(-turn_angle, 350)
                         self._go_with_sensors(8)
                         self._grab(9, -500)
                         self._go_with_sensors(8, -MIN_SPEED)
                         print(f"turning away from bed, angle: {turn_angle}")
-                        self._turn_with_sensors(turn_angle, 400)
+                        self._turn_with_sensors(turn_angle, 450)
                         self.funcdict.get("DELIVER_JINGLE")()
                         self._go_with_sensors(13, -MIN_SPEED)
                         self._angle_sweeper(0)
