@@ -46,7 +46,7 @@ MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can s
 SWEEPS_PER_SWEEP = 2  # number of full ROMs swept per call of Megamind._sweep()
 FW_PER_SWEEP = 10  # centimeters of straight-line motion between every sweep
 MAX_ROOM_DEPTH = (
-    40  # centimeters of max forward movement during sweeping before giving up on a room
+    45  # centimeters of max forward movement during sweeping before giving up on a room
 )
 TURN_DEADZONE = (
     2  # max degrees (+/-) considered acceptable turn deviations in a given direction
@@ -368,7 +368,10 @@ class Megamind(Processor):
                         self._turn_with_sensors(turn_angle, 450)
                         self.funcdict.get("DELIVER_JINGLE")()
                         self._go_with_sensors(13, -MIN_SPEED)
-                        self._angle_sweeper(0)
+                        if distance_advanced < 10:
+                            self._angle_sweeper(90)
+                        else:
+                            self._angle_sweeper(0)
                         self._go_to_door(-MIN_SPEED)
                         return True
                     elif curr_color == "red":
