@@ -37,7 +37,7 @@ SWEEPER = (
 )
 MEGAMIND_BUFFER = 0.005  # seconds between Megamind queue parsings
 MAX_DRIFT = 0.5  # max degrees of drift acceptable from desired rectilinear trajectory
-DRIFT_CORRECTION = 1.2  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
+DRIFT_CORRECTION = 1.15  # percentage (decimal form) of desired speed applied to lagging wheel if drifting
 BED_LENGTH = 12  # length of a bed in centimeters
 START_SWEEP_ANGLE = 0  # initial angle of sweeper
 SWEEP_MINIMUM_TURN = 4  # degrees of smallest sweep increment
@@ -368,11 +368,11 @@ class Megamind(Processor):
                         self._turn_with_sensors(turn_angle, 450)
                         self.funcdict.get("DELIVER_JINGLE")()
                         self._go_with_sensors(13, -MIN_SPEED)
-                        if distance_advanced < 10:
-                            self._angle_sweeper(90)
+                        self._angle_sweeper(0)
+                        if distance_advanced <= 20:
+                            self._go_with_sensors(distance_advanced, -MIN_SPEED)
                         else:
-                            self._angle_sweeper(0)
-                        self._go_to_door(-MIN_SPEED)
+                            self._go_to_door(-MIN_SPEED)
                         return True
                     elif curr_color == "red":
                         # exit room if patient invalid

@@ -5,11 +5,11 @@ grab_n_go 6 500
 go 12 -350
 turn 35 300
 go 6 350
-grab_n_go 6 500
-grab 5 500
+grab_n_go 4 500
+grab 7 500
 go 12 -350
 turn -35 400
-go 24 -350
+go 25 -350
 turn -90 400
 
 # room 1
