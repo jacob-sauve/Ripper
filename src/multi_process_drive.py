@@ -367,7 +367,7 @@ class Megamind(Processor):
                         print(f"turning away from bed, angle: {turn_angle}")
                         self._turn_with_sensors(turn_angle, 350)
                         self.funcdict.get("DELIVER_JINGLE")()
-                        self._go_with_sensors(10, -MIN_SPEED)
+                        self._go_with_sensors(13, -MIN_SPEED)
                         self._angle_sweeper(0)
                         self._go_to_door(-MIN_SPEED)
                         return True

@@ -20,15 +20,15 @@ go 5 -350
 # room 2
 turn 90 300
 angle_sweeper 90
-go 50 350
+go 55 350
 turn -90 400
 angle_sweeper 0
 go_door
 sweep
-#go 3 -350
+go 3 350
 turn 90 300
 angle_sweeper 90
-go 20 350
+go 30 350
 
 # big room loop
 turn 90 300
@@ -36,14 +36,14 @@ angle_sweeper 0
 sweep
 turn -90 400
 angle_sweeper 90
-go 9 350
+go 10 350
 turn 90 300
 angle_sweeper 0
 sweep
 angle_sweeper 90
 turn -90 400
 angle_sweeper 0
-go 9 350
+go 10 350
 turn 90 300
 sweep
 
