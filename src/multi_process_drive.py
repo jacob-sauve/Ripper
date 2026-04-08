@@ -595,8 +595,8 @@ class Vision(Processor):
             color = classify(rgb, debugging=False)  # SET TO TRUE FOR CALIBRATION
             output["color"] = color
             output["rgb"] = rgb
-            print(f"{color = }")
-            print(f"{rgb = }")
+            #print(f"{color = }")
+            #print(f"{rgb = }")
         return output
 
     def manage_queue(self):
