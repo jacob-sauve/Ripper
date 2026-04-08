@@ -21,7 +21,7 @@ go 5 -350
 # room 2
 turn 90 300
 angle_sweeper 90
-go 56 350
+go 58 350
 turn -90 400
 angle_sweeper 0
 go_door
