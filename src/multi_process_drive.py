@@ -44,7 +44,7 @@ SWEEP_MINIMUM_TURN = 4  # degrees of smallest sweep increment
 START_DIRECTION = 0  # degrees of orientation at the beginning when placed in pharmacy (decide on convention)
 MAX_ROOM_DISTANCE = 90  # centimeters of straight-line motion before robot can safely assume it is in a room
 SWEEPS_PER_SWEEP = 2  # number of full ROMs swept per call of Megamind._sweep()
-FW_PER_SWEEP = 13  # centimeters of straight-line motion between every sweep
+FW_PER_SWEEP = 10  # centimeters of straight-line motion between every sweep
 MAX_ROOM_DEPTH = (
     45  # centimeters of max forward movement during sweeping before giving up on a room
 )
@@ -364,7 +364,7 @@ class Megamind(Processor):
                         print(f"turning towards bed, angle: {-turn_angle}")
                         self._turn_with_sensors(-turn_angle, 350)
                         self._go_with_sensors(9)
-                        self._grab(8, -500)
+                        self._grab(6, -500)
                         self._go_with_sensors(11, -MIN_SPEED)
                         print(f"turning away from bed, angle: {turn_angle}")
                         self._turn_with_sensors(turn_angle, 450)
