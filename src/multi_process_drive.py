@@ -358,12 +358,12 @@ class Megamind(Processor):
                         sleep(0.2)
                         self._angle_sweeper(-90)
                         sleep(0.2)
-                        turn_angle = self.bed_direction // 6
+                        turn_angle = self.bed_direction // 5
                         print(f"turning towards bed, angle: {-turn_angle}")
                         self._turn_with_sensors(-turn_angle, 350)
-                        self._go_with_sensors(9)
+                        self._go_with_sensors(8)
                         self._grab(9, -500)
-                        self._go_with_sensors(9, -MIN_SPEED)
+                        self._go_with_sensors(8, -MIN_SPEED)
                         print(f"turning away from bed, angle: {turn_angle}")
                         self._turn_with_sensors(turn_angle, 450)
                         self.funcdict.get("DELIVER_JINGLE")()
