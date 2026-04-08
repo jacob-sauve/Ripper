@@ -365,7 +365,7 @@ class Megamind(Processor):
                         self._grab(9, -500)
                         self._go_with_sensors(9, -MIN_SPEED)
                         print(f"turning away from bed, angle: {turn_angle}")
-                        self._turn_with_sensors(turn_angle, 350)
+                        self._turn_with_sensors(turn_angle, 450)
                         self.funcdict.get("DELIVER_JINGLE")()
                         self._go_with_sensors(13, -MIN_SPEED)
                         self._angle_sweeper(0)
@@ -374,7 +374,7 @@ class Megamind(Processor):
                     elif curr_color == "red":
                         # exit room if patient invalid
                         sweeper.queue.put(("STOP",))
-                        self._go_with_sensors(10, -MIN_SPEED)
+                        self._go_with_sensors(15, -MIN_SPEED)
                         self._angle_sweeper(0)
                         self._go_to_door(-MIN_SPEED)
                         return True
@@ -387,6 +387,7 @@ class Megamind(Processor):
         sleep(0.1)
         if distance_advanced >= MAX_ROOM_DEPTH:
             # if so, leave
+            self._angle_sweeper(0)
             self._go_to_door(-MIN_SPEED)
         else:
             # if not, queue sweep instructions again
