@@ -4,8 +4,8 @@ go 28 350
 grab_n_go 4 500
 go 12 -350
 turn 30 300
-go 5 350
-grab_n_go 4 500
+go 4 350
+grab_n_go 5 500
 go 12 -350
 turn -30 400
 go 19 -350
