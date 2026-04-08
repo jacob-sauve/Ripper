@@ -382,6 +382,7 @@ class Megamind(Processor):
                 color_readings = color.queue.safeGet(False)
             sweep_dir *= -1
             increment *= -1
+            sleep(0.15)
         # false if not found
         # check if room fully traversed
         sleep(0.1)
