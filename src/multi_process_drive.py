@@ -359,7 +359,7 @@ class Megamind(Processor):
                         sleep(0.2)
                         turn_angle = self.bed_direction // 4
                         # dead zone
-                        if abs(turn_angle) < 7:
+                        if abs(turn_angle) < 5:
                             turn_angle = 0
                         print(f"turning towards bed, angle: {-turn_angle}")
                         self._turn_with_sensors(-turn_angle, 350)
