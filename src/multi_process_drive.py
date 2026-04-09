@@ -53,7 +53,7 @@ TURN_DEADZONE = (
 )
 BODY_LENGTH = 14    # cm, length from axle to grabber aperture
 SWEEPER_LENGTH = 13 # cm, length of sweeper (to middle of colour sensor)
-MIN_GO_DISTANCE = -2 # cm, distance added to all dropping of block forward motion
+MIN_GO_DISTANCE = -1 # cm, distance added to all dropping of block forward motion
 DROP_TURN_COEFF = 0.8 # percentage of actual trig calculated turn that the robot actually does when dropping
 
 
@@ -365,7 +365,7 @@ class Megamind(Processor):
                         c = sqrt(a**2 + b**2 - 2*a*b*cos(C)) # law of cosines
                         B = asin(max(-1, min(1, sin(C) * b/c))) # law of sines
                         turn_angle = -degrees(B) # minus to account for opposite sweep/turn dirs
-                        turn_angle = int(turn_angle * DROP_TURN_COEFF - 10) if turn_angle > 0 else int(turn_angle / DROP_TURN_COEFF)
+                        turn_angle = int(turn_angle * DROP_TURN_COEFF - 20) if turn_angle > 0 else int(turn_angle / DROP_TURN_COEFF)
                         go_distance = max(c - a + MIN_GO_DISTANCE, MIN_GO_DISTANCE)
                         # dead zone
                         if abs(turn_angle) < 5:
