@@ -242,7 +242,7 @@ class Megamind(Processor):
                     drift < -MAX_DRIFT and speed > 0
                 ):
                     # NEW LEFT DRIFT
-                    print("left drift. correcting...")
+                    # print("left drift. correcting...")
                     # left wheel lagging
                     right.queue.put(("GO", speed / DRIFT_CORRECTION))
                     left.queue.put(("GO", speed * DRIFT_CORRECTION))
@@ -250,7 +250,7 @@ class Megamind(Processor):
                     drift > MAX_DRIFT and speed > 0
                 ):
                     # NEW RIGHT DRIFT
-                    print("right drift. correcting...")
+                    # print("right drift. correcting...")
                     # right wheel lagging
                     right.queue.put(("GO", speed * DRIFT_CORRECTION))
                     left.queue.put(("GO", speed / DRIFT_CORRECTION))
@@ -292,11 +292,11 @@ class Megamind(Processor):
             left.queue.put(("GO", direction * speed))
             right.queue.put(("GO", -direction * speed))
             sleep(MEGAMIND_BUFFER)
-            print(f"{gyro_readings=}")
+            # print(f"{gyro_readings=}")
         curr_angle = gyro.queue.get(True).get("angle")  # blocking queue read
         if abs(curr_angle - target_angle) > TURN_DEADZONE:
             self.queue.put(("TURN", target_angle - curr_angle, speed))
-        print(f"stopped turning, final gyro reading: {gyro_readings}")
+        # print(f"stopped turning, final gyro reading: {gyro_readings}")
         left.queue.put(("STOP",))
         right.queue.put(("STOP",))
         # self.current_direction = gyro_readings.get("angle")
@@ -310,7 +310,7 @@ class Megamind(Processor):
         grabber.queue.put(("GO", speed))
 
         for i in range(granular_iterations):
-            print(f"waiting... iteration {i}")
+            # print(f"waiting... iteration {i}")
             sleep(MEGAMIND_BUFFER)
 
         grabber.queue.put(("STOP",))
@@ -358,7 +358,9 @@ class Megamind(Processor):
                         # drop block on bed
                         # calibrate the constant to get the right turn angle given sweeper angle
                         sleep(0.2)
-                        self._angle_sweeper(-90)
+                        # stow sweeper to opposite side of turn
+                        stow_angle = 90 if turn_angle <= 0 else -90
+                        self._angle_sweeper(stow_angle)
                         sleep(0.2)
 
                         # DOING REAL TRIG NOW
@@ -423,8 +425,8 @@ class Megamind(Processor):
         right.queue.put(("GO", speed))
         # get most recent gyro reading, if existent
         # take it as reference for "straightness"
-        print("go to door protocol initiated")
-        print(f"{granular_iterations = }")
+        # print("go to door protocol initiated")
+        # print(f"{granular_iterations = }")
         # clear sensors
         sensor_outputs = self.clearSensorQueues(False)
         color_readings = sensor_outputs.get(color)
@@ -434,17 +436,17 @@ class Megamind(Processor):
             initial_angle = gyro.queue.get(True).get("angle")
         for i in range(granular_iterations):
             gyro_readings = gyro.queue.safeGet(False)
-            print(f"{gyro_readings=}")
+            # print(f"{gyro_readings=}")
             # don't refill if already filled
             color_readings = color.queue.safeGet(False)
             if color_readings:
                 curr_color = color_readings.get("color")
-                print(f"{curr_color = }")
+                # print(f"{curr_color = }")
                 if curr_color and curr_color == "orange":
                     break
             if gyro_readings:
                 drift = gyro_readings.get("angle") - initial_angle
-                print(f"{drift=}")
+                # print(f"{drift=}")
                 # flip these corrections if they're inverted
                 # print(f"{drift=}")
                 if (drift > MAX_DRIFT and speed < 0) or (
@@ -452,7 +454,7 @@ class Megamind(Processor):
                 ):
                     # NEW LEFT DRIFT
 
-                    print("left drift. correcting...")
+                    # print("left drift. correcting...")
                     # left wheel lagging
                     right.queue.put(("GO", speed / DRIFT_CORRECTION))
                     left.queue.put(("GO", speed * DRIFT_CORRECTION))
@@ -461,7 +463,7 @@ class Megamind(Processor):
                     drift > MAX_DRIFT and speed > 0
                 ):
                     # NEW RIGHT DRIFT
-                    print("right drift. correcting...")
+                    # print("right drift. correcting...")
                     # right wheel lagging
                     right.queue.put(("GO", speed * DRIFT_CORRECTION))
                     left.queue.put(("GO", speed / DRIFT_CORRECTION))
