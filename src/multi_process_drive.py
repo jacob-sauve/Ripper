@@ -356,13 +356,7 @@ class Megamind(Processor):
                         self.bed_direction = sweeper._get_angle()
                         print(f"{self.bed_direction =}")
                         # drop block on bed
-                        # calibrate the constant to get the right turn angle given sweeper angle
                         sleep(0.2)
-                        # stow sweeper to opposite side of turn
-                        stow_angle = 90 if turn_angle <= 0 else -90
-                        self._angle_sweeper(stow_angle)
-                        sleep(0.2)
-
                         # DOING REAL TRIG NOW
                         # lowercase  = side name, upper = angle name (triangle)
                         a, b = BODY_LENGTH, SWEEPER_LENGTH
@@ -374,6 +368,11 @@ class Megamind(Processor):
                         # dead zone
                         if abs(turn_angle) < 5:
                             turn_angle = 0
+                        # stow sweeper to opposite side of turn
+                        stow_angle = 90 if turn_angle <= 0 else -90
+                        self._angle_sweeper(stow_angle)
+                        sleep(0.2)
+
                         print(f"turning towards bed, angle: {-turn_angle}")
                         self._turn_with_sensors(-turn_angle, 350)
                         self._go_with_sensors(go_distance)
