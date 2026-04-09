@@ -10,7 +10,7 @@ grab_n_go 2 500
 grab 3 500
 go 12 -350
 turn -30 400
-go 9 -350
+go 11 -350
 turn -90 370
 
 # room 1
@@ -18,7 +18,7 @@ angle_sweeper 0
 go_door
 sweep
 # MAYBE CHANGE TO 4 (if high battery)
-go 5 -350
+go 4 -350
 
 # room 2
 turn 90 240
@@ -43,14 +43,14 @@ angle_sweeper -90
 go 12 350
 turn 45 290
 go 9 350
-turn 45 290
+turn 43 270
 angle_sweeper 0
 sweep
 
 # go back home
 go 10 350
 angle_sweeper 90
-turn 88 220
+turn 88 200
 go 77 350
 turn -92 400
 angle_sweeper 0
