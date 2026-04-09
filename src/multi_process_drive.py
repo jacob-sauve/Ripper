@@ -343,10 +343,12 @@ class Megamind(Processor):
             self._angle_sweeper(-90)
         for i in range(SWEEPS_PER_SWEEP):
             sensor_outputs = self.clearSensorQueues(False)
-            color_readings = sensor_outputs.get(color)
+            #color_readings = sensor_outputs.get(color)
             # sweep back and forth 180 deg
-            for d in range(-90 * sweep_dir, 90 * sweep_dir, increment):
+            for d in range(-(90 + increment) * sweep_dir, (90 + increment) * sweep_dir, increment):
                 self._angle_sweeper(d, speed)
+                sleep(MEGAMIND_BUFFER * 2)
+                color_readings = color.queue.safeGet(False)
                 if color_readings:
                     curr_color = color_readings.get("color")
                     #                    print(f"{curr_color =}")
@@ -365,7 +367,7 @@ class Megamind(Processor):
                         c = sqrt(a**2 + b**2 - 2*a*b*cos(C)) # law of cosines
                         B = asin(max(-1, min(1, sin(C) * b/c))) # law of sines
                         turn_angle = -degrees(B) # minus to account for opposite sweep/turn dirs
-                        turn_angle = int(turn_angle * DROP_TURN_COEFF - 20) if turn_angle > 0 else int(turn_angle / DROP_TURN_COEFF)
+                        turn_angle = int(turn_angle * DROP_TURN_COEFF - 15) if turn_angle > 0 else int(turn_angle / DROP_TURN_COEFF)
                         go_distance = max(c - a + MIN_GO_DISTANCE, MIN_GO_DISTANCE)
                         # dead zone
                         if abs(turn_angle) < 5:
@@ -395,8 +397,6 @@ class Megamind(Processor):
                         self._angle_sweeper(0)
                         self._go_to_door(-MIN_SPEED)
                         return True
-                sleep(MEGAMIND_BUFFER * 2)
-                color_readings = color.queue.safeGet(False)
             sweep_dir *= -1
             increment *= -1
             sleep(0.15)
