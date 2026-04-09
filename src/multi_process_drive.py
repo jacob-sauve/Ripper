@@ -363,27 +363,28 @@ class Megamind(Processor):
                         C = radians(180 - self.bed_direction)
                         c = sqrt(a**2 + b**2 - 2*a*b*cos(C)) # law of cosines
                         B = asin(max(-1, min(1, sin(C) * b/c))) # law of sines
-                        turn_angle = degrees(B)
+                        turn_angle = -degrees(B) # - to account for opposite sweep/turn dirs
                         go_distance = max(c - a + MIN_GO_DISTANCE, MIN_GO_DISTANCE)
                         # dead zone
                         if abs(turn_angle) < 5:
                             turn_angle = 0
                         # stow sweeper to opposite side of turn
-                        stow_angle = 90 if turn_angle <= 0 else -90
+                        stow_angle = 90 if turn_angle >= 0 else -90
                         self._angle_sweeper(stow_angle)
                         sleep(0.2)
 
-                        print(f"turning towards bed, angle: {-turn_angle}")
-                        self._turn_with_sensors(-turn_angle, 350)
+                        print(f"turning towards bed, angle: {turn_angle}")
+                        self._turn_with_sensors(turn_angle, 350)
                         self._go_with_sensors(go_distance)
                         self._grab(5, -500)
                         self._go_with_sensors(go_distance, -MIN_SPEED)
-                        print(f"turning away from bed, angle: {turn_angle}")
-                        self._turn_with_sensors(turn_angle, 450)
+                        print(f"turning away from bed, angle: {-turn_angle}")
+                        self._turn_with_sensors(-turn_angle, 450)
                         self.funcdict.get("DELIVER_JINGLE")()
-                        self._go_with_sensors(11, -MIN_SPEED)
+                        self._go_with_sensors(min(11, distance_advanced), -MIN_SPEED)
                         self._angle_sweeper(0)
-                        self._go_to_door(-MIN_SPEED)
+                        if distance_advanced > 11:
+                            self._go_to_door(-MIN_SPEED)
                         return True
                     elif curr_color == "red":
                         # exit room if patient invalid
