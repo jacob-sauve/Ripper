@@ -20,7 +20,7 @@ from utils.brick import (
     TouchSensor,
     wait_ready_sensors,
 )
-from math import pi
+from math import pi, sqrt, cos, sin, asin, radians, degrees
 from time import sleep
 from multiprocess import cpu_count, Process, Queue
 from colors import classify
@@ -364,11 +364,11 @@ class Megamind(Processor):
                         # DOING REAL TRIG NOW
                         # lowercase  = side name, upper = angle name (triangle)
                         a, b = BODY_LENGTH, SWEEPER_LENGTH
-                        C = 180 - self.bed_direction
+                        C = radians(180 - self.bed_direction)
                         c = sqrt(a**2 + b**2 - 2*a*b*cos(C)) # law of cosines
-                        B = asin(sin(C) * b/c) # law of sines
-                        turn_angle = B
-                        go_distance = c-a + MIN_GO_DISTANCE
+                        B = asin(max(-1, min(1, sin(C) * b/c))) # law of sines
+                        turn_angle = degrees(B)
+                        go_distance = max(c - a + MIN_GO_DISTANCE, MIN_GO_DISTANCE)
                         # dead zone
                         if abs(turn_angle) < 5:
                             turn_angle = 0
