@@ -51,6 +51,9 @@ MAX_ROOM_DEPTH = (
 TURN_DEADZONE = (
     2  # max degrees (+/-) considered acceptable turn deviations in a given direction
 )
+BODY_LENGTH = 14    # cm, length from axle to grabber aperture
+SWEEPER_LENGTH = 13 # cm, length of sweeper (to middle of colour sensor)
+MIN_GO_DISTANCE = 2 # cm, distance added to all dropping of block forward motion
 
 
 def safeGet(queue):
@@ -357,15 +360,23 @@ class Megamind(Processor):
                         sleep(0.2)
                         self._angle_sweeper(-90)
                         sleep(0.2)
-                        turn_angle = self.bed_direction // 4
+
+                        # DOING REAL TRIG NOW
+                        # lowercase  = side name, upper = angle name (triangle)
+                        a, b = BODY_LENGTH, SWEEPER_LENGTH
+                        C = 180 - self.bed_direction
+                        c = sqrt(a**2 + b**2 - 2*a*b*cos(C)) # law of cosines
+                        B = asin(sin(C) * b/c) # law of sines
+                        turn_angle = B
+                        go_distance = c-a + MIN_GO_DISTANCE
                         # dead zone
                         if abs(turn_angle) < 5:
                             turn_angle = 0
                         print(f"turning towards bed, angle: {-turn_angle}")
                         self._turn_with_sensors(-turn_angle, 350)
-                        self._go_with_sensors(9)
+                        self._go_with_sensors(go_distance)
                         self._grab(5, -500)
-                        self._go_with_sensors(11, -MIN_SPEED)
+                        self._go_with_sensors(go_distance, -MIN_SPEED)
                         print(f"turning away from bed, angle: {turn_angle}")
                         self._turn_with_sensors(turn_angle, 450)
                         self.funcdict.get("DELIVER_JINGLE")()
