@@ -5,12 +5,12 @@ grab_n_go 4 500
 grab 1 -500
 go 12 -350
 turn 30 300
-go 3 350
+go 4 350
 grab_n_go 2 500
-grab 3 500
-go 12 -350
+grab 4 500
+go 13 -350
 turn -30 400
-go 11 -350
+go 10 -350
 turn -90 370
 
 # room 1
@@ -30,7 +30,7 @@ go_door
 sweep
 angle_sweeper 90
 go 8 350
-turn 87 260
+turn 87 240
 go 28 350
 
 # big room loop
@@ -40,10 +40,10 @@ sweep
 go 5 -350
 turn -90 400
 angle_sweeper -90
-go 11 350
+go 15 350
 turn 45 290
 go 8 350
-turn 41 270
+turn 40 250
 angle_sweeper 0
 sweep
 
