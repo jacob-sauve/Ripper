@@ -53,7 +53,7 @@ TURN_DEADZONE = (
 )
 BODY_LENGTH = 14    # cm, length from axle to grabber aperture
 SWEEPER_LENGTH = 13 # cm, length of sweeper (to middle of colour sensor)
-MIN_GO_DISTANCE = 2 # cm, distance added to all dropping of block forward motion
+MIN_GO_DISTANCE = -2 # cm, distance added to all dropping of block forward motion
 
 
 def safeGet(queue):
