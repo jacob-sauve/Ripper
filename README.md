@@ -122,12 +122,13 @@ In this final "all-hands" pivot, the team dynamic transitioned from general coll
 ## 1.6 Strategic Reflection: Hindsight and Future Design for Future Teams
 Reflecting on the development of 'Ripper,' our team concluded that the most critical phase of any robotics project is establishing an uncompromisingly reliable physical foundation. We advise future teams that a rigid, durable chassis, specifically one that securely houses the BrickPi and provides vibration-free mounting points, is not merely a design choice, but a prerequisite for software success. We discovered that sensors only operate with peak efficiency if their mounting is stable and the battery fully charged; without a rigid frame, even the most sophisticated software becomes prone to cumulative error.  
 A significant technical "pivot" for a future iteration would be the abandonment of hardcoded navigation. While our current implementation provided the necessary precision for the specific lab environment, it lacked the flexibility required for dynamic obstacles or varied starting configurations.  
-Our recommendation for future teams should prioritize a State-Machine architecture or a Dynamic Pathfinding algorithm (such as A\* or Dijkstra) from day 1. Moving away from "if-then" hardcoding toward a more modular navigation stack would allow the software to be platform-agnostic and more resilient to physical perturbations.  
+Our recommendation for future teams should prioritize a State-Machine architecture or a Dynamic Pathfinding algorithm (such as A* or Dijkstra) from day 1. Moving away from "if-then" hardcoding toward a more modular navigation stack would allow the software to be platform-agnostic and more resilient to physical perturbations.  
 While the "No Monopoly" policy in our contract ensured everyone learned the basics, the complexity of PID tuning and Odometry suggests that a Strategic Shift in Expertise is necessary.We recommend appointing a dedicated lead early on to manage the nuances of sensor fusion and error correction. Beyond hardware and software leads, a future team would benefit from a "Systems Architect" whose sole job is to ensure that the mechanical constraints (e.g., wheel diameter, gear backlash) are perfectly aligned with the software's mathematical assumptions.  
 If we were to restart the semester, our "Time Budget" would look significantly different: Front-Loaded Hardware: We would dedicate the first 15% of the timeline exclusively to stress-testing the chassis. A robot that falls apart during a 2:00 AM testing session is a software team’s worst nightmare.  
 The "Hardware-in-the-Loop" Phase: We would prioritize a middle phase dedicated entirely to Integration Testing. Often, teams treat hardware and software as parallel tracks that meet at the end; we suggest they meet every 48 hours to prevent "Integration Hell."  
 Our "Six Bricks™" contract served us well, but for a future project of this scale, we would add a "Peer-to-Peer Debugging Clause." We found that the person who writes the code is often the worst person to debug because they are blind to their own logical assumptions. The change would be for future contracts to mandate that "Sub-team A" must attempt to run and break the code of "Sub-team B." This internal "Red-Teaming" would identify edge cases such as sensor saturation or battery voltage drops long before the final demonstration.  
-Final Takeaway: The success of 'Ripper' was built on consistency, but its successor should be built on abstraction. By moving from a "fixed solution" mindset to a "robust system" mindset, future teams can spend less time fighting their robot and more time optimizing its performance.  
+Final Takeaway: The success of 'Ripper' was built on consistency, but its successor should be built on abstraction. By moving from a "fixed solution" mindset to a "robust system" mindset, future teams can spend less time fighting their robot and more time optimizing its performance.
+
 ---
 
 # **2. Specifications**
@@ -214,7 +215,8 @@ Key Uncertainties
 3. There is an inherent uncertainty regarding the "wear and tear" of LEGO mechanical joints over repeated trials, which may introduce minor mechanical backlash in the grabbing mechanism.  
    
 
-The team dedicated significant effort to refining these technical details to eliminate any ambiguity in the initial design phase. We recognized that failing to identify a requirement early would inevitably lead to costly, late-stage design changes that could jeopardize our timeline. By establishing this rigorous baseline as a collective, leveraging the "more voices the better" philosophy we ensured that every member of The Six Bricks was aligned on the project’s trajectory. This collaborative planning phase proved to be the most crucial investment of our time. It served as our primary defense against technical debt, allowing us to move from the architectural phase to a functional prototype without the need for late-stage pivots or costly mechanical redesigns."  
+The team dedicated significant effort to refining these technical details to eliminate any ambiguity in the initial design phase. We recognized that failing to identify a requirement early would inevitably lead to costly, late-stage design changes that could jeopardize our timeline. By establishing this rigorous baseline as a collective, leveraging the "more voices the better" philosophy we ensured that every member of The Six Bricks was aligned on the project’s trajectory. This collaborative planning phase proved to be the most crucial investment of our time. It served as our primary defense against technical debt, allowing us to move from the architectural phase to a functional prototype without the need for late-stage pivots or costly mechanical redesigns."
+
 ---
 
 # **3. Design**
@@ -570,8 +572,8 @@ B. Team Weekly Availabilities and Calendar for the Final DPM project from March 
 | **Jacob**  | 1:30 - 4 | 11:35 - 2 6 - 8 | 11:30 - 2:30 | 11:35 - 2 4 - 6 | 12:30 - 2  5:30 - 7   | 12 - 5 | 12 - 5 |
 | **Ivan**  | 3 - 7 | 11:35 - 2  4 - 7  | 2:30 - 5:30 | 11:35 - 2 2:30 - 4:30 | 3:30 - 7 | 12 - 5 | 12 - 5 |
 | **Andre**  | 3 - 6 | 11:35 - 2  3-5  | 11:30 - 1 | 11:35 - 2  3:30 - 7 | 3:30 - 5:30 | 12 - 5 | 12 - 5 |
-| **Zach**  | 2 - 4 | 11:35 - 3 6 - 8 | 2:30 - 5 | 11:35 - 2  4 - 7  | 1 - 3  6 - 7 | 12 - 5\* | 12 - 5\* |
-| **Sasha** | 11:30 -1 | 11:35 - 2 5 - 8  | 11:30 - 1 4-7 | 11:35 - 2 5 - 7 | 4 - 7 | 12 - 5\* | 12 - 5\* |
+| **Zach**  | 2 - 4 | 11:35 - 3 6 - 8 | 2:30 - 5 | 11:35 - 2  4 - 7  | 1 - 3  6 - 7 | 12 - 5* | 12 - 5* |
+| **Sasha** | 11:30 -1 | 11:35 - 2 5 - 8  | 11:30 - 1 4-7 | 11:35 - 2 5 - 7 | 4 - 7 | 12 - 5* | 12 - 5* |
 <a id="table-17"></a>
 
 *Table 17. Individual member schedules and potential weekend availability.*
@@ -600,14 +602,14 @@ Schedule of Meetings and Major Conflicts:
 
 *Table 19.* 
 
-| Member  | Task Time |  |
-| ----- | ----- | :---- |
-| Jacob Sauvé | Meeting Minutes Development of pre-alpha software and hardware Brainstorming system and subsystem designs Deliverable 1 documentation **Total** | 0.5 hours 1 hour 2 hours 5.5 hours **9 hours** |
-| Marny Brooker | Completed the lab report by building the initial Gantt Chart, System limitations, capabilities, and key findings.  Budget writing Documenting the report and Designing possible ideas to start to implement  **Total** | 4 hours  1 hour  1 hour 3 hours  **9 hours** |
-| Zachary Chuang | Determined requirements, constraints, and specifications for our given task.  Brainstormed ideas for grabber and drive mechanisms. Participated in writing meeting minutes.  | 2 hours 3 hours 1 hour **6 hours** |
-| Ivan Gaspart | Determined requirements, constraints, specifications Helped writing, proofreading, drawing sketches for deliverable 1 Helped draft documentation for future testing and hardware designs Contributed in the initial brainstorm | 1 hour 4 hours 1 hour 2 hours Total: **8 hours** |
-| André Savard | Prototyped possible cube grabber mechanisms, and explored options allowing for the grabbing of multiple cubes at once.  Wrote deliverable documentation regarding time and task allocation. Reviewed and revised documentation | 3 hours 1 hours 1 hours **5 hours** |
-| Sasha Gelfand | Contributed to electing overall group structure for this project  Present in brain storming various sub systems (hardware and software)  Sketched out potential subsystem designs and established their potential strongsuits.  Documented and developed some mechanically different drive system ideas   Contributed to deliverable document  | 0.5 hour 2.5 hours  2 hours  2 hours  2 hours   **Total: 9 hours**  |
+| Member | Task | Time |
+| :---- | :---- | :---- |
+| Jacob Sauvé | Meeting Minutes<br>Development of pre-alpha software and hardware<br>Brainstorming system and subsystem designs<br>Deliverable 1 documentation<br>**Total** | 0.5 hours<br>1 hour<br>2 hours<br>5.5 hours<br>**9 hours** |
+| Marny Brooker | Completed the lab report (Gantt Chart, system limitations, capabilities, key findings)<br>Budget writing<br>Documenting the report<br>Designing possible ideas to start to implement<br>**Total** | 4 hours<br>1 hour<br>1 hour<br>3 hours<br>**9 hours** |
+| Zachary Chuang | Determined requirements, constraints, and specifications<br>Brainstormed ideas for grabber and drive mechanisms<br>Participated in writing meeting minutes<br>**Total** | 2 hours<br>3 hours<br>1 hour<br>**6 hours** |
+| Ivan Gaspart | Determined requirements, constraints, specifications<br>Helped writing, proofreading, drawing sketches for deliverable 1<br>Helped draft documentation for future testing and hardware designs<br>Contributed in the initial brainstorm<br>**Total** | 1 hour<br>4 hours<br>1 hour<br>2 hours<br>**8 hours** |
+| André Savard | Prototyped cube grabber mechanisms; explored multi-cube options<br>Wrote deliverable documentation regarding time and task allocation<br>Reviewed and revised documentation<br>**Total** | 3 hours<br>1 hour<br>1 hour<br>**5 hours** |
+| Sasha Gelfand | Contributed to electing overall group structure<br>Brainstorming various sub systems (hardware and software)<br>Sketched potential subsystem designs and established their strengths<br>Documented and developed mechanically different drive system ideas<br>Contributed to deliverable document<br>**Total** | 0.5 hour<br>2.5 hours<br>2 hours<br>2 hours<br>2 hours<br>**9 hours** |
 <a id="table-20"></a>
 
 *Table 20.* 
@@ -624,26 +626,26 @@ Schedule of Meetings and Major Conflicts:
 
 *Table 21.* 
 
-| Member  | Task | Time |
-| ----- | ----- | ----- |
-| Jacob Sauvé | Implementations: Grabber software for grabbing individual blocks Sweeping mechanism for color sensor Color sensor data classification Emergency stop implementation and following debugging Debugging: Megamind system refinement and code organization Concurrent commands handling Emergency stop, color sensor and classification, and full demo testing System and task allocation documentation  **Total** |  1 hour 2 hours 1 hour 2 hours 2 hours 2 hours 2 hours 2 hour  **14 hours** |
-| Marny Brooker | Gantt Chart Improvements Design Review Hardware Documentation  Software Documentation  Simulation Testing Deliverable 3 Documentation **Total** | 2 hours 1 hour 1 hour 1 hour 1 hour 3 hours **9 hours** |
-| Zachary Chuang | Hardware iteration and final design.  Documented component and integration tests.  Documented iterations of final system design.  | 2 hours 4 hours 3 hours **9 hours** |
-| Ivan Gaspart | Assembling robot together and optimizing material usage for the hardware Design review preparation and presentation Arm/cube retrieval code and software code documentation Documentation of testing procedures Deliverable 3 documentation | 1 hour 1 hour 2 hours 2 hours 4 hours Total: **10 hours** |
-| André Savard | Emergency stop software implementation Color sensor sweep motor software implementation Color sensor classification implementation Musical confirmation system Debugging: Emergency stop Grabber not properly setting speed Concurrent instructions not functioning Hardware documentation Task and contribution documentation | 1 hours 1 hours 1 hours .5 hours 1 hours 1 hours 1 hours 3 hours .5 hours **Total: 10 hours** |
-| Sasha Gelfand | Documentation of test procedures.  Documentation of test results.  Deliverable three write up.   Hardware/Software documentation.  Design Review prep/ presentation.   | **3 hours 1.5 hours 2 hours 1 hour   1.5 hours Total: 9.5 hours** |
+| Member | Task | Time |
+| :---- | :---- | :---- |
+| Jacob Sauvé | Grabber software for grabbing individual blocks<br>Sweeping mechanism for color sensor<br>Color sensor data classification<br>Emergency stop implementation and debugging<br>Megamind system refinement and code organization<br>Concurrent commands handling<br>Emergency stop, color sensor, classification, and full demo testing<br>System and task allocation documentation<br>**Total** | 1 hour<br>2 hours<br>1 hour<br>2 hours<br>2 hours<br>2 hours<br>2 hours<br>2 hours<br>**14 hours** |
+| Marny Brooker | Gantt Chart Improvements<br>Design Review<br>Hardware Documentation<br>Software Documentation<br>Simulation Testing<br>Deliverable 3 Documentation<br>**Total** | 2 hours<br>1 hour<br>1 hour<br>1 hour<br>1 hour<br>3 hours<br>**9 hours** |
+| Zachary Chuang | Hardware iteration and final design<br>Documented component and integration tests<br>Documented iterations of final system design<br>**Total** | 2 hours<br>4 hours<br>3 hours<br>**9 hours** |
+| Ivan Gaspart | Assembling robot and optimizing material usage for hardware<br>Design review preparation and presentation<br>Arm/cube retrieval code and software code documentation<br>Documentation of testing procedures<br>Deliverable 3 documentation<br>**Total** | 1 hour<br>1 hour<br>2 hours<br>2 hours<br>4 hours<br>**10 hours** |
+| André Savard | Emergency stop software implementation<br>Color sensor sweep motor software implementation<br>Color sensor classification implementation<br>Musical confirmation system<br>Debugging: Emergency stop<br>Grabber not properly setting speed<br>Concurrent instructions not functioning<br>Hardware documentation<br>Task and contribution documentation<br>**Total** | 1 hour<br>1 hour<br>1 hour<br>0.5 hours<br>1 hour<br>1 hour<br>1 hour<br>3 hours<br>0.5 hours<br>**10 hours** |
+| Sasha Gelfand | Documentation of test procedures<br>Documentation of test results<br>Deliverable 3 write up<br>Hardware/Software documentation<br>Design Review prep/presentation<br>**Total** | 3 hours<br>1.5 hours<br>2 hours<br>1 hour<br>1.5 hours<br>**9.5 hours** |
 <a id="table-22"></a>
 
 *Table 22.* 
 
 | Member  | Task Time |  |
 | ----- | ----- | :---- |
-| Jacob Sauvé | Partially Overseeing Chassis Overhaul - providing software insights (H 2.0) Sensor queue type-safety overhaul, fixing previously inconsistent drift correction (S 2.3.0, safeGet) Debugging, testing and co-developing robot rotation script (S 2.3.0, turning) Integration-testing Composite Robot Workflows (Demo 1 tasks + turning) Documenting Software Progress Reviewing and Polishing Deliverable 4 Documentation TOTAL | 0.5 hours 1 hour 3 hours 2 hours 0.5 hours 2 hours **9 hours** |
-| Marny Brooker | Navigation Hardware Overhaul (H2.0, chassis) Deliverable 4 Documentation Testing Documentation Hardware Documentation Navigation Test Pickup Test Room Logic Test TOTAL | 1 hour 2 hours 2 hours 1 hour 1 hour 1 hour 1 hour **9 hours** |
-| Zachary Chuang | Disassembled Ripper I and designed a new grabber mechanism to be more compact and rigid (H 2.0, grabber) Wrote a turning method for the robot. (S2.3.0, turning) Debugged and wrote a script to pick up blocks in the pharmacy. (S2.3.0, grabber) Wrote system design documentation.  TOTAL | 2 hours 3 hours 2 hours 2 hours **9 hours** |
-| Ivan Gaspart | Wrote script for successful delivery sound (S2.3.0, delivery jingle) Rewrote script for color classification (S2.3.0, HSV) Debugged color classification and calibrated constants in script (S2.3.0, HSV) Started debugging sweeper and robot movement (S2.3.0, ISSUES) Deliverable 4 Documentation TOTAL | 2 hours 1 hour 2 hours 2 hours 2 hours  **9 hours** |
-| André Savard | Deliverable 4 Hardware Documentation Debugging - grabber subsystem (H 2.2, S 2.3.0) Preliminary Full Mission Design & Integration Testing (H 2.2, S 2.3.0) Complete hardware subsystem and integration overhaul (H 2.1, 2.2) Color sensor & bed finding subsystem re-integration (H 2.2, S 2.3.0) TOTAL | 2.5 hours 1 hour 1 hour 3 hours 1 hour  **8.5 hours** |
-| Sasha Gelfand | Deliverable 4 documentation  Hardware revamp, partial oversight (H2.1, chassis)  Testing documentation  Navigation testing Hardware documentation TOTAL | 2 hours  .5 hours  4 hours  1 hour  1.5 hour  **9 hours**  |
+| Jacob Sauvé | Partially Overseeing Chassis Overhaul - providing software insights (H 2.0)<br>Sensor queue type-safety overhaul, fixing previously inconsistent drift correction (S 2.3.0, safeGet)<br>Debugging, testing and co-developing robot rotation script (S 2.3.0, turning)<br>Integration-testing Composite Robot Workflows (Demo 1 tasks + turning)<br>Documenting Software Progress<br>Reviewing and Polishing Deliverable 4 Documentation<br>**Total** | 0.5 hours<br>1 hour<br>3 hours<br>2 hours<br>0.5 hours<br>2 hours<br>**9 hours** |
+| Marny Brooker | Navigation Hardware Overhaul (H2.0, chassis)<br>Deliverable 4 Documentation<br>Testing Documentation<br>Hardware Documentation<br>Navigation Test<br>Pickup Test<br>Room Logic Test<br>**Total** | 1 hour<br>2 hours<br>2 hours<br>1 hour<br>1 hour<br>1 hour<br>1 hour<br>**9 hours** |
+| Zachary Chuang | Disassembled Ripper I and designed a new grabber mechanism to be more compact and rigid (H 2.0, grabber)<br>Wrote a turning method for the robot (S2.3.0, turning)<br>Debugged and wrote a script to pick up blocks in the pharmacy (S2.3.0, grabber)<br>Wrote system design documentation<br>**Total** | 2 hours<br>3 hours<br>2 hours<br>2 hours<br>**9 hours** |
+| Ivan Gaspart | Wrote script for successful delivery sound (S2.3.0, delivery jingle)<br>Rewrote script for color classification (S2.3.0, HSV)<br>Debugged color classification and calibrated constants in script (S2.3.0, HSV)<br>Started debugging sweeper and robot movement (S2.3.0, ISSUES)<br>Deliverable 4 Documentation<br>**Total** | 2 hours<br>1 hour<br>2 hours<br>2 hours<br>2 hours<br>**9 hours** |
+| André Savard | Deliverable 4 Hardware Documentation<br>Debugging - grabber subsystem (H 2.2, S 2.3.0)<br>Preliminary Full Mission Design & Integration Testing (H 2.2, S 2.3.0)<br>Complete hardware subsystem and integration overhaul (H 2.1, 2.2)<br>Color sensor & bed finding subsystem re-integration (H 2.2, S 2.3.0)<br>**Total** | 2.5 hours<br>1 hour<br>1 hour<br>3 hours<br>1 hour<br>**8.5 hours** |
+| Sasha Gelfand | Deliverable 4 documentation<br>Hardware revamp, partial oversight (H2.1, chassis)<br>Testing documentation<br>Navigation testing<br>Hardware documentation<br>**Total** | 2 hours<br>0.5 hours<br>4 hours<br>1 hour<br>1.5 hours<br>**9 hours** |
 <a id="table-23"></a>
 
 *Table 23.* 
@@ -1349,8 +1351,27 @@ Tuned commands.txt instructions for optimal 10/10 run at near-full battery capac
 
 *Table 13.* 
 
-| COLOURSOrangehsv:0.06277056277056277,0.9166666666666666,0.32941176470588235hsv:0.06277056277056277,0.9166666666666666,0.32941176470588235hsv:0.04761904761904764,0.8953488372093024,0.33725490196078434hsv:0.04761904761904764,0.8953488372093024,0.33725490196078434hsv:0.04761904761904764,0.8953488372093024,0.33725490196078434REDhsv:0.0026455026455026545,0.9264705882352942,0.26666666666666666hsv:0.0026455026455026545,0.9264705882352942,0.26666666666666666hsv:0.0026455026455026545,0.9264705882352942,0.26666666666666666hsv:0.0026455026455026545,0.9264705882352942,0.26666666666666666hsv:0.008196721311475419,0.9384615384615385,0.2549019607843137hsv:0.008196721311475419,0.9384615384615385,0.2549019607843137hsv:0.008196721311475419,0.9384615384615385,0.2549019607843137hsv:0.008196721311475419,0.9384615384615385,0.2549019607843137hsv:0.010582010582010581,0.9545454545454545,0.25882352941176473hsv:0.010582010582010581,0.9545454545454545,0.25882352941176473hsv:0.010582010582010581,0.9545454545454545,0.25882352941176473hsv:0.010582010582010581,0.9545454545454545,0.25882352941176473Greenhsv:0.2514124293785311,0.921875,0.25098039215686274hsv:0.2514124293785311,0.921875,0.25098039215686274hsv:0.2514124293785311,0.921875,0.25098039215686274hsv:0.2514124293785311,0.921875,0.25098039215686274hsv:0.24425287356321843,0.9354838709677419,0.24313725490196078hsv:0.24425287356321843,0.9354838709677419,0.24313725490196078hsv:0.24425287356321843,0.9354838709677419,0.24313725490196078hsv:0.24425287356321843,0.9354838709677419,0.24313725490196078hsv:0.24269005847953218,0.890625,0.25098039215686274hsv:0.24269005847953218,0.890625,0.25098039215686274hsv:0.24269005847953218,0.890625,0.25098039215686274hsv:0.24269005847953218,0.890625,0.25098039215686274hsv:0.24011299435028252,0.9365079365079365,0.24705882352941178hsv:0.24011299435028252,0.9365079365079365,0.24705882352941178Yellowhsv:0.12962962962962962,0.8780487804878048,0.3215686274509804hsv:0.13013698630136986,0.9012345679012346,0.3176470588235294hsv:0.13013698630136986,0.9012345679012346,0.3176470588235294hsv:0.13013698630136986,0.9012345679012346,0.3176470588235294hsv:0.13013698630136986,0.9012345679012346,0.3176470588235294hsv:0.1283783783783784,0.8915662650602411,0.3254901960784314hsv:0.1283783783783784,0.8915662650602411,0.3254901960784314hsv:0.1283783783783784,0.8915662650602411,0.3254901960784314hsv:0.1283783783783784,0.8915662650602411,0.3254901960784314hsv:0.13063063063063063,0.8915662650602411,0.3254901960784314hsv:0.13063063063063063,0.8915662650602411,0.3254901960784314hsv:0.13063063063063063,0.8915662650602411,0.3254901960784314hsv:0.13063063063063063,0.8915662650602411,0.3254901960784314hsv:0.13063063063063063,0.9024390243902439,0.3215686274509804hsv:0.13063063063063063,0.9024390243902439,0.3215686274509804hsv:0.13063063063063063,0.9024390243902439,0.3215686274509804Bluehsv:0.4393939393939394,0.89106382978723405,0.3686274509803922hsv:0.4444444444444444,0.89106382978723405,0.3686274509803922hsv:0.4444444444444444,0.89106382978723405,0.3686274509803922hsv:0.4444444444444444,0.89106382978723405,0.3686274509803922hsv:0.4444444444444444,0.89106382978723405,0.3686274509803922hsv:0.4393939393939394,0.8873684210526316,0.37254901960784315hsv:0.4393939393939394,0.8873684210526316,0.37254901960784315hsv:0.4393939393939394,0.8873684210526316,0.37254901960784315hsv:0.4393939393939394,0.8873684210526316,0.37254901960784315hsv:0.4393939393939394,0.88374999999999994,0.3764705882352941hsv:0.4393939393939394,0.88374999999999994,0.3764705882352941hsv:0.4393939393939394,0.88374999999999994,0.3764705882352941hsv:0.4393939393939394,0.88374999999999994,0.3764705882352941hsv:0.4375,0.88042553191489366,0.3686274509803922hsv:0.4375,0.88042553191489366,0.3686274509803922hsv:0.4375,0.88042553191489366,0.3686274509803922 |
-| :---- |
+| Colour | H | S | V | Samples |
+| :---- | :---- | :---- | :---- | :----: |
+| **Orange** | 0.0628 | 0.9167 | 0.3294 | ×2 |
+| | 0.0476 | 0.8953 | 0.3373 | ×3 |
+| **Red** | 0.0026 | 0.9265 | 0.2667 | ×4 |
+| | 0.0082 | 0.9385 | 0.2549 | ×4 |
+| | 0.0106 | 0.9545 | 0.2588 | ×4 |
+| **Green** | 0.2514 | 0.9219 | 0.2510 | ×4 |
+| | 0.2443 | 0.9355 | 0.2431 | ×4 |
+| | 0.2427 | 0.8906 | 0.2510 | ×4 |
+| | 0.2401 | 0.9365 | 0.2471 | ×2 |
+| **Yellow** | 0.1296 | 0.8780 | 0.3216 | ×1 |
+| | 0.1301 | 0.9012 | 0.3176 | ×4 |
+| | 0.1284 | 0.8916 | 0.3255 | ×4 |
+| | 0.1306 | 0.8916 | 0.3255 | ×4 |
+| | 0.1306 | 0.9024 | 0.3216 | ×3 |
+| **Blue** | 0.4394 | 0.8911 | 0.3686 | ×1 |
+| | 0.4444 | 0.8911 | 0.3686 | ×4 |
+| | 0.4394 | 0.8874 | 0.3725 | ×4 |
+| | 0.4394 | 0.8837 | 0.3765 | ×4 |
+| | 0.4375 | 0.8804 | 0.3686 | ×3 |
 
 <a id="figure-x"></a>
 *Figure X*
