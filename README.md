@@ -19,97 +19,52 @@ Sasha Gelfand
 Jacob Sauvé  
 André Savard
 
-**Table of Contents:**
+## Table of Contents
 
-[**1. Introduction	2**](#1.-introduction)
+- **[1. Introduction](#1-introduction)**
+  - [1.1 Team Overview](#11-team-overview)
+  - [1.2 Team Composition, Roles and Capabilities](#12-team-composition-roles-and-capabilities)
+  - [1.3 Team Contract and Organization](#13-team-contract-and-organization)
+  - [1.4 Project Management and Milestones](#14-project-management-and-milestones)
+  - [1.5 Budgetary Development & Resource Shift](#15-budgetary-development--resource-shift)
+  - [1.6 Strategic Reflection: Hindsight and Future Design](#16-strategic-reflection-hindsight-and-future-design-for-future-teams)
+- **[2. Specifications](#2-specifications)**
+  - [2.1 Problem Statement and Scope](#21-problem-statement-and-scope)
+  - [2.2 Design Requirements and Constraints](#22-design-requirements-and-constraints)
+  - [2.3 Engineering Specifications](#23-engineering-specifications)
+  - [2.4 Design Assumptions](#24-design-assumptions)
+- **[3. Design](#3-design)**
+  - [3.1 System Design Process](#31-system-design-process)
+  - [3.2 Hardware Design and Evolution](#32-hardware-design-and-evolution)
+  - [3.3 Software Design and Implementation](#33-software-design-and-implementation)
+    - [3.3.1 Software Specifications and Initial Model](#331-software-specifications-and-initial-model)
+    - [3.3.2 Design Iterations and Paradigm Shift: Multiprocessing](#332-design-iterations-and-paradigm-shift-multiprocessing)
+    - [3.3.3 Final Software Architecture: Structure and Functionality](#333-final-software-architecture-structure-and-functionality)
+  - [3.4 Design Iterations and Lessons Learned](#34-design-iterations-and-lessons-learned)
+- **[4. Testing](#4-testing)**
+- **[5. Performance](#5-performance)**
+  - [5.1 Final System Capabilities](#51-final-system-capabilities)
+  - [5.2 Performance Metrics](#52-performance-metrics)
+  - [5.3 Use Cases and Limitations](#53-use-cases-and-limitations)
+- **[Appendix](#appendix)**
 
-[1.1 Team Overview	2](#1.1-team-overview)
-
-[1.2 Team Composition, Roles and Capabilities	2](#1.2-team-composition,-roles-and-capabilities-table-1-the-six-bricks-team-members’-respective-roles-and-responsibilities.)
-
-[1.3 Team Contract and Organization	5](#1.3-team-contract-and-organization)
-
-[1.4 Project Management and Milestones	7](#1.4-project-management-and-milestones)
-
-[1.5 Budgetary Development & Resource Shift	9](#1.5-budgetary-development-&-resource-shift)
-
-[1.6 Strategic Reflection: Hindsight and Future Design for Future Teams	10](#1.6-strategic-reflection:-hindsight-and-future-design-for-future-teams)
-
-[**2. Specifications	10**](#2.-specifications)
-
-[2.1 Problem Statement and Scope	10](#2.1-problem-statement-and-scope)
-
-[2.2 Design Requirements and Constraints:	11](#2.2-design-requirements-and-constraints:)
-
-[2.3 Engineering Specifications:	13](#2.3-engineering-specifications:)
-
-[2.4 Design Assumptions:	14](#2.4-design-assumptions:)
-
-[**Section 3. Design	15**](#section-3.-design)
-
-[3.1 System Design Process:	15](#3.1-system-design-process:)
-
-[3.2 Hardware Design and Evolution:	19](#3.2-hardware-design-and-evolution:-full-hardware-history)
-
-[H0.1	23](#h0.1)
-
-[H0.2	23](#h0.2)
-
-[H1.0	24](#h1.0)
-
-[H1.1	24](#h1.1)
-
-[H2.0	25](#h2.0)
-
-[H2.1	25](#h2.1)
-
-[H2.2	26](#h2.2)
-
-[3.3 Software Design and Implementation:	28](#3.3-software-design-and-implementation:)
-
-[3.3.1 Software Specifications and Initial Model	29](#3.3.1-software-specifications-and-initial-model)
-
-[3.3.2 Design Iterations and Paradigm Shift: Multiprocessing	31](#3.3.2-design-iterations-and-paradigm-shift:-multiprocessing)
-
-[3.3.3 Final Software Architecture: Structure and Functionality	31](#3.3.3-final-software-architecture:-structure-and-functionality)
-
-[A. Delivery and Mission Complete Jingles	31](#appendix)
-
-[B. HSV Colour Classification	31](#appendix)
-
-[3.4 Design Iterations: How did it evolve from beginning to now and what design modifications need avoiding (we tried them and no point of doing them)	31](#3.4-design-iterations:-how-did-it-evolve-from-beginning-to-now-and-what-design-modifications-need-avoiding-\(we-tried-them-and-no-point-of-doing-them\))
-
-[**Section 4. Testing	33**](#section-4.-testing)
-
-[**Section 5. Performance	48**](#section-5.-performance)
-
-[5.1 Final System Capabilities	48](#5.1-final-system-capabilities)
-
-[5.2 Performance Metrics	48](#5.2-performance-metrics)
-
-[5.3 Use Cases and Limitations	49](#5.3-use-cases-and-limitations)
-
-[**Appendix	50**](#appendix)
-
-# **1. Introduction**  {#1.-introduction}
-
-## 1.1 Team Overview {#1.1-team-overview}
-
+# **1. Introduction**
+## 1.1 Team Overview
 *‘The Six Bricks™’: Our philosophy.*
 
 We are team 19 and one of our core team values is unity, striving together towards our common goals. Our logo features six interlocking bricks, one for each team member [(Figure 1\)](#figure-1). This represents how we, much like our final robot design components, hold each other up, since even one missing brick could cause system failure.  
 Moreover, we strived to build and expand a common knowledge base. At the start of ECSE 211, we were individual “bricks,” raw materials with untapped potential. Throughout the design process, we merged and expanded our skillsets. By the term’s end, we no longer were separate pieces but rather a solid block, symbolizing the skills, experiences and machine we built together.	 In light of these guiding values, it is clear why the name ‘The Six Bricks’ clicked instantly. It was a unanimous decision because it so clearly captures how we plan to work together this semester.  
 Our team elected to follow the structure described in the technical and workshop slides with a slight personal twist which functioned to foster accountability as well as reap the benefits of intellectual liberties. This dynamic was established early on as we agreed on positions that emphasized the levels of expertise that certain members had. From here management and overall functionality flowed fairly seamlessly. Certain team sub divisions naturally arose as managers and testing leads guiding the progress and made sure all members were aware of priorities. From this hardware, software and documentation were easy additions with all members aware of the restrictions we were working within. During the entire development of our robot ‘Ripper’ all members were actively participating in different subteams and subsystems. This aspect of the team dynamic allowed for greater overall perspective on various problems and thus enabled more well rounded solutions to problems we encountered. The project management and focus of certain work sessions was made significantly easier with the detail of our gantt chart. This feature made it clear for all members what needed to be done and or current position in the grand scheme of development. As far as overall team guidance went this was a very useful factor and aided the focus of our attention. This balance between structure and collaboration created a group dynamic that had guidance, accountability, and intellectual liberty. This set up made problem solving within the constraints practical and achievable.  
 
-## 1.2 Team Composition, Roles and Capabilities [Table 1](#table-1) *The Six Bricks team members’ respective roles and responsibilities.* {#1.2-team-composition,-roles-and-capabilities-table-1-the-six-bricks-team-members’-respective-roles-and-responsibilities.}
+## 1.2 Team Composition, Roles and Capabilities
 
+*The Six Bricks team members’ respective roles and responsibilities ([Table 1](#table-1)).*
 *Capabilities:*  
 When assigning roles within our projects, we must account for our members’ distinctive skillsets. Not only will this allow competent members to lead in their respective fields, but also for less experienced members to share the workload and acquire new skills from the veterans. The following table documents our self-assessed level in five selected fields associated with the project, rated on a scale from 1 to 5 proportionally to our confidence in the given field (see Table 1 in Appendix). GitHub was chosen as the fifth skill due to the primordiality of version control when it comes to large-scale, modular software projects.  
 For the final project as well as for this deliverable we decided to structure our member responsibilities based on the common overall structure from design lecture slides. This includes roles such as; Project Manager, Documentation Lead, Testing Lead, Software Lead, Hardware Lead, and Software and Hardware Engineers. We elected to implement this structure because it provides fair distribution of responsibilities among each member tailored to their specific strong suits. As far as strictness for roles, we understand that some tasks may require more time, and we have unanimously agreed to participate in other required areas rather than restricting certain aspects to a select few. This balance between structured hierarchy of roles and contribution in all areas from various members allows for our group to attack problems we will be faced with from multiple angles, and overcome hurdles resiliently. The role division of this deliverable follows suit of the aforementioned group division. Certain members such as the project manager and the documentation lead contributed more to documentation, whereas design leads and engineers play a greater role in the idea development and the subsystem implementation sections.  
 To get a better understanding of why such numbers in the [Table 25](#table-25)  of our appendix we need to quickly describe the previous experiences of all members, Marny the project manager works during summer in a “management” position in a real estate company where he spends time managing small teams which was obvious for him to be the project manager, Jacob Ivan Zach and Andre were all robotics club  members prior to McGill, Jacob and Zach tending more to the software aspect of robotics whereas Ivan and Andre specialised into hardware. Finally Sasha is well rounded; he participated in most subsystems and played an important role regarding documentation and testing, he was our swiss knife.
 
-## 1.3 Team Contract and Organization {#1.3-team-contract-and-organization}
-
+## 1.3 Team Contract and Organization
 To optimize our workflow and ensure consistent progress, the team conducted a thorough analysis of individual schedules to identify optimal windows for collaboration. Based on these availability constraints, we established a primary weekly meeting on Tuesday mornings at 11:30 AM, which serves as our main synchronization point where all members are present. Following our weekly deliverables on Wednesdays, we meet with our Teaching Assistant (TA) to receive feedback and clarify technical requirements [(see Table 2\)](#table-2). These sessions are immediately followed by intensive lab work, where the team spends the majority of the day together to handle complex hardware integration and high-level planning. The remainder of the week is then structured around decentralized tasks, allowing members to focus on individual components or work in specialized sub-teams according to their specific technical responsibilities
 
 *The Six Bricks™ Team Expectations Contract - ECSE 211, Winter 2026:*
@@ -139,8 +94,7 @@ Signatures:
 | :---- | :---- | :---- |
 | Ivan  | André  | Zach  |
 
-## 1.4 Project Management and Milestones {#1.4-project-management-and-milestones}
-
+## 1.4 Project Management and Milestones
 To maintain a consistent workload of nine hours per person, the team implemented a structured weekly cadence centered around the Wednesday TA briefing. This routine ensured that “The Six Bricks” remained responsive to the evolving technical requirements of the robot, “Ripper.”  
 The primary synchronization point occurred every Wednesday at 12:00 PM in the Trottier Design Lab. Following the progress review with the TA, the team held a mandatory planning session to cross-reference feedback with current progress and recalibrate objectives for the upcoming seven days. Most development occurred within the DPM room, which allowed for real-time visibility into subsystem progress. By working in the same physical space, members could immediately identify who was working on specific hardware or software components, facilitating instant peer support. For asynchronous documentation and "emergency" troubleshooting outside of lab hours, WhatsApp served as the primary communication channel to prevent bottlenecks between formal sessions.  
 Technical Management and Version Control Software integrity was managed through a rigorous GitHub workflow. The team utilized separate development branches for specific features (e.g., navigation, sensor logic) to prevent merging conflicts and code instability. Pull requests were only initiated once a feature was fully tested, ensuring that no large-scale software issues were introduced into the master branch. This granular approach ensured that every line of code was peer-reviewed before integration into Ripper’s final system.  
@@ -159,15 +113,13 @@ For a team tackling this design problem in the future, several adjustments to th
 
 ---
 
-## 1.5 Budgetary Development & Resource Shift {#1.5-budgetary-development-&-resource-shift}
-
+## 1.5 Budgetary Development & Resource Shift
 To ensure technical accountability and an equitable workload, every team member was responsible for logging their individual hours weekly in a centralized tracking system [(see Table 3 in Appendix)](#table-3). This shared Google Sheet provided a data-driven overview of the project’s progress, allowing the team to dynamically adapt the Gantt chart based on actual man-hours completed. To maximize the utility of lab sessions, Sasha, acting as the team secretary, prepared specific meeting agendas for the weekly consultations with the Teaching Assistant. This ensured that all technical hurdles identified during the week were addressed promptly, keeping the resource "spend" focused on solving critical path issues.  
 The project budget was treated as a finite allocation of both physical components and collective man-hours. "The Six Bricks" opted to front-load the resource budget into an extensive initial design phase. By dedicating significant early-stage hours to achieving a "near-perfect" structural architecture for Ripper, the team created a robust physical foundation that simplified subsequent assembly. While this deliberate investment in mechanical rigidity and aesthetics required more time upfront, it prevented the need for costly physical redesigns later in the term.  
 However, as the project transitioned into the final implementation phases, the inherent complexity of the software environment and sensor limitations necessitated a strategic shift in how resources were deployed. While the project began with a highly collaborative, "all-hands" approach to the initial design and assembly, the final two weeks saw a shift toward high-stakes specialization.	  
 In this final "all-hands" pivot, the team dynamic transitioned from general collaboration to targeted execution. Each member identified the specific subsystem where their expertise was most impactful, whether in PID tuning, navigation logic, or hardware debugging. Each member focused their energy entirely on those domains to ensure the best possible product. Even members in management and documentation roles reoriented their efforts toward rigorous field-testing and debugging. This strategic specialization in the final 14 days was the deciding factor in ensuring Ripper could reliably pass every functional benchmark for the April 9th demonstration, proving that while a team may start the design process together, the final delivery often relies on the precise application of individual strengths.
 
-## 1.6 Strategic Reflection: Hindsight and Future Design for Future Teams {#1.6-strategic-reflection:-hindsight-and-future-design-for-future-teams}
-
+## 1.6 Strategic Reflection: Hindsight and Future Design for Future Teams
 Reflecting on the development of 'Ripper,' our team concluded that the most critical phase of any robotics project is establishing an uncompromisingly reliable physical foundation. We advise future teams that a rigid, durable chassis, specifically one that securely houses the BrickPi and provides vibration-free mounting points, is not merely a design choice, but a prerequisite for software success. We discovered that sensors only operate with peak efficiency if their mounting is stable and the battery fully charged; without a rigid frame, even the most sophisticated software becomes prone to cumulative error.  
 A significant technical "pivot" for a future iteration would be the abandonment of hardcoded navigation. While our current implementation provided the necessary precision for the specific lab environment, it lacked the flexibility required for dynamic obstacles or varied starting configurations.  
 Our recommendation for future teams should prioritize a State-Machine architecture or a Dynamic Pathfinding algorithm (such as A\* or Dijkstra) from day 1. Moving away from "if-then" hardcoding toward a more modular navigation stack would allow the software to be platform-agnostic and more resilient to physical perturbations.  
@@ -178,10 +130,8 @@ Our "Six Bricks™" contract served us well, but for a future project of this sc
 Final Takeaway: The success of 'Ripper' was built on consistency, but its successor should be built on abstraction. By moving from a "fixed solution" mindset to a "robust system" mindset, future teams can spend less time fighting their robot and more time optimizing its performance.  
 ---
 
-# **2. Specifications** {#2.-specifications}
-
-## 2.1 Problem Statement and Scope {#2.1-problem-statement-and-scope}
-
+# **2. Specifications**
+## 2.1 Problem Statement and Scope
 *Outline of the Problem:*   
 In response to high staff workloads and the increasing demand for reliable internal logistics in clinical environments , The Six Bricks™ has been tasked with developing an Autonomous Smart Hospital Assistant Robot. The objective is to engineer a prototype capable of executing a fully autonomous medical delivery mission within a 1.2 m x 1.2 m simulated hospital map (See [figure 33](#figure-33)) without any human intervention.
 
@@ -199,8 +149,7 @@ constraints, such as the inclusion of a manual emergency stop.
 *In Scope*: The technical focus of this project centers on the development of a functional prototype capable of executing a fully autonomous medical delivery mission within a simulated healthcare environment. A primary component of this scope is the implementation of precise autonomous navigation throughout a 1.2 m×1.2 m hospital map, which requires the system to navigate physical corridors while respecting both physical and virtual wall boundaries. The mechanical scope includes the secure acquisition of two foam medical packages from a designated pharmacy pickup counter and their stable transport to delivery zones without dragging or dropping the items. Furthermore, the robot must demonstrate sophisticated sensor-based decision-making by utilizing onboard color sensors to identify patient rooms (yellow tiles) and accurately distinguish between green and red bed indicators to determine medication needs. These operations are conducted under a strict time-critical constraint, requiring the mission to be completed in its entirety within a 180-second window. Finally, the scope includes essential safety integration through a manual emergency stop mechanism designed to immediately terminate all robot movement and actions.  
 *Out of Scope:* To maintain a rigorous focus on the core proof-of-concept objectives, several advanced features have been explicitly excluded from this design phase. Notably, the system is not engineered for dynamic obstacle avoidance; while it must avoid static walls, it is not designed to detect or react to moving objects, such as hospital staff or patients, within the corridors. Additionally, the prototype is restricted to single-level environments, meaning multi-floor navigation involving elevators or ramps is outside the current technical requirements. Although the robot utilizes distinct sounds for delivery notification, more advanced human-robot interaction such as complex user interfaces for patient verification is not part of the system architecture. The design also assumes a high level of environmental stability, specifically a flat, even surface and consistent indoor lighting, and thus does not account for real-world environmental variability. Lastly, all forms of wireless teleoperation or remote control are strictly out of scope to ensure the system adheres to the requirement for 100% autonomous operation without human intervention.
 
-## 2.2 Design Requirements and Constraints: {#2.2-design-requirements-and-constraints:}
-
+## 2.2 Design Requirements and Constraints
 *Provided Functional Requirements:*   
 The robot must satisfy the following functional requirements [(ID meaning in Appendix)](#table-24) :[Table 2 - requirements](#table-2)
 
@@ -225,8 +174,7 @@ Additional Unexpressed Requirements :
 4. BrickPi Processing Latency: The Python-based control loop on the BrickPi is constrained by a specific sampling frequency (approx. 20 Hz to 50 Hz). This limits the maximum safe velocity of the robot, as driving too fast would result in the robot "over-shooting" a color tile before the sensor data is processed.  
    
 
-## 2.3 Engineering Specifications:  {#2.3-engineering-specifications:}
-
+## 2.3 Engineering Specifications
 The system must adhere to the following technical specifications to ensure mission success:  
      
 1. Chassis Width: The robot width must not exceed 20.0 cm. This provides a 4.0 cm total clearance (2.0 cm per side) to account for odometry drift when passing through 24 cm doorways.  
@@ -239,8 +187,7 @@ The system must adhere to the following technical specifications to ensure missi
 8. Ultrasonic Sampling Frequency: To prevent collisions at a speed of 15 cm/s, the ultrasonic sensor must provide distance data at a minimum frequency of 10 Hz, allowing the software to trigger an emergency stop within 1.5 cm of an unexpected obstacle.  
    
 
-## 2.4 Design Assumptions: {#2.4-design-assumptions:}
-
+## 2.4 Design Assumptions
 *Assumptions and Uncertainties:*  
 
 
@@ -270,10 +217,8 @@ Key Uncertainties
 The team dedicated significant effort to refining these technical details to eliminate any ambiguity in the initial design phase. We recognized that failing to identify a requirement early would inevitably lead to costly, late-stage design changes that could jeopardize our timeline. By establishing this rigorous baseline as a collective, leveraging the "more voices the better" philosophy we ensured that every member of The Six Bricks was aligned on the project’s trajectory. This collaborative planning phase proved to be the most crucial investment of our time. It served as our primary defense against technical debt, allowing us to move from the architectural phase to a functional prototype without the need for late-stage pivots or costly mechanical redesigns."  
 ---
 
-# **Section 3. Design**  {#section-3.-design}
-
-## 3.1 System Design Process: {#3.1-system-design-process:}
-
+# **3. Design**
+## 3.1 System Design Process
 Phase 1 Subdivision: In order to more easily generate numerous original ideas, we first divided the ideation process into decisions regarding three categories, each representing a subsystem of the robot. Because these subsystems are largely independent in both their mechanical and electronic implementations, they were considered separately. The three categories were: a) the drive system, responsible for the robot’s locomotion; b) the cube-grabbing mechanism, responsible for interacting with and manipulating cubes; and c) the vision system, responsible for detecting and locating relevant objects, and understanding the robot’s own position in the environment.  
 This subdivision allowed for a more organic, “spitball”-style approach to ideation, as a complete conceptualization of the final robot was no longer an immediate prerequisite to proposing potential implementation.
 
@@ -380,7 +325,9 @@ Key Features:
 - The wheel driving system navigates the environment as dictated by the code
 
 
-## 3.2 Hardware Design and Evolution:  [Full Hardware History](#hardware-history) {#3.2-hardware-design-and-evolution:-full-hardware-history}
+## 3.2 Hardware Design and Evolution
+
+*See also: [Full Hardware History](#detailed-hardware-history) in the Appendix.*
 
 *Week 1:*   
 Medicine Cube Grabber Design  
@@ -414,14 +361,12 @@ Detailed Hardware Design - Summary:
 Ripper is a medicine carrying robot that allows for the picking up of and delivery of two medicine cubes. The grabbing of these cubes is done by the Conveyor Grabber, which is a system of two near parallel tracks which grab and squeeze the cubes up into the conveyer. This subsystem is mounted at a ~45-degree angle on the front of the robot, to minimize the horizontal space it consumes, which is still effectively grabbing. The chassis utilizes a skid-steer motor system, consisting of two central mounted motors with wheels and a single front mounted ball bearing beneath the grabber. This results in smooth turns around a constant center of rotation. The heart of the robot is the BrickPi, a RaspberryPi-based controller, which allows us to program the robot’s behavior by directing and processing actuator and sensor signals. The large BrickPi is mounted above the center of the robot, to avoid enlarging the robot’s horizontal dimensions. Minimizing the length and width is key to allow for flexible navigation within the environment. The battery is mounted on top of the Pi (H 2.2), in a location that optimises weight distribution. Finally, the sensor and vision subsystem consists of three main components: color sensing and bed detection, emergency stop, and gyro sensor feedback. The gyro and emergency-stop touch sensor are mounted at convenient, easy to access locations on the left and right of the robot, respectively. For the bed detection subsystem, the color sensor is mounted on a small motor or “sweeper”, which allows the sensor to be swept left and right at approximately a diameter slightly smaller than the width of a room. This allows beds to be located without turning the robot. This subsystem is mounted on the grabber, and the very front of the robot, such that the color sensor hovers about a cm off the ground.  
 To complement the physical design, a detailed 3D digital twin of “Ripper III” has been developed to accurately represent the robot’s structure, component layout, and subsystem integration. This model highlights the relationships between key elements such as the Conveyor Grabber, BrickPi, and sensors, providing a clear visualization of design decisions. It also serves as a tool for validating dimensions, optimizing component placement, and communicating the system architecture effectively. The following model illustrates the final iteration of the robot and provides a comprehensive view of its mechanical and functional design. [Figure 17 - digital twin](#figure-17).
 
-## 3.3 Software Design and Implementation: {#3.3-software-design-and-implementation:}
-
+## 3.3 Software Design and Implementation
 The programs operating the Ripper system were developed in parallel with the robot’s hardware, as the integrated nature of the software required access to the physical I/O devices for testing and validation purposes.  
 Development was done using the cross-platform model, as battery unreliability made in situ development risky for codebase health. Git and GitHub were utilised for both version control and transferring code from the respective developers’ local clients to the BrickPi system. To run tests and pilot the robot during testing and demonstrations, SSH tunneling was utilised.  
 The following section will provide a detailed description of the software specifications derived from the provided requirements and the initial model thus derived, the paradigm shift to multiprocessing which ultimately defined the system, and the final architecture and behaviour implemented for the final product demonstration.
 
-### ***3.3.1 Software Specifications and Initial Model*** {#3.3.1-software-specifications-and-initial-model}
-
+### 3.3.1 Software Specifications and Initial Model
 After converting the functional requirements and constraints, both provided and implicit, into an overall, hardware-focussed system model (see [Section 2](#2.-specifications)), a set of software specifications was defined to guide the foundational prototyping and implementation phases. Below are an exhaustive list of thus-compiled specifications, grouped by subsystem when possible:
 
 *Overall Software Specifications:* 
@@ -462,8 +407,7 @@ Based on these specifications, we designed an initial, holistic software system 
 
 This initial model was implemented as early as version S1.0.0, i.e. when the initial ‘discovery testing’ phase of development was over (e.g.: discovering the Large Servomotors, discovering the Gyro Sensor), and persisted in these broad strokes throughout the entirety of the design process. 
 
-### ***3.3.2 Design Iterations and Paradigm Shift: Multiprocessing*** {#3.3.2-design-iterations-and-paradigm-shift:-multiprocessing}
-
+### 3.3.2 Design Iterations and Paradigm Shift: Multiprocessing
 To produce the final system from the initial planning and prototyping phase, an iterative approach was adopted to produce code in tandem with advances in hardware development. Indeed, due to the code’s integrated nature, it was nearly impossible to test (save compiling it to uproot Exceptions) without a compatible hardware model. Therefore, it was decided that the bulk of new feature development would occur as new hardware enhancements rendered capabilities possible. For instance, grabber code would only begin being intensely developed past a function skeleton when a physical grabber was implemented, i.e. not before hardware version H1.0.  
 The entirety of the software version history is contained within section 3.3.2 of the appendix for complete reference. Each entry is organised as follows:
 
@@ -478,8 +422,7 @@ This format not only allows for rapid reference in case changes need to be rever
 
 The main paradigm shift which occurred during the design process, which was not simply a tweaking of the previously-detailed holistic sequential structure or an implementation of a functionality from the specifications, was the shift to a multiprocessing framework internally referred to as Megamind. As seen in [figure 18](#figure-18), it is organised according to processes, i.e. parallel operations managed by different CPUs, managed by the Python multiprocess library. These processes are themselves encapsulated into different helper classes, all subclasses of the Processor class, which manages individual instruction queues for each actuator, sensor, and even the Megamind controller/dispatcher class (see [figure 19](#figure-19)). 
 
-### ***3.3.3 Final Software Architecture: Structure and Functionality*** {#3.3.3-final-software-architecture:-structure-and-functionality}
-
+### 3.3.3 Final Software Architecture: Structure and Functionality
 The final structure of the software is depicted in the class diagram in [figure 18](#figure-18). The core classes present, along with their main features and uses, are:
 
 1. Megamind (MM)  
@@ -503,8 +446,7 @@ This architecture isolates parsing, coordination, and actuation responsibilities
 The main risk typically associated with queue-based load leveling is throttling, i.e. reaching a bottleneck where the instructions received are entering at a rate far superior to their actual execution. In this case, the delay between processing each instruction serves to create a sequential flow of instructions, rendering throttling a desired outcome rather than a liability. Indeed, Megamind serves one instruction at a time to Drivers, with low buffer time (0.005 seconds). The main throttling risk, however, exists outside of this main load leveling architecture, in Vision.queue. This structure is accessed periodically to synchronize saved and actual current system state (orientation, nearest color), and is updated asynchronously and continuously with extremely low buffer time, making stale readings being at the front of the queue a real possibility. This risk is mitigated by the Megamind.clearSensorQueues() method, which is called periodically to ensure that the front of sensor output queues reflects the current state of the system.  
 On a broader scale, the system software architecture also reflects master-worker parallel processing and thread-pool variations of the Command pattern: main.py as client/invoker, parsed tuples as commands, and downstream driver/vision components as receivers. A parallel while-loop emergency-stop process provides an additional safety control path during runtime.
 
-## 3.4 Design Iterations: How did it evolve from beginning to now and what design modifications need avoiding (we tried them and no point of doing them) {#3.4-design-iterations:-how-did-it-evolve-from-beginning-to-now-and-what-design-modifications-need-avoiding-(we-tried-them-and-no-point-of-doing-them)}
-
+## 3.4 Design Iterations and Lessons Learned
 The total design integration evolved substantially over the course of the 4 weeks the team spent developing “Ripper”, our medicine delivery solution. In Week 1, the initial selection of a hardware design idea was made, where we decided on the general solutions we'd implement for each subsystem. Before deciding on the hardware implementations, we prototyped two design ideas. One, was a claw mechanism that used one motor to both squeeze and pick up the block. The second, and conveyor belt method that pulled blocks up and into an angled conveyor grabber. After prototyping, we were unable to create a claw mechanism that remained small and reliable enough for implementation on our robot, however it was a proof of the concept. Due to the size constraints of the robot, we decided to pursue the conveyer grabber mechanism, which we had named “woodchipper”. Following this decision, we were able to begin designing the software that would power this system. Our first prototype came at the end of week one, in the form of a bare-bones skid-steer implementation, employing only a color sensor at the front. The purpose of this initial prototype was to experimentally test different software implementations, as well as the chosen skid-steer chassis, and to determine the feasibility of line following **(see [figure 15](#figure-15))**. Following the testing of this prototype, we determined that line following would not be utilized, as we were unable to achieve decent results, and found it unwise to pursue it long term in the chance that it may harm our solution’s success. Additionally, we noted that a software implementation that allowed instructions to be handled like a queue, would be necessary to streamline the process of navigation and task handling. This was particularly important due to our decision to essentially “hardcode” the navigation system from a constant starting point. While this method may seem unreliable, testing revealed it functioned reasonably well and reliability, as long as the battery maintains a constant output voltage. The decision was therefore made to prioritize implementation speed and to minimize complexity.
 
 Moving into week 2, we began to pursue the first proper implementation of each subsystem, in preparation for a coming demo in week 3. The chassis was scrapped in favor of a new, sturdy chassis that could support the addition of the medicine cube grabber mechanism. The grabber mechanism itself was prototyped and built during week 2, however it was clear that the use of bent and flex lego pieces caused reliability issues over time, and would eventually need to be altered. Shown in **Figure 13**, our first full system integration properly employed every subsystem as they were intended, and testing began to verify the feasibility of our design, in case changes needed to be made before week 3. Through this integration, we noticed that contrary to previous belief, one of the most impactful constraints upon our design was the size limitations. The robot needed not only to be small enough to enter and exit rooms, as well as travel between them, but also to navigate within them, particularly to pick up and drop off blocks without hitting walls. This integration, while working well within the scope of individual subsystems, unfortunately infringed on our ability to navigate within the hospital setting. Software at this stage saw minimal changes in design method and philosophy, and rather work was primarily focused on increasing the scope of the actions and instructions the system could intake and execute. Software integration proved to be the most time consuming step, and at this stage, the focus was on having an instruction set enabling basic navigation and bed location.
@@ -517,8 +459,7 @@ Reflecting on the design process, there were many limitations we encountered tha
 
 ---
 
-# **Section 4. Testing**   {#section-4.-testing}
-
+# **4. Testing**
 Testing was broken down into various levels allowing for a more in depth understanding of our components capabilities. This approach  starts with component testing making sure that we had a full understanding of how well the most important pieces of our robot functioned. The next layer of testing was broken down into specific subsystems tests where multiple components first began interacting with one another. From here testing system level integration came naturally as multiple sub systems came together and we developed a functional bot. All test procedures will be in the appendix.   
 The first of our component level tests was for the motors. These tests were done by J. Sauvé and I. Gaspart, with written reports completed by S. Gelfand. This was an encoder test for all motors that compared recorded rotation with predicted encoded distance. In order to validate devices under test the actual rotational distance traveled was compared to a conversion of the encoded value. These calculations were made by first finding the actual wheel circumference. From here we then needed to find the distance traveled per single encoder count. This is done by dividing circumference by the total number of encoder ticks per revolution (720 found online). For finding the predicted distance traveled or recorded by the robot the simple calculation of multiplying distance per iterations by encoder iterations recorded. Then with this value it can be compared to the actual distance traveled and a gauge of accuracy can be determined. This test was run three times for each motor. The success criteria for this test sprung from the need for accurate and repeatable values, especially for map traversal. With this we elected for digital values of distance traveled to be within a 2cm buffer range from the actual recorded distance. The error for all three trials per motor were averaged and all average displacement from actual values were within the specified range [*Table 9*](#table-9) *- motor tests*. The average error for each motor also provided us with insight as to which specific motors might be better to use within a drive subsystem which would benefit from lower average error values. These findings aided us in design implementation and component selection. Moreover, such results guaranteed consistent and accurate performance from each motor allowing confidence in using the encoded values coming from each motor in practice.  
 
@@ -538,23 +479,19 @@ The cube management subsystem is vital to the overall success of this project an
 
 ---
 
-# **Section 5. Performance**  {#section-5.-performance}
-
-## 5.1 Final System Capabilities {#5.1-final-system-capabilities}
-
+# **5. Performance**
+## 5.1 Final System Capabilities
 The architectural framework of the "Ripper" platform enables a fully autonomous mission cycle, starting from a localized pharmacy coordinate (Blue Tile) and terminating back at that same origin point without human intervention. The system’s primary capability lies in its precise closed-loop navigation, which allows it to negotiate hospital corridors and 24 cm doorways through high-resolution encoder feedback and ultrasonic proximity detection. For object manipulation, the robot employs a custom-actuated mechanical end-effector optimized for the acquisition and secure containment of foam-based medical simulants, ensuring zero package displacement during high-torque maneuvers. Sensory processing is handled via a chromatic thresholding algorithm using a downward-facing color sensor to differentiate between patient room identifiers (Yellow Tiles) and bed-specific delivery requirements (Red vs. Green stickers). Once a green-indicator bed is identified, the system executes an automated delivery sequence, dispensing a single medical package while triggering an auditory confirmation via an integrated speaker system.  
 To deploy the system, a user must precisely position the robot and the two medical packages at their designated coordinates within the pharmacy zone (Blue Tile). Unlike standalone hardware, the “Ripper” is designed for a networked environment; the mission is initiated by executing the control script from a remote computer terminal rather than a physical onboard button. Once the script is triggered, the system operates with total autonomy, employing a downward-facing color sensor and a chromatic thresholding algorithm to differentiate between patient rooms (Yellow Tiles) and bed-specific delivery requirements (Red vs. Green). The cycle concludes only when the "mission complete" auditory signal is emitted upon the robot’s return to the pharmacy origin.
 
-## 5.2 Performance Metrics {#5.2-performance-metrics}
-
+## 5.2 Performance Metrics
 Quantitative analysis of the system's performance reveals a high degree of operational efficiency and mechanical reliability. In final evaluation trials, the robot consistently completed the full mission which included the acquisition of two medical packages at the same time and delivery to designated green beds within an average window of 145 to 165 seconds, significantly outperforming the maximum 180-second threshold set by the client. Navigation precision was assessed through iterative testing, resulting in a mean positional error of less than 3 cm over the cumulative travel distance, which ensured zero collisions with physical or virtual walls. Furthermore, the system achieved a 100% success rate in maintaining package retention throughout the mission duration and a 95% accuracy rate in bed-indicator classification. Resource management remained highly optimized, with the development team adhering strictly to the 45 hours per member time-budget, demonstrating that the system's performance was achieved through efficient engineering rather than excessive resource consumption.  
 See [table 24](#table-24)
 
 To ensure script consistency and mitigate the effects of battery voltage sagging, the team implemented a Voltage Standardization Protocol. Given that motor torque and odometry in the BrickPi environment are sensitive to the discharge curve, the navigation logic was calibrated for a specific operational voltage. Prior to the final evaluation, the battery was intentionally discharged to a precise baseline level. This ensured that the robot’s physical execution perfectly matched the calibrated parameters of the control script.  
 During the initial evaluation run, the robot scored a 9/10 because it traveled slightly too far into the final room, causing it to miss one bed sweep. To correct this, the team performed a targeted software adjustment, reducing the travel distance between the second and final room from 12 cm to 8 cm (see [Table 23](#table-23), line 42). This rapid iteration successfully compensated for the movement variance, allowing the Ripper platform to achieve a perfect 10/10 score on the final attempt.
 
-## 5.3 Use Cases and Limitations {#5.3-use-cases-and-limitations}
-
+## 5.3 Use Cases and Limitations
 While the prototype demonstrates significant utility for healthcare automation, its operational efficacy is restricted to specific environmental parameters. The navigation and localization algorithms are designed for a static 2D map; consequently, the system is not currently equipped for dynamic obstacle avoidance or navigation in corridors with moving human traffic. Sensory limitations include a high dependency on stable indoor lighting conditions; significant fluctuations in ambient lux levels or the presence of specular reflections can interfere with the color sensor’s ability to accurately detect bed indicators. Mechanically, the chassis is optimized for flat, high-friction surfaces; operation on inclined planes or low-friction materials would result in non-negligible wheel slip, compromising the integrity of the odometry-based navigation. Finally, the system’s operational duty cycle is tied to the BrickPi’s battery voltage; a drop below 7.2V introduces non-linear motor performance and sensor latency, requiring the mission to be executed at high battery capacity to ensure the precision of the proof-of-concept.  
 Finally the “Ripper”  platform is specifically intended for low-risk, internal logistical transport within a controlled hospital layout. However, the following constraints define its operational ceiling:
 
@@ -566,11 +503,7 @@ Finally the “Ripper”  platform is specifically intended for low-risk, intern
 
 
 
-# **Appendix** {#appendix}
-
-
-  
-
+# **Appendix**
 | Team Member | Roles and Responsibilities | Content summary |
 | :---: | :---- | :---- |
 | **Marny**  | Role: Project Manager The Project Manager orchestrated the project lifecycle from initial design to full implementation by developing and maintaining a precise Gantt chart and resource budget. This structural framework allowed the team to focus exclusively on the technical engineering of the DPM robot, "Ripper." Responsibilities included facilitating cross-functional communication, monitoring the timely delivery of all 89 tasks, and proactively adapting schedules when milestones shifted. By maintaining an overview of the project, the Project Manager provided essential support across various subsystems, specifically during the high-pressure hardware assembly and final integration testing phases. | Gantt Chart Meeting Minutes  Deliverable Report Writing  Designing Proof Reading Testing of navigation and of full simulation  Hardware wheel attachment  Emergency Stop / Chassis  Final Report  Planning meetings and following advancements on tasks  |
@@ -1549,8 +1482,7 @@ Table 16
 <a id="hardware-history"></a>
 ### Detailed Hardware History
 
-### ***H0.1*** {#h0.1}
-
+### ***H0.1***
 **Nickname/main feature**: “Roller”  
 **Date:** March 8, 2026  
 **Description of additions**:   
@@ -1559,8 +1491,7 @@ This initial prototype introduced a basic mobility system using two servo-contro
 This version was created to establish a working baseline for movement and basic mechanical integration. It allowed for testing of wheel control and stability before adding more complex features.  
 **Photos**: [Figures 9 & 10](#figure-9)
 
-### ***H0.2*** {#h0.2}
-
+### ***H0.2***
 **Nickname/main feature**: “Rock and Roll”  
 **Date:** March 12, 2026  
 **Description of additions**:   
@@ -1569,8 +1500,7 @@ This iteration improved the robot’s stability, enabling more consistent and re
 The goal of this update was to enhance safety, autonomy, and sensing. It addressed instability issues from the previous version while beginning to integrate environmental interaction.  
 **Photos**:[Figure 11](#figure-11)
 
-### ***H1.0*** {#h1.0}
-
+### ***H1.0***
 **Nickname/main feature**: “Ball Dropper”  
 **Date:** March 16, 2026  
 **Description of additions**:   
@@ -1579,8 +1509,7 @@ This version introduced a conveyor belt-style grabber arm designed to manipulate
 The focus was on enabling object interaction and improving structural integrity. This iteration addressed limitations in manipulation capability and accessibility from earlier designs.  
 **Photos**:[Figure 12](#figure-12)
 
-### ***H1.1*** {#h1.1}
-
+### ***H1.1***
 **Nickname/main feature**: “RIPPER I”  
 **Date:** March 25, 2026  
 **Description of additions**:   
@@ -1589,8 +1518,7 @@ A mobile, front-mounted color sensor was added, driven by a small EV3 motor for 
 This update aimed to improve sensing accuracy and navigation control. It built on previous designs by introducing dynamic sensing and orientation tracking.  
 **Photos:**
 
-### ***H2.0*** {#h2.0}
-
+### ***H2.0***
 **Nickname/main feature**: “RIPPER Lite”  
 **Date:** April 1, 2026  
 **Description of additions**:  
@@ -1599,8 +1527,7 @@ This iteration focused on reducing the robot’s horizontal profile through part
 The goal was to improve efficiency, compactness, and durability. This version addressed issues related to bulkiness and poor weight distribution in earlier designs.  
 **Photos: [Figure 13 & 14](#figure-13)**
 
-### ***H2.1*** {#h2.1}
-
+### ***H2.1***
 **Nickname/main feature**: “RIPPER II”  
 **Date:** April 4, 2026  
 **Description of additions**:  
@@ -1609,8 +1536,7 @@ The robot was fully reassembled into a more vertical and compact configuration, 
 This iteration focused on space optimization and improved integration of components. It aimed to create a more compact and efficient design while adding new functional features.  
 **Photos: [Figure 15](#figure-15)**
 
-### ***H2.2*** {#h2.2}
-
+### ***H2.2***
 **Nickname/main feature**: “RIPPER III”  
 **Date:** April 7, 2026  
 **Description of additions**:  
