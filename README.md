@@ -1,8 +1,7 @@
 **ECSE 211, Winter 2026**  
 **Professors B. Boulet and R. Bensalem**
 
-**Debrief Report – DPM Project**  
-**Version 1.1**  
+# **Debrief Report – DPM Project**  **Version 1.1**  
 ***April 10th, 2026***
 
 ![image22](images/image22.png)
