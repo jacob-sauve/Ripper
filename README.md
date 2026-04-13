@@ -5,11 +5,9 @@
 **Version 1.1**  
 ***April 10th, 2026***
 
-![image1](images/image1.png)  
-<a id="figure-1"></a>
-*Figure 1. Logo for The Six Bricks™.*
+![image22](images/image22.png)
 
-**“The Six Bricks™”**
+**”The Six Bricks™”**
 
 **Team 19**   
 Marny Brooker  
@@ -50,7 +48,11 @@ André Savard
 
 # **1. Introduction**
 ## 1.1 Team Overview
-*‘The Six Bricks™’: Our philosophy.*
+*’The Six Bricks™’: Our philosophy.*
+
+![image1](images/image1.png)  
+<a id="figure-1"></a>
+*Figure 1. Logo for The Six Bricks™.*
 
 We are team 19 and one of our core team values is unity, striving together towards our common goals. Our logo features six interlocking bricks, one for each team member [(Figure 1\)](#figure-1). This represents how we, much like our final robot design components, hold each other up, since even one missing brick could cause system failure.  
 Moreover, we strived to build and expand a common knowledge base. At the start of ECSE 211, we were individual “bricks,” raw materials with untapped potential. Throughout the design process, we merged and expanded our skillsets. By the term’s end, we no longer were separate pieces but rather a solid block, symbolizing the skills, experiences and machine we built together.	 In light of these guiding values, it is clear why the name ‘The Six Bricks’ clicked instantly. It was a unanimous decision because it so clearly captures how we plan to work together this semester.  
@@ -100,7 +102,7 @@ The primary synchronization point occurred every Wednesday at 12:00 PM in the Tr
 Technical Management and Version Control Software integrity was managed through a rigorous GitHub workflow. The team utilized separate development branches for specific features (e.g., navigation, sensor logic) to prevent merging conflicts and code instability. Pull requests were only initiated once a feature was fully tested, ensuring that no large-scale software issues were introduced into the master branch. This granular approach ensured that every line of code was peer-reviewed before integration into Ripper’s final system.  
 To manage the macro-view of the project, a master schedule was maintained using specialized project management software. This Gantt chart comprised 89 distinct tasks, explicitly mapping the project’s critical path and forward-linked dependencies. The chart was kept on a shared Google Drive, making it accessible to all members at all times for reference.  
 The following figure provides a high-level overview of the project timeline and task distribution. To enhance readability, the Critical Path has been manually highlighted in red, replacing the standard hatching used by the software to ensure the primary project constraints are immediately visible.  
-Each entry in the chart specifies the task name, the assigned team members, and the specific dependencies required for task initiation. While this figure serves as a summary of our workflow, a high-resolution, full-scale version of the Gantt chart is provided in [*Figure 16 - Gantt chart timeline for the DPM project*](#figure-16-gantt). The appendix version offers a comprehensive view of the entire project duration and more granular detail for each scheduled phase.
+Each entry in the chart specifies the task name, the assigned team members, and the specific dependencies required for task initiation. While this figure serves as a summary of our workflow, a high-resolution, full-scale version of the Gantt chart is provided in [*Figure 16 - Gantt chart timeline for the DPM project*](#figure-16-gantt). This full-scale version offers a comprehensive view of the entire project duration and more granular detail for each scheduled phase.
 
 Progress was further tracked via a shared Google Sheets log. Every member recorded their hours and specific tasks in real-time, providing transparency regarding the project's "man-hour budget." This data allowed the Project Manager to identify if a particular subsystem such as the navigation logic was requiring more investment than forecasted, triggering a reallocation of resources.  
 The project also utilized a Timesheet system that operated in symbiosis with the Gantt Chart and Project Budget to ensure disciplined resource management. By meticulously logging individual contributions, the Timesheet allowed for real-time tracking of labor hours against the milestones previously established in the Gantt Chart. This integration enabled the team to identify discrepancies between estimated and actual effort, providing a feedback loop that kept the project on schedule. Furthermore, by quantifying human-hour expenditures, the Timesheet informed the Budget’s labor-cost analysis, ensuring that our most valuable resource “time” was allocated efficiently to meet the technical requirements of the design challenge.  
@@ -113,7 +115,7 @@ For a team tackling this design problem in the future, several adjustments to th
 
 ![image3](images/image3.png)  
 <a id="figure-16-gantt"></a>
-*Figure 16. Gantt Chart for the final DPM project. The timeline includes the start of the project from the first team meeting to the Final Report on April 10th.*  
+*Figure 16. Gantt chart for the final DPM project. The timeline includes the start of the project from the first team meeting to the Final Report on April 10th.*  
 
 ---
 
@@ -146,7 +148,7 @@ In response to high staff workloads and the increasing demand for reliable inter
 
 ![image5](images/image5.png)  
 <a id="figure-33"></a>
-*Figure 33. Environmental Details*
+*Figure 33. Simulated hospital environment layout (1.2 m × 1.2 m map).*
 
 The mission scope requires the system to:
 
@@ -352,7 +354,7 @@ After preliminary testing proved the design feasible, it was decided that an ini
 ![image8](images/image8.png)
 <a id="figure-5"></a>
 <a id="figure-6"></a>
-*Figure 5. Original grabber prototype. Figure 6: New compact grabber*
+*Figure 5. Original grabber prototype. Figure 6. New compact grabber.*
 
 Chassis Design  
 The size and weight of the grabber mechanism combined with the brickpi revealed the need for a taller, stronger, and extremely robust chassis. Our initial prototype was an implementation of “Skid Steer Drive System”, however left no room for the attachment of the grabber. Our prototype was subsequently scrapped, and a new chassis was built (see [Figure 8](#figure-8), grabber attached to a new stronger, taller, wider chassis. This chassis was specially designed by I. Gaspart to minimize flex under load.)  
@@ -365,12 +367,13 @@ As a summary, V1.1 utilizes a sturdy skid steer chassis, a belt conveyor grabber
 
 ![image6](images/image6.png)
 <a id="figure-3"></a>
-*Figure 3. Current full system implementation as of 9th April 2026.*
+*Figure 3. Full system implementation (Hardware V1.1).*
+
 Other various small issues were fixed, such as securing the battery onto the back of the robot as seen in Figure 3. Additionally, the speaker was briefly attached to enable musical feedback when a bed in need of medicine was found. [Battery and speaker mount](#figure-4).
 
 ![image7](images/image7.png)
 <a id="figure-4"></a>
-*Figure 4: View of our integration of the battery and speaker on top of our robot.*
+*Figure 4. Integration of the battery and speaker on top of the robot.*
 
 *Week 3*  
 Reflection on Beta Demo:   
@@ -498,19 +501,19 @@ Moving into week 2, we began to pursue the first proper implementation of each s
 
 ![image17](images/image17.png)![image18](images/image18.png)
 <a id="figure-13"></a>
-*Figure 13: First iteration of the final functional design of our medicine delivery robot.*
+*Figure 13. First iteration of the final functional design of our medicine delivery robot.*
 
 The Week 3 demonstration revealed major issues regarding the size of our previous implementation as well as the rigidity and reliability of the grabber mechanism. We noticed one factor that strongly influenced the size of the robot was the orientation of the motors powering the wheels. When implementing these motors horizontally such as in our previous iteration, we found that while it produced a very stable platform, it made it challenging to fit the navigation subsystem’s ball bearing, as well as to attach the grabber and the color sensor without making the overall system too long. Due to this reason, we decided to only consider hardware designs with vertically orientated motors, in an effort to decrease size. This was the first step towards a realization that designing with the vertical axis in mind was beneficial to our implementations, as there was no vertical size restraint. Referring to [Figure 15](#figure-15), we see vertical motors such that the grabber can fit much closer to the center of mass, reducing the size of the robot significantly. Additionally, the BrickPi and battery are placed centrally between the motors, again to maximize space efficiency. Finally, the grabber mechanism received an overall, decreasing its size, and reducing its reliance on the torsion tolerance of lego connections and pieces, thereby increasing its reliability. Up to this point, in the software instruction queue was implementation as a set of subsequent function calls to MegaMind. This method made it difficult to quickly test various subsystems and instructions, as each change required a code alteration, subsequent git commit, push, and pull, and then finally an execution of the .py file. To fix this, we implemented a new queueing method. A commanding parsing function was designed to take input from either a .txt file or the command line to add instructions to the queue for execution. This drastically sped up testing, and we strongly recommend a similar system be implemented early on in the design stage. This increased testing efficiency additionally helped us review problems faster. With our new design, we noticed the uneven weight distribution caused the robot to turn somewhat inconsistently. Additionally, while the redesigned grabber was a major improvement, its mounting hardware would periodically come loose due to the connectors orientations being parallel to the forces acting upon them.
 
 ![image20](images/image20.png)![image21](images/image21.png)
 <a id="figure-15"></a>
-*Figure 15: Second version of the final integration model.*
+*Figure 15. Second version of the final integration model.*
 
 Early in Week 4, we developed our final implementation. From **Figure 16** , we see that changes from the previous iteration include a redesigned grabber mount and a relocated battery and BrickPi, to even out the weight distribution. One unfortunate limitation we ran into during this implementation, was the number of lego connectors we had access to. Running out of these connectors meant we relied heavily on rubber bands to mount components that weren't critical to the stability of the chassis, and that had no need to be mounted precisely, such as the battery and speaker. Fortunately however, this caused zero issues in the stability or reliability of the robot and its crucial subsystems, and so the design was kept in favor of extra time for testing. An additional instruction set that allowed the robot to scan the large room was added to the software, and the robot was ready to begin calibration testing for the final demonstration and mission completion.
 
 ![image22](images/image22.png)
 <a id="figure-16"></a>
-*Figure 16: Final iteration of our chosen robot design, with grabber, drive, and vision subsystems integrated.*
+*Figure 16. Final iteration of our chosen robot design, with grabber, drive, and vision subsystems integrated.*
 
 Reflecting on the design process, there were many limitations we encountered that we did not expect to impact us as significantly as they did. The first of these is the size and weight limitations of the full system and of individual subsystems. Knowing what we know now, we would pay closer attention to the size and stability of the design when in our initial design selection phase, and consider how different subsystems will need to connect together. Another major limitation was the number of connectors we had. In pursuit of a strong chassis, we ran out of connectors on quite a few occasions, requiring either redesigns or reliance on rubber bands. We believe an intelligent solution to this issue would be to properly budget the pieces each subsystem will require to build and then install, such that no subsystem is left missing pieces. On the software side, while our implementation promised extremely flexible operation and a large instruction set, all with low down time, the complexity at times harmed us. It is worth noting however that the majority of limitations we encountered while testing software were a result of the BrickPi python library that we were required to use as a base. A better analysis of this library and how we should use it could have minimized these problems.
 
@@ -576,7 +579,7 @@ Finally the “Ripper”  platform is specifically intended for low-risk, intern
 
 ![image2](images/image2.png)  
 <a id="figure-2"></a>
-*Figure 2: Gantt chart for design and implementation of the medicine delivery robot* 
+*Figure 2. Gantt chart for design and implementation of the medicine delivery robot.*
 
 | ID | Requirement Category | Description |
 | :---- | :---- | :---- |
@@ -1215,30 +1218,30 @@ Tuned commands.txt instructions for optimal 10/10 run at near-full battery capac
   **![image11](images/image11.png)**![image12](images/image12.png)
 <a id="figure-9"></a>
 
-  *Figure 9: Initial prototype, with only locomotion functionality*
+  *Figure 9. Initial prototype, with only locomotion functionality.*
 
   ![image13](images/image13.png)
 <a id="figure-10"></a>
 
-  *Figure 10: First grabber prototype. Deemed to be too bulky and resource heavy.* 
+  *Figure 10. First grabber prototype. Deemed to be too bulky and resource heavy.*
 
 
   ![image14](images/image14.png)![image15](images/image15.png)
 <a id="figure-11"></a>
 
-  *Figure 11: First integration of color sensor vision subsystem with the navigation subsystem.* 
+  *Figure 11. First integration of color sensor vision subsystem with the navigation subsystem.*
 
 
   ![image16](images/image16.png)
 <a id="figure-12"></a>
 
-  *Figure 12: First integration of the grabber subsystem with the vision and drive subsystems.* 
+  *Figure 12. First integration of the grabber subsystem with the vision and drive subsystems.*
 
 
   ![image19](images/image19.png)
 <a id="figure-14"></a>
 
-  *Figure 14: Disassembly and rebuild of the drive and grabber subsystems.* 
+  *Figure 14. Disassembly and rebuild of the drive and grabber subsystems.*
 
 |    # pharmacy logic    angle_sweeper 90    go 22 350    grab_n_go 4 500    grab 2 -500    go 12 -350    turn 30 300    go 4 350    grab_n_go 2 500 grab 4 500 go 13 -350 turn -30 400 go 10 -350 turn -90 370 # room 1 angle_sweeper 0 go_door sweep go 4 -350 # room 2 turn 90 240 angle_sweeper 90 go 47 350 turn -90 400 angle_sweeper 0 Go_door Sweep angle_sweeper 90 go 8 350 turn 87 240 go 28 350 # big room loop turn 90 300 angle_sweeper 0 Sweep go 5 -350 turn -90 400 angle_sweeper -90 go 8 350 turn 45 290 go 8 350 turn 35 240 angle_sweeper 0 Sweep # go back home go 10 350 angle_sweeper 90 turn 88 200 go 77 350 turn -92 400 angle_sweeper 0 Go_door angle_sweeper 90 go 27 350 final_jingle |
 | :---- |
